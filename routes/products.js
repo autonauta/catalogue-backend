@@ -8,7 +8,10 @@ router.get("/", (req,res)=>{
 })
 //create new product in the DB
 router.post("/new", async (req, res) => {
-  const [name, sysId, price, category] = req.body;
+  const name = req.body.name;
+  const sysId = req.body.sysId;
+  const price = req.body.price;
+  const category = req.body.category;
   const newProduct = new Product({
     name, sysId, price, category
   });
