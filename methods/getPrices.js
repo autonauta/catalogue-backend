@@ -24,9 +24,9 @@ const getPrices = async () => {
           });
         const syscomProducts = await resSyscomProducts.json();
         if(!syscomProducts){
-            console.log("No products received from syscom");
+            console.log("No products received from syscom.mx");
         }else{
-            console.log("Products received from syscom", JSON.stringify(syscomProducts,null,4));
+            console.log(syscomProducts.length + " products received from syscom.mx");
             //updateProducts(syscomProducts);
         }
     }
