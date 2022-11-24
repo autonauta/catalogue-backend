@@ -22,7 +22,7 @@ const getPrices = async () => {
               "Content-Type": "application/x-www-form-urlencoded",
             },
           });
-        const syscomProducts = resSyscomProducts.json();
+        const syscomProducts = await resSyscomProducts.json();
         if(!syscomProducts){
             console.log("No products received from syscom");
         }else{
