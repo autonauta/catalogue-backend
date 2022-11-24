@@ -11,12 +11,14 @@ const getPrices = async () => {
             productsString =+ product.sysId + ",";
         });
         productsString = productsString.slice(0, -1);
-        console.log(productsString);
+        console.log("Products string: " + productsString);
+        const syscomAuth = process.env.SYSCOM_AUTH;
         const url = process.env.SYSCOM_URL + "productos/" + productsString;
+        console.log("URL: " + url);
         const resSyscomProducts = await fetch(url,{
-            method: "GET",
+            method: 'GET',
             headers: {
-              Authorization: process.env.SYSCOM_AUTH,
+              Authorization: syscomAuth,
               "Content-Type": "application/x-www-form-urlencoded",
             },
           });
