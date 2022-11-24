@@ -1,5 +1,6 @@
 const { Product } = require("../models/Product");
-import fetch from 'node-fetch';
+const fetch = (...args) =>
+	import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const getPrices = async () => {
     var productsString = "";
