@@ -10,7 +10,7 @@ const getPrices = async () => {
         console.log("No products");
     } else {
         for(let i=0; i < products.length;i++){
-            productsString =+ products[i].sysId + ",";
+            productsString += products[i].sysId + ",";
         }
         productsString = productsString.slice(0, -1);
         console.log("Products string: " + productsString);
