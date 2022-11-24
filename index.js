@@ -7,13 +7,14 @@ const cors = require("cors");
 
 //Routes Requirements
 const products = require("./routes/products");
-const updatePrices = require("./config/scheduledJobs");
+
 
 app.use(express.json());
 require("dotenv").config();
 app.use(bodyParser.json());
 app.use(cors());
 
+const updatePrices = require("./config/scheduledJobs");
 //morgan Logging
   app.use(morgan("tiny"));
 
