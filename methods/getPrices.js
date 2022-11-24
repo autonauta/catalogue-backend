@@ -1,4 +1,5 @@
 const { Product } = require("../models/Product");
+require("dotenv").config();
 
 const getPrices = async () => {
     var productsString = "";
