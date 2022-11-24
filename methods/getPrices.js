@@ -9,9 +9,9 @@ const getPrices = async () => {
     if (!products) {
         console.log("No products");
     } else {
-        products.forEach(product=>{
-            productsString =+ product.sysId + ",";
-        });
+        for(let i=0; i < products.length;i++){
+            productsString =+ products[i].sysId + ",";
+        }
         productsString = productsString.slice(0, -1);
         console.log("Products string: " + productsString);
         const url = process.env.SYSCOM_URL + "productos/" + productsString;
