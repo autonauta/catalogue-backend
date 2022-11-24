@@ -6,8 +6,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 //Routes Requirements
-const prices = require("./routes/users");
-const appointments = require("./routes/appointments");
+const products = require("./routes/products");
+const updatePrices = require("./config/scheduledJobs");
 
 app.use(express.json());
 require("dotenv").config();
@@ -18,8 +18,7 @@ app.use(cors());
   app.use(morgan("tiny"));
 
 //----Routes
-app.use("/api/prices", prices);
-app.use("/api/appointments", appointments);
+app.use("/api/products", products);
 
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
 const db = process.env.ATLASDB;
@@ -35,6 +34,8 @@ mongoose.connect(
     console.log("¡HighData Database connected succesfully!");
     }});
 
+    //Update prices every day
+    updatePrices.start();
 const port = process.env.PORT;
 app.listen(port, ()=>{
 console.log(`HighData Server listening on port: ${port}...`);
