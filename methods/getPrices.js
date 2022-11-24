@@ -4,7 +4,7 @@ const fetch = (...args) =>
 
 const getPrices = async () => {
     var productsString = "";
-    const products = await Product.find();
+    const products = await Product.find({});
     
     if (!products) {
         console.log("No products");
