@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const {Product} = require("../models/Product");
 
+
+router.get("/", (req,res)=>{
+  res.send("PRODUCTS");
+})
 //create new product in the DB
 router.post("/new", async (req, res) => {
   const [name, sysId, price, category] = req.body;
