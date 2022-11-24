@@ -15,6 +15,7 @@ const getPrices = async () => {
         const syscomAuth = process.env.SYSCOM_AUTH;
         const url = process.env.SYSCOM_URL + "productos/" + productsString;
         console.log("URL: " + url);
+        console.log("Syscom auth: "+ syscomAuth);
         const resSyscomProducts = await fetch(url,{
             method: 'GET',
             headers: {
