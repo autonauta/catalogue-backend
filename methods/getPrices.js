@@ -5,7 +5,7 @@ const fetch = (...args) =>
 const getPrices = async () => {
     var productsString = "";
     const products = await Product.find({});
-    
+    console.log("Products in DB: " + JSON.stringify(products,null,4));
     if (!products) {
         console.log("No products");
     } else {
@@ -26,7 +26,7 @@ const getPrices = async () => {
         if(!syscomProducts){
             console.log("No products received from syscom.mx");
         }else{
-            console.log(syscomProducts.length + " products received from syscom.mx " + JSON.stringify(syscomProducts,null,4));
+            console.log(syscomProducts.length + " products received from syscom.mx ");
             updateProducts(syscomProducts);
         }
     }
