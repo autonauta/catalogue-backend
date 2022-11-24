@@ -26,6 +26,7 @@ const getPrices = async () => {
         if(!syscomProducts){
             console.log("No products received from syscom");
         }else{
+            console.log("Products received from syscom");
             updateProducts(syscomProducts);
         }
     }
