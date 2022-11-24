@@ -15,14 +15,21 @@ router.post("/new", async (req, res) => {
   const newProduct = new Product({
     name, sysId, price, category
   });
-  const product = await newProduct.save();
-  if(!product) {
-    console.log("No product saved");
-    res.send({error: true, message: "No product saved"});
-  }else{
-    console.log("Product saved");
-    res.send(product);
+  try{
+    const product = await newProduct.save();
+    if(!product) {
+      console.log("No product saved");
+      res.send({error: true, message: "No product saved"});
+    }else{
+      console.log("Product saved");
+      res.send(product);
+    }
+  
+  }catch(err){
+    res.status(400).send("Error" + err);
   }
 });
+
+
 
 module.exports = router;
