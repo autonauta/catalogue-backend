@@ -34,6 +34,7 @@ const updateProducts = async (products) => {
         const filter = { sysID: products[i].producto_id };
         const update = { price: products[i].precios.precio_descuento };
         const productCreated = await Product.findOneAndUpdate(filter, update);
+        console.log("Product created: "+JSON.stringify(productCreated,null,4));
         if(!productCreated) {
             console.log("Product " + products[i].producto_id + " was not updated");
         }else{
