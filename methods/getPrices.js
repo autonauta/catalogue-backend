@@ -43,7 +43,7 @@ const updateProducts = async (products) => {
       console.log("Product " + products[i].producto_id + " was not updated");
     } else updateCounter++;
   }
-  console.log(updateCounter + "products of " + products.length + " in total, were succesfully updated on " + new Date().toLocaleString());
+  console.log(new Date().toLocaleString() + ": " + updateCounter + " products of " + products.length + " in total, were succesfully updated.");
 
 };
 
