@@ -5,7 +5,6 @@ const fetch = (...args) =>
 const getPrices = async () => {
     var productsString = "";
     const products = await Product.find({});
-    console.log("Products in DB: " + JSON.stringify(products,null,4));
     if (!products) {
         console.log("No products");
     } else {
@@ -13,7 +12,6 @@ const getPrices = async () => {
             productsString += products[i].sysId + ",";
         }
         productsString = productsString.slice(0, -1);
-        console.log("Products string: " + productsString);
         const url = process.env.SYSCOM_URL + "productos/" + productsString;
         const resSyscomProducts = await fetch(url,{
             method: 'GET',
@@ -26,7 +24,6 @@ const getPrices = async () => {
         if(!syscomProducts){
             console.log("No products received from syscom.mx");
         }else{
-            console.log(syscomProducts.length + " products received from syscom.mx ");
             updateProducts(syscomProducts);
         }
     }
