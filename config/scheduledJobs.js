@@ -1,7 +1,7 @@
 var cron = require("node-cron");
 const getPrices = require("../methods/getPrices");
 
-const updatePrices = cron.schedule("* * * * *", () => {
+const updatePrices = cron.schedule("*/3 * * * *", () => {
   console.log("<------------------Update Prices-------------------->");
   console.log("<---------Started the daily prices updater---------->");
   console.log("<--------------------------------------------------->");
