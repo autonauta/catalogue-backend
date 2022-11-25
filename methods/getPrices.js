@@ -30,14 +30,22 @@ const getPrices = async () => {
 };
 
 const updateProducts = async (products) => {
-  products.forEach((product) => {
-    let filter = { sysId: product.producto_id };
+  for (let i = 0; i < products.length; i++) {
+    let filter = { sysId: products[i].producto_id };
     let update = {
-      price: product.precios.precio_descuento,
+      price: products[i].precios.precio_descuento,
       lastUpdate: new Date().toLocaleString(),
     };
-    Product.findOneAndUpdate(filter, update);
-  });
+    let productCreated = await Product.findOneAndUpdate(filter, update);
+    productCreated = await Product.findOne(filter);
+    if (!productCreated.price === products[i].price) {
+      console.log("Product " + products[i].producto_id + " was not updated");
+    } else {
+      console.log(
+        "Product " + products[i].producto_id + " was successfully updated"
+      );
+    }
+  }
 };
 
 module.exports = getPrices;
