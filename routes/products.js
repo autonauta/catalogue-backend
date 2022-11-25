@@ -3,8 +3,12 @@ const router = express.Router();
 const {Product} = require("../models/Product");
 
 
-router.get("/", (req,res)=>{
-  res.send("PRODUCTS");
+router.get("/", async(req,res)=>{
+  const products = Product.find({});
+  if(!products) {
+    res.status(400).send({error: true, message: "An error ocurred while getting the products info, try again later."});
+  }
+  res.send(products);
 })
 //create new product in the DB
 router.post("/new", async (req, res) => {

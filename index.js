@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
+const updatePrices = require("./config/scheduledJobs");
 
 //Routes Requirements
 const products = require("./routes/products");
@@ -15,7 +15,7 @@ require("dotenv").config();
 app.use(bodyParser.json());
 app.use(cors());
 
-const updatePrices = require("./config/scheduledJobs");
+
 //morgan Logging
   app.use(morgan("tiny"));
 
