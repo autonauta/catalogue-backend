@@ -16,6 +16,7 @@ const productsSchema = new mongoose.Schema({
       "renovables"
     ],
   },
+  lastUpdate: {type: Date},
 });
 
 const Product = mongoose.model("Product", productsSchema);
