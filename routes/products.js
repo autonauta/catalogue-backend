@@ -4,10 +4,11 @@ const {Product} = require("../models/Product");
 
 
 router.get("/", async(req,res)=>{
-  const products = Product.find({});
+  const products = await Product.find({});
   if(!products) {
     res.status(400).send({error: true, message: "An error ocurred while getting the products info, try again later."});
   }
+  console.log(JSON.stringify(products,null,4));
   res.send(products);
 })
 //create new product in the DB
