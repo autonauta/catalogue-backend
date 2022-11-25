@@ -34,7 +34,7 @@ const updateProducts = async (products) => {
     let filter = { sysId: products[i].producto_id };
     let update = {
       price: products[i].precios.precio_descuento,
-      lastUpdate: new Date(),
+      lastUpdate: new Date().toLocaleString(),
     };
     let productCreated = await Product.findOneAndUpdate(filter, update);
     productCreated = await Product.findOne(filter);
