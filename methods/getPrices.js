@@ -30,6 +30,7 @@ const getPrices = async () => {
 };
 
 const updateProducts = async (products) => {
+    var updateCounter = 0;
   for (let i = 0; i < products.length; i++) {
     let filter = { sysId: products[i].producto_id };
     let update = {
@@ -40,12 +41,10 @@ const updateProducts = async (products) => {
     productCreated = await Product.findOne(filter);
     if (!productCreated.price === products[i].price) {
       console.log("Product " + products[i].producto_id + " was not updated");
-    } else {
-      console.log(
-        "Product " + products[i].producto_id + " was successfully updated"
-      );
-    }
+    } else updateCounter++;
   }
+  console.log(updateCounter + "products of " + products.length + " in total, were succesfully updated.")
+
 };
 
 module.exports = getPrices;
