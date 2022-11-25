@@ -20,7 +20,7 @@ app.use(cors());
   app.use(morgan("tiny"));
 
 //----Routes
-app.use("/api/products", products);
+app.use("/api/v1/products", products);
 
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
 const db = process.env.ATLASDB;
