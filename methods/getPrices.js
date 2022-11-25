@@ -24,8 +24,7 @@ const getPrices = async () => {
         if(!syscomProducts){
             console.log("No products received from syscom.mx");
         }else{
-            console.log("Products received from syscom: " + JSON.stringify(syscomProducts,null,4));
-            //updateProducts(syscomProducts);
+            updateProducts(syscomProducts);
         }
     }
 };
@@ -34,7 +33,8 @@ const updateProducts = async (products) => {
     for(let i = 0; i < products.length; i++){
         const filter = { sysID: products[i].producto_id };
         const update = { price: products[i].precios.precio_descuento };
-        const productCreated = await Product.findOneAndUpdate(filter, update);
+        let productCreated = await Product.findOneAndUpdate(filter, update);
+        productCreated = await Product.findOne(filter);
         console.log("Product created: "+JSON.stringify(productCreated,null,4));
         if(!productCreated) {
             console.log("Product " + products[i].producto_id + " was not updated");
