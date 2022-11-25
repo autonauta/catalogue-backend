@@ -31,8 +31,8 @@ const getPrices = async () => {
 
 const updateProducts = async (products) => {
     for(let i = 0; i < products.length; i++){
-        const filter = { sysID: products[i].producto_id };
-        const update = { price: products[i].precios.precio_descuento };
+        let filter = { sysID: products[i].producto_id };
+        let update = { price: products[i].precios.precio_descuento };
         let productCreated = await Product.findOneAndUpdate(filter, update);
         productCreated = await Product.findOne(filter);
         console.log("Product created: "+JSON.stringify(productCreated,null,4));
