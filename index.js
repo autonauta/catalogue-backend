@@ -1,14 +1,30 @@
 const express = require("express");
 const app = express();
+const https = require("https");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const fs = require("fs");
 const updatePrices = require("./config/scheduledJobs");
 
 //Routes Requirements
 const products = require("./routes/products");
 
+const privateKey = fs.readFileSync(
+  "/etc/letsencrypt/live/arq.highdatamx.com/privkey.pem"
+);
+const certificate = fs.readFileSync(
+  "/etc/letsencrypt/live/arq.highdatamx.com/fullchain.pem"
+);
+
+const server = https.createServer(
+  {
+    key: privateKey,
+    cert: certificate,
+  },
+  app
+);
 
 app.use(express.json());
 require("dotenv").config();
@@ -39,6 +55,6 @@ mongoose.connect(
     //Update prices every day
     updatePrices.start();
 const port = process.env.PORT;
-app.listen(port, ()=>{
+server.listen(port, ()=>{
 console.log(`HighData Server listening on port: ${port}...`);
 });
