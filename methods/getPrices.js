@@ -33,15 +33,26 @@ const getPrices = async () => {
 
 const printProducts = async (products) => {
   for (let i = 0; i < products.length; i++) {
-    console.log(
-      products[i].precios.precio_especial
-        ? (Number(products[i].precios.precio_especial) -
-            Number(products[i].precios.precio_descuento)) /
-            Number(products[i].precios.precio_especial)
-        : (Number(products[i].precios.precio_lista) -
-            Number(products[i].precios.precio_descuento)) /
-            Number(products[i].precios.precio_lista)
-    );
+    let diferencia;
+    let porcentaje;
+    if (products[i].precios.precio_especial) {
+      diferencia =
+        Number(products[i].precios.precio_especial) -
+        Number(products[i].precios.precio_descuento);
+      porcentaje = diferencia / Number(products[i].precios.precio_especial);
+    } else {
+      diferencia =
+        Number(products[i].precios.precio_lista) -
+        Number(products[i].precios.precio_descuento);
+      porcentaje = diferencia / Number(products[i].precios.precio_lista);
+    }
+    if (porcentaje >= 0.3)
+      console.log(
+        "Producto mamalón: " +
+          products[i].modelo +
+          ", Porcentaje de utilidad: " +
+          porcentaje * 100
+      );
   }
 };
 
