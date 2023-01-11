@@ -24,13 +24,20 @@ const getPrices = async () => {
     if (!syscomProducts) {
       console.log("No products received from syscom.mx");
     } else {
+      printProducts(syscomProducts);
       updateProducts(syscomProducts);
     }
   }
 };
 
+const printProducts = async (products) => {
+  for (let i = 0; i < products.length; i++) {
+    console.log(products[i]);
+  }
+};
+
 const updateProducts = async (products) => {
-    var updateCounter = 0;
+  var updateCounter = 0;
   for (let i = 0; i < products.length; i++) {
     let filter = { sysId: products[i].producto_id };
     let update = {
@@ -43,8 +50,14 @@ const updateProducts = async (products) => {
       console.log("Product " + products[i].producto_id + " was not updated");
     } else updateCounter++;
   }
-  console.log(new Date().toLocaleString() + ": " + updateCounter + " products of " + products.length + " in total, were succesfully updated.");
-
+  console.log(
+    new Date().toLocaleString() +
+      ": " +
+      updateCounter +
+      " products of " +
+      products.length +
+      " in total, were succesfully updated."
+  );
 };
 
 module.exports = getPrices;
