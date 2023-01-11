@@ -56,7 +56,6 @@ mongoose.connect(
 
 //Update prices every day
 updatePrices.start();
-bestProducts.start();
 const port = process.env.PORT;
 server.listen(port, () => {
   console.log(`HighData Server listening on port: ${port}...`);
