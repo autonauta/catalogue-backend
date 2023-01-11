@@ -35,10 +35,12 @@ const printProducts = async (products) => {
   for (let i = 0; i < products.length; i++) {
     console.log(
       products[i].precios.precio_especial
-        ? Number(products[i].precios.precio_especial) -
-            Number(products[i].precios.precio_descuento)
-        : Number(products[i].precios.precio_lista) -
-            Number(products[i].precios.precio_descuento)
+        ? (Number(products[i].precios.precio_especial) -
+            Number(products[i].precios.precio_descuento)) /
+            Number(products[i].precios.precio_especial)
+        : (Number(products[i].precios.precio_lista) -
+            Number(products[i].precios.precio_descuento)) /
+            Number(products[i].precios.precio_lista)
     );
   }
 };
