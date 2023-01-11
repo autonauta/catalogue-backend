@@ -12,6 +12,7 @@ const getPrices = async () => {
       productsString += products[i].sysId + ",";
     }
     productsString = productsString.slice(0, -1);
+    console.log(productsString);
     const url = process.env.SYSCOM_URL + "productos/" + productsString;
     const resSyscomProducts = await fetch(url, {
       method: "GET",
