@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const fs = require("fs");
-const updatePrices = require("./config/scheduledJobs");
+const { updatePrices, bestProducts } = require("./config/scheduledJobs");
 
 //Routes Requirements
 const products = require("./routes/products");
@@ -31,9 +31,8 @@ require("dotenv").config();
 app.use(bodyParser.json());
 app.use(cors());
 
-
 //morgan Logging
-  app.use(morgan("tiny"));
+app.use(morgan("tiny"));
 
 //----Routes
 app.use("/api/v1/products", products);
@@ -41,20 +40,24 @@ app.use("/api/v1/products", products);
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
 const db = process.env.ATLASDB;
 mongoose.connect(
-    db,
-    { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true 
-    },(err) => {
+  db,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  (err) => {
     if (err) {
-    console.log("error in connection" + err);
+      console.log("error in connection" + err);
     } else {
-    console.log("¡HighData Database connected succesfully!");
-    }});
+      console.log("¡HighData Database connected succesfully!");
+    }
+  }
+);
 
-    //Update prices every day
-    updatePrices.start();
+//Update prices every day
+updatePrices.start();
+bestProducts.start();
 const port = process.env.PORT;
-server.listen(port, ()=>{
-console.log(`HighData Server listening on port: ${port}...`);
+server.listen(port, () => {
+  console.log(`HighData Server listening on port: ${port}...`);
 });
