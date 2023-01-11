@@ -14,7 +14,7 @@ const getBestProducts = async () => {
   if (!syscomProducts) {
     console.log("Error de comunicación con syscom");
   } else {
-    printProducts(syscomProducts);
+    printProducts(syscomProducts.productos);
   }
 };
 
