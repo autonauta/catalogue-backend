@@ -24,7 +24,7 @@ const getPrices = async () => {
     if (!syscomProducts) {
       console.log("No products received from syscom.mx");
     } else {
-      printProducts(syscomProducts);
+      //printProducts(syscomProducts);
       updateProducts(syscomProducts);
     }
   }
