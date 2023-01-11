@@ -2,7 +2,7 @@ const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const getBestProducts = async () => {
-  const url = process.env.SYSCOM_URL + "marcas/tplink/productos";
+  const url = process.env.SYSCOM_URL + "marcas/ezviz/productos";
   const resSyscomProducts = await fetch(url, {
     method: "GET",
     headers: {
