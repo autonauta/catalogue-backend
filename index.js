@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const fs = require("fs");
-const { updatePrices, bestProducts } = require("./config/scheduledJobs");
+const { updatePrices } = require("./config/scheduledJobs");
 
 //Routes Requirements
 const products = require("./routes/products");
