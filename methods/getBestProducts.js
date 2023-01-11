@@ -33,7 +33,7 @@ const printProducts = async (products) => {
         Number(products[i].precios.precio_descuento);
       porcentaje = diferencia / Number(products[i].precios.precio_lista);
     }
-    if (porcentaje >= 0.5)
+    if (porcentaje >= 0.4)
       console.log(
         "Producto mamalón: " +
           products[i].modelo +
