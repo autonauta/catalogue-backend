@@ -25,7 +25,6 @@ const getPrices = async () => {
     if (syscomProducts.status || !syscomProducts) {
       console.log("Error de comunicación con syscom: " + syscomProducts.detail);
     } else {
-      console.log(syscomProducts);
       printProducts(syscomProducts);
       updateProducts(syscomProducts);
     }
@@ -34,7 +33,13 @@ const getPrices = async () => {
 
 const printProducts = async (products) => {
   for (let i = 0; i < products.length; i++) {
-    console.log(products[i]);
+    console.log(
+      products[i].precios.precio_especial
+        ? Number(products[i].precios.precio_especial) -
+            Number(products[i].precios.precio_descuento)
+        : Number(products[i].precios.precio_lista) -
+            Number(products[i].precios.precio_descuento)
+    );
   }
 };
 
