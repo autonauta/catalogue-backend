@@ -21,6 +21,13 @@ router.get("/funnel", async (req, res) => {
     });
     return;
   }
+  if (funnel.length != 24) {
+    res.status(400).send({
+      error: true,
+      message: "No es un id válido, tiene que tener 24 caractéres",
+    });
+    return;
+  }
   const product = await Product.findById(funnel.productId);
   if (!product) {
     res.status(400).send({
