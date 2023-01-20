@@ -45,7 +45,7 @@ router.get("/funnel", async (req, res) => {
     return;
   }
   funnel.productPrice = product.price * dollar.price;
-
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.send(funnel);
 });
 //Endpoint for crreating new Funnels
