@@ -13,10 +13,10 @@ router.get("/funnel", async (req, res) => {
     });
     return;
   }
-  if (funnelId.length != 24) {
+  if (!funnelId.match(/^[0-9a-fA-F]{24}$/)) {
     res.status(400).send({
       error: true,
-      message: "No es un id válido, tiene que tener 24 caractéres",
+      message: "No es un id válido.",
     });
     return;
   }
