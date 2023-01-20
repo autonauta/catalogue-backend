@@ -11,6 +11,7 @@ router.get("/funnel", async (req, res) => {
       error: true,
       message: "No se recibió ningún funnelId",
     });
+    return;
   }
   const funnel = await Funnel.findById(funnelId);
   if (!funnel) {
@@ -18,6 +19,7 @@ router.get("/funnel", async (req, res) => {
       error: true,
       message: "No se encontró un funnel con ese id.",
     });
+    return;
   }
   const product = await Product.findById(funnel.productId);
   if (!product) {
@@ -25,6 +27,7 @@ router.get("/funnel", async (req, res) => {
       error: true,
       message: "No existe ese producto en la base de datos.",
     });
+    return;
   }
   const dollar = await Dollar.find({});
   if (!dollar) {
@@ -32,6 +35,7 @@ router.get("/funnel", async (req, res) => {
       error: true,
       message: "No existe el precio del dollar, revisar base de datos.",
     });
+    return;
   }
   funnel.productPrice = product.price * dollar.price;
 
