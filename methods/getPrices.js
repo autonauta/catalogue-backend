@@ -44,12 +44,13 @@ const updateDollarPrice = async () => {
       }
     );
     const dollarPrice = Number(resSyscom.normal);
-    const dp = await Dollar.find({});
-    console.log(dp);
-    dp.price = dollarPrice;
-    dp.lastUpdate = new Date().toLocaleString();
-    await dp.save();
-    console.log("Dollar price: " + dollarPrice);
+    let filter = {};
+    let update = {
+      price: dollarPrice,
+      lastUpdate: new Date().toLocaleString(),
+    };
+    let dollarCreated = await Dollar.findOneAndUpdate(filter, update);
+    console.log(dollarCreated);
   } catch (error) {
     console.log(error);
   }
