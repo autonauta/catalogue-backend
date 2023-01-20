@@ -12,7 +12,7 @@ const funnelSchema = new mongoose.Schema({
   video: {
     uri: { type: String, default: null },
   },
-  productId: mongoose.ObjectId,
+  productId: { type: String },
   productPrice: { type: Number },
 });
 

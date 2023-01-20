@@ -28,7 +28,7 @@ router.get("/funnel", async (req, res) => {
     });
     return;
   }
-  const product = await Product.findById(funnel.productId);
+  const product = await Product.findOne({ productId: funnel.productId });
   if (!product) {
     res.status(400).send({
       error: true,
