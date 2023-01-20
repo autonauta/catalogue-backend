@@ -37,3 +37,4 @@ router.get("/", async (req, res) => {
 
   res.send(funnel);
 });
+module.exports = router;
