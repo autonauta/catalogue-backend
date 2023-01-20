@@ -50,7 +50,7 @@ router.get("/funnel", async (req, res) => {
 });
 //Endpoint for crreating new Funnels
 router.post("/funnel/new", async (req, res) => {
-  if (!req.body) {
+  if (req.body.length === 0) {
     res.status(400).send({
       error: true,
       message: "No se recibieron datos.",
