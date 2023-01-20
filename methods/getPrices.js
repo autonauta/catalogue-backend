@@ -44,7 +44,9 @@ const updateDollarPrice = async () => {
       }
     );
     const dollarPrice = resSyscom;
-    console.log("Received from syscom: " + dollarPrice);
+    console.log(
+      "Received from syscom: " + JSON.stringify(dollarPrice, null, 4)
+    );
     let filter = {};
     let update = {
       price: dollarPrice,
