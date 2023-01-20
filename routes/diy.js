@@ -87,6 +87,9 @@ router.post("/funnel/new", async (req, res) => {
     productId,
   });
   const saved = await newFunnel.save();
-  res.send(saved);
+  console.log(
+    "New funnel created with link: " + "https://diy.highdatamx.com/" + saved._id
+  );
+  res.send({ ...saved, link: "https://diy.highdatamx.com/" + saved._id });
 });
 module.exports = router;
