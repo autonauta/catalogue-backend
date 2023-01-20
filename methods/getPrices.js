@@ -43,7 +43,8 @@ const updateDollarPrice = async () => {
         },
       }
     );
-    const dollarPrice = Number(resSyscom.normal);
+    const dollarPrice = resSyscom;
+    console.log("Received from syscom: " + dollarPrice);
     let filter = {};
     let update = {
       price: dollarPrice,
