@@ -1,4 +1,5 @@
 const { Product } = require("../models/Product");
+const { Dollar } = require("../models/Dollar");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -25,12 +26,31 @@ const getPrices = async () => {
     if (syscomProducts.status || !syscomProducts) {
       console.log("Error de comunicación con syscom: " + syscomProducts.detail);
     } else {
-      printProducts(syscomProducts);
       updateProducts(syscomProducts);
+      updateDollarPrice();
     }
   }
 };
-
+const updateDollarPrice = async () => {
+  try {
+    const resSyscom = await fetch(
+      "https://developers.syscom.mx/api/v1/tipocambio",
+      {
+        method: "GET",
+        headers: {
+          Authorization: process.env.SYSCOM_AUTH,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    const dollarPrice = Number(resSyscom.normal);
+    const dp = await Dollar.find({});
+    dp.price = dollarPrice;
+    dp.lastUpdate = new Date().toLocaleString();
+  } catch (error) {
+    console.log(error);
+  }
+};
 const updateProducts = async (products) => {
   var updateCounter = 0;
   for (let i = 0; i < products.length; i++) {

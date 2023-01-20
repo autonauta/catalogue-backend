@@ -10,6 +10,7 @@ const { updatePrices } = require("./config/scheduledJobs");
 
 //Routes Requirements
 const products = require("./routes/products");
+const diy = require("./routes/diy");
 
 const privateKey = fs.readFileSync(
   "/etc/letsencrypt/live/arq.highdatamx.com/privkey.pem"
@@ -36,6 +37,7 @@ app.use(morgan("tiny"));
 
 //----Routes
 app.use("/api/v1/products", products);
+app.use("/api/v1/diy", diy);
 
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
 const db = process.env.ATLASDB;
