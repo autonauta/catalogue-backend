@@ -90,6 +90,6 @@ router.post("/funnel/new", async (req, res) => {
   console.log(
     "New funnel created with link: " + "https://diy.highdatamx.com/" + saved._id
   );
-  res.send({ ...saved, link: "https://diy.highdatamx.com/" + saved._id });
+  res.send({ link: "https://diy.highdatamx.com/" + saved._id });
 });
 module.exports = router;
