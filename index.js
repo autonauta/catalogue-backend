@@ -26,14 +26,10 @@ const server = https.createServer(
   },
   app
 );
-var corsOptions = {
-  origin: "189.141.174.124",
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 app.use(express.json());
 require("dotenv").config();
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 //morgan Logging
 app.use(morgan("tiny"));
