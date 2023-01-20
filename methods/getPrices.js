@@ -45,6 +45,7 @@ const updateDollarPrice = async () => {
     );
     const dollarPrice = Number(resSyscom.normal);
     const dp = await Dollar.find({});
+    console.log(dp);
     dp.price = dollarPrice;
     dp.lastUpdate = new Date().toLocaleString();
     await dp.save();
