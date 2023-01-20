@@ -87,6 +87,6 @@ router.post("/funnel/new", async (req, res) => {
     productId,
   });
   const saved = await newFunnel.save();
-  console.log(saved);
+  res.send(saved);
 });
 module.exports = router;
