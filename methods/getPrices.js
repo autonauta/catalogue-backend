@@ -48,6 +48,7 @@ const updateDollarPrice = async () => {
     dp.price = dollarPrice;
     dp.lastUpdate = new Date().toLocaleString();
     await dp.save();
+    console.log("Dollar price: " + dollarPrice);
   } catch (error) {
     console.log(error);
   }
