@@ -21,10 +21,14 @@ router.get("/", async (req, res) => {
 });
 //create new product in the DB
 router.post("/new", async (req, res) => {
-  const name = req.body.name;
-  const sysId = req.body.sysId;
-  const price = req.body.price;
-  const category = req.body.category;
+  const { name, sysId, price, category } = req.body;
+  if (!name || !sysId || !price || !category) {
+    res.status(400).send({
+      error: true,
+      message: "No estan completos los datos.",
+    });
+    return;
+  }
   const newProduct = new Product({
     name,
     sysId,
