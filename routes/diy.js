@@ -20,7 +20,7 @@ router.get("/funnel", async (req, res) => {
     });
     return;
   }
-  const funnel = await Funnel.findById(funnelId);
+  var funnel = await Funnel.findById(funnelId);
   if (!funnel) {
     res.status(400).send({
       error: true,
@@ -45,7 +45,7 @@ router.get("/funnel", async (req, res) => {
     return;
   }
   funnel.productPrice = product.price * dollar.price;
-  res.setHeader("Access-Control-Allow-Origin", "*").send(funnel);
+  res.send(funnel);
 });
 //Endpoint for crreating new Funnels
 router.post("/funnel/new", async (req, res) => {
