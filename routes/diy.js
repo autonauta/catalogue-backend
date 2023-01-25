@@ -4,7 +4,7 @@ const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 
-router.get("/funnel", async (req, res) => {
+router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
   if (!funnelId) {
     res.status(400).send({
