@@ -7,8 +7,8 @@ const cors = require("cors");
 const { updatePrices } = require("./config/scheduledJobs");
 
 //Routes Requirements
-// const products = require("./routes/products");
-// const diy = require("./routes/diy");
+const products = require("./routes/products");
+const diy = require("./routes/diy");
 
 /* const privateKey = fs.readFileSync(
   "/etc/letsencrypt/live/arq.highdatamx.com/privkey.pem"
