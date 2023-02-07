@@ -95,7 +95,7 @@ router.post("/funnel/new", async (req, res) => {
   res.send({ link: "https://diy.highdatamx.com/" + saved._id });
 });
 
-router.post("/payment-intent", async (req, res)=>{
+router.post("/funnel/payment-intent", async (req, res)=>{
   try {
     const {amount, sysId} = req;
     //Check for product stock abvailability
