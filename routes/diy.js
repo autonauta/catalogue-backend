@@ -99,13 +99,12 @@ router.post("/funnel/new", async (req, res) => {
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
-    const amount = req.body.amount;
-    const productId = req.body.sysId;
-    console.log("amount:", amount, "prodId:", productId);
+    const { amount, sysId } = req.body;
+    console.log("amount:", amount, "prodId:", sysId);
     //Check for product stock abvailability
     //
     //----------------------->
-    const product = await Product.findOne({ productId });
+    const product = await Product.findOne({ sysId });
     if (!product) {
       res.status(400).send({
         error: true,
@@ -116,7 +115,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
     console.log(product);
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "mxn",
-      amount: amount,
+      amount,
       automatic_payment_methods: {
         enabled: true,
       },
