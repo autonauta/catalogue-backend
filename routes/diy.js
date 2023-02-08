@@ -99,8 +99,7 @@ router.post("/funnel/new", async (req, res) => {
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
-    const { amount, sysId } = req.body;
-    console.log("amount:", amount, "prodId:", sysId);
+    const { sysId } = req.body;
     //Check for product stock abvailability
     //
     //----------------------->
@@ -112,6 +111,12 @@ router.post("/funnel/payment-intent", async (req, res) => {
       });
       return;
     }
+    console.log(
+      "amount:",
+      Math.ceil(product.price * 20 * 1.16 * 1.04),
+      "prodId:",
+      sysId
+    );
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "mxn",
       amount: Math.ceil(product.price * 20 * 1.16 * 1.04),
