@@ -101,7 +101,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
   try {
     const amount = req.body.amount;
     const productId = req.body.sysId;
-    console.log("amount:", amount, "prodId:", sysId);
+    console.log("amount:", amount, "prodId:", productId);
     //Check for product stock abvailability
     //
     //----------------------->
