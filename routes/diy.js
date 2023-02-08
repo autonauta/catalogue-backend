@@ -51,7 +51,9 @@ router.post("/funnel", async (req, res) => {
   }
   const tax = 1.16;
   const markup = 1.2;
-  const productPrice = product.price * dollar[0].price * tax * markup;
+  const stripeComission = 1.041;
+  const productPrice =
+    product.price * dollar[0].price * tax * markup * stripeComission;
   console.log(productPrice);
   funnel.productPrice = productPrice.toFixed(2);
   await funnel.save();
