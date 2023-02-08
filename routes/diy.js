@@ -3,9 +3,11 @@ const router = express.Router();
 const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const Stripe = require("stripe");
-const stripe = Stripe(process.env.STRIPE_LIVE_KEY);
+const stripe = Stripe(
+  "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"
+);
 
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
