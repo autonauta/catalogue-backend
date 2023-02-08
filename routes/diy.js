@@ -106,7 +106,7 @@ router.post("/funnel/new", async (req, res) => {
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
-    const { price } = req.body;
+    const { price, email } = req.body;
     //Check for product stock abvailability
     //
     //----------------------->
@@ -116,6 +116,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
       automatic_payment_methods: {
         enabled: true,
       },
+      receipt_email: email,
     });
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
