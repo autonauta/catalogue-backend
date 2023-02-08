@@ -112,7 +112,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
       return;
     }
     const paymentIntent = await stripe.paymentIntents.create({
-      currency: "mx",
+      currency: "mxn",
       amount,
       automatic_payment_methods: {
         enabled: true,
