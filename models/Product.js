@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const productsSchema = new mongoose.Schema({
-  name: { type: String, unique: true},
-  sysId: {type: String, unique: true},
+  name: { type: String, unique: true },
+  sysId: { type: String, unique: true },
   price: { type: Number },
   category: {
     type: String,
@@ -13,10 +13,10 @@ const productsSchema = new mongoose.Schema({
       "conectividad",
       "videoportero",
       "audio",
-      "renovables"
+      "renovables",
     ],
   },
-  lastUpdate: {type: String},
+  lastUpdate: { type: String },
 });
 
 const Product = mongoose.model("Product", productsSchema);
