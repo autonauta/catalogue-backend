@@ -49,7 +49,9 @@ router.post("/funnel", async (req, res) => {
     });
     return;
   }
-  const productPrice = dollar[0].price;
+  const tax = 1.16;
+  const markup = 1.1;
+  const productPrice = product.price * dollar[0].price * tax;
   console.log(productPrice);
   res.send(funnel);
 });
