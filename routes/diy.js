@@ -49,7 +49,7 @@ router.post("/funnel", async (req, res) => {
     });
     return;
   }
-  const productPrice = dollar;
+  const productPrice = dollar[0].price;
   console.log(productPrice);
   res.send(funnel);
 });
