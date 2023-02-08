@@ -50,8 +50,8 @@ router.post("/funnel", async (req, res) => {
     return;
   }
   const tax = 1.16;
-  const markup = 1.1;
-  const productPrice = product.price * dollar[0].price * tax;
+  const markup = 1.2;
+  const productPrice = product.price * dollar[0].price * tax * markup;
   console.log(productPrice);
   funnel.productPrice = productPrice.toFixed(2);
   await funnel.save();
@@ -104,27 +104,13 @@ router.post("/funnel/new", async (req, res) => {
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
-    const { sysId } = req.body;
+    const { price } = req.body;
     //Check for product stock abvailability
     //
     //----------------------->
-    const product = await Product.findOne({ sysId });
-    if (!product) {
-      res.status(400).send({
-        error: true,
-        message: "No existe ese producto en la base de datos.",
-      });
-      return;
-    }
-    console.log(
-      "amount:",
-      Math.ceil(product.price * 20 * 1.16 * 1.04),
-      "prodId:",
-      sysId
-    );
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "mxn",
-      amount: Math.ceil(product.price * 20 * 1.16 * 1.04 * 100),
+      amount: Math.ceil(price * 100),
       automatic_payment_methods: {
         enabled: true,
       },
