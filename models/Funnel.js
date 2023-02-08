@@ -13,7 +13,6 @@ const funnelSchema = new mongoose.Schema({
     uri: { type: String, default: null },
   },
   productId: { type: String },
-  productPrice: { type: Number },
 });
 
 const Funnel = mongoose.model("Funnel", funnelSchema);
