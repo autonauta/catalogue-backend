@@ -8,7 +8,7 @@ const Stripe = require("stripe");
 const stripe = Stripe(
   "sk_test_51LGo8xJbTdcQvIUcToGpCGB5GS0m96YdnnQmbw3mApjpVBCSsVOrH3sLuhwtz7HsVQxxAgGdEpujLCIwzp4m5reh00mR9NsMsa"
 );
-
+const tax = 1.16;
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
   if (!funnelId) {
@@ -49,10 +49,10 @@ router.post("/funnel", async (req, res) => {
     });
     return;
   }
-  funnel.productPrice = product.price * dollar.price;
+  funnel.productPrice = product.price * dollar.price * tax;
   res.send(funnel);
 });
-//Endpoint for crreating new Funnels
+//Endpoint for creating new Funnels
 router.post("/funnel/new", async (req, res) => {
   const {
     title,
