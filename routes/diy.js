@@ -5,9 +5,7 @@ const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 
 const Stripe = require("stripe");
-const stripe = Stripe(
-  "sk_test_51LGo8xJbTdcQvIUcToGpCGB5GS0m96YdnnQmbw3mApjpVBCSsVOrH3sLuhwtz7HsVQxxAgGdEpujLCIwzp4m5reh00mR9NsMsa"
-);
+const stripe = Stripe(process.env.STRIPE_LIVE_KEY);
 
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
