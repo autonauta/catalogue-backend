@@ -50,7 +50,8 @@ router.post("/funnel", async (req, res) => {
     return;
   }
   const productPrice = product.price * dollar.price * tax;
-  res.send(...funnel, productPrice);
+  funnel = { ...funnel, productPrice };
+  res.send(funnel);
 });
 //Endpoint for creating new Funnels
 router.post("/funnel/new", async (req, res) => {
