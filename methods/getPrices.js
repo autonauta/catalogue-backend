@@ -63,7 +63,7 @@ const updateProducts = async (products) => {
   for (let i = 0; i < products.length; i++) {
     let filter = { sysId: products[i].producto_id };
     let update = {
-      price: (products[i].precios.precio_descuento / 1.04173).toFixed(2),
+      price: (products[i].precios.precio_descuento / 1.0417).toFixed(2),
       lastUpdate: new Date().toLocaleString(),
     };
     let productCreated = await Product.findOneAndUpdate(filter, update);
