@@ -49,10 +49,8 @@ router.post("/funnel", async (req, res) => {
     });
     return;
   }
-  const tax = 1.16;
-  const markup = 1.1;
-  funnel.productPrice = product.price * dollar.price * tax;
-  await funnel.save();
+  const productPrice = dollar.price;
+  console.log(productPrice);
   res.send(funnel);
 });
 //Endpoint for creating new Funnels
