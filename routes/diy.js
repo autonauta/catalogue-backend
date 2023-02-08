@@ -4,8 +4,10 @@ const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 
-const Stripe = require('stripe');
-const stripe = Stripe('sk_test_51LGo8xJbTdcQvIUcToGpCGB5GS0m96YdnnQmbw3mApjpVBCSsVOrH3sLuhwtz7HsVQxxAgGdEpujLCIwzp4m5reh00mR9NsMsa');
+const Stripe = require("stripe");
+const stripe = Stripe(
+  "sk_test_51LGo8xJbTdcQvIUcToGpCGB5GS0m96YdnnQmbw3mApjpVBCSsVOrH3sLuhwtz7HsVQxxAgGdEpujLCIwzp4m5reh00mR9NsMsa"
+);
 
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
@@ -95,13 +97,13 @@ router.post("/funnel/new", async (req, res) => {
   res.send({ link: "https://diy.highdatamx.com/" + saved._id });
 });
 
-router.post("/funnel/payment-intent", async (req, res)=>{
+router.post("/funnel/payment-intent", async (req, res) => {
   try {
-    const {amount, sysId} = req;
+    const { amount, sysId } = req;
     //Check for product stock abvailability
     //
     //----------------------->
-    const product = await Product.findOne({sysId});
+    const product = await Product.findOne({ sysId });
     if (!product) {
       res.status(400).send({
         error: true,
@@ -109,17 +111,17 @@ router.post("/funnel/payment-intent", async (req, res)=>{
       });
       return;
     }
-    const paymentIntent = await  stripe.paymentIntents.create({
+    const paymentIntent = await stripe.paymentIntents.create({
       currency: "mx",
       amount,
       automatic_payment_methods: {
         enabled: true,
-      }
-    })
-    res.send({clientSecret: paymentIntent.client_secret});
+      },
+    });
+    res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
-    return res.status(400).send({error: true, message: error.message})
+    console.log(error);
+    return res.status(400).send({ error: true, message: error.message });
   }
-
-})
+});
 module.exports = router;
