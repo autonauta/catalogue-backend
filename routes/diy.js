@@ -3,6 +3,7 @@ const router = express.Router();
 const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
+require("dotenv").config({ path: "../.env" });
 const Stripe = require("stripe");
 const stripe = Stripe(process.env.STRIPE_LIVE_KEY);
 
