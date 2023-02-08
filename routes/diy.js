@@ -105,7 +105,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
     //Check for product stock abvailability
     //
     //----------------------->
-    const product = await Product.findOne({ productId: sysId });
+    const product = await Product.findOne({ productId: productId });
     if (!product) {
       res.status(400).send({
         error: true,
