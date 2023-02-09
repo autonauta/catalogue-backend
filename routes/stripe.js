@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const stripe = require("stripe")(process.env.STRIPE_LIVE_KEY);
+const stripe = require("../index");
 
 router.get("/delete/payment-intents", async (req, res) => {
   try {

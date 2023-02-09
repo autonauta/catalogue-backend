@@ -11,6 +11,7 @@ const products = require("./routes/products");
 const diy = require("./routes/diy");
 const stripe = require("./routes/stripe");
 
+module.exports = stripe;
 //Middleware
 app.use(express.json());
 require("dotenv").config();
