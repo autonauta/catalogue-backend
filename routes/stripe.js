@@ -7,11 +7,11 @@ const stripe = Stripe(
 router.get("/delete/payment-intents", async (req, res) => {
   try {
     const paymentIntents = await stripe.paymentIntents.list({
-      status: "incomplete",
+      limit: 10,
     });
 
     for (const intent of paymentIntents.data) {
-      await stripe.paymentIntents.del(intent.id);
+      console.log(intent);
     }
 
     res.send({ message: "All incomplete payment intents deleted." });
