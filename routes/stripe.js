@@ -7,9 +7,9 @@ const stripe = Stripe(
 router.get("/delete/payment-intents", async (req, res) => {
   try {
     const paymentIntents = await stripe.paymentIntents.list({
-      limit: 10,
+      status: "requires_payment_method",
     });
-
+    console.log(paymentIntents.data.length);
     for (const intent of paymentIntents.data) {
       console.log(intent);
     }
