@@ -4,7 +4,9 @@ const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const Stripe = require("stripe");
-const stripe = require("../index");
+const stripe = Stripe(
+  "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"
+);
 
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
