@@ -9,14 +9,9 @@ const { updatePrices } = require("./config/scheduledJobs");
 //Routes Requirements
 const products = require("./routes/products");
 const diy = require("./routes/diy");
+const diy = require("./routes/diy");
 
-/* const privateKey = fs.readFileSync(
-  "/etc/letsencrypt/live/arq.highdatamx.com/privkey.pem"
-);
-const certificate = fs.readFileSync(
-  "/etc/letsencrypt/live/arq.highdatamx.com/fullchain.pem"
-); */
-
+//Middleware
 app.use(express.json());
 require("dotenv").config();
 app.use(bodyParser.json());
@@ -28,6 +23,7 @@ app.use(morgan("tiny"));
 //----Routes
 app.use("/api/v1/products", products);
 app.use("/api/v1/diy", diy);
+app.use("/api/v1/stripe", stripe);
 
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
 const db = process.env.ATLASDB;
