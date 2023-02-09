@@ -9,7 +9,7 @@ const { updatePrices } = require("./config/scheduledJobs");
 //Routes Requirements
 const products = require("./routes/products");
 const diy = require("./routes/diy");
-const diy = require("./routes/diy");
+const stripe = require("./routes/stripe");
 
 //Middleware
 app.use(express.json());
