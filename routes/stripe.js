@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-require("dotenv").config({ path: `${__dirname}/../../.env` });
+require("dotenv").config({ path: `../.env` });
 const stripe = require("stripe")(process.env.STRIPE_LIVE_KEY);
 
 router.get("/delete/payment-intents", async (req, res) => {
