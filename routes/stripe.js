@@ -33,7 +33,7 @@ router.get("/payment-intents", async (req, res) => {
       console.log(intent.status);
     }
 
-    res.send({ message: "All incomplete payment intents deleted." });
+    res.send(paymentIntents.data);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
