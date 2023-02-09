@@ -8,6 +8,7 @@ router.get("/delete/payment-intents", async (req, res) => {
   try {
     const paymentIntents = await stripe.paymentIntents.list({
       created: { lte: Date.now() },
+      limit: 100,
     });
 
     for (const intent of paymentIntents.data) {
