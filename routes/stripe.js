@@ -6,13 +6,12 @@ const stripe = Stripe(
 );
 router.get("/delete/payment-intents", async (req, res) => {
   try {
-    const paymentIntents = await stripe.paymentIntents.list({
-      created: { lte: Date.now() },
-      limit: 100,
-    });
+    const paymentIntents = await stripe.paymentIntents.list({});
 
     for (const intent of paymentIntents.data) {
-      console.log(intent.status);
+      if (intent.status === "requires_payment_method") {
+        await stripe.paymentIntents.cancel(intent.id);
+      }
     }
 
     res.send({ message: "All incomplete payment intents deleted." });
