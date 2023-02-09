@@ -22,5 +22,21 @@ router.get("/delete/payment-intents", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+router.get("/payment-intents", async (req, res) => {
+  try {
+    const paymentIntents = await stripe.paymentIntents.list({
+      created: { lte: Date.now() },
+      limit: 100,
+    });
+
+    for (const intent of paymentIntents.data) {
+      console.log(intent.status);
+    }
+
+    res.send({ message: "All incomplete payment intents deleted." });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
 module.exports = router;
