@@ -54,12 +54,12 @@ exports.createBill = async (general, data) => {
     };
     data = {
       CfdiType: "I",
-      NameId: "Factura de cámara",
+      NameId: "1",
       ExpeditionPlace: "76904",
       PaymentForm: "03",
       PaymentMethod: "PUE",
       Folio: "100",
-      Date: "2018-04-16T09:51:39",
+      Date: "2023-02-10T14:11:39",
     };
     Items = [
       {
