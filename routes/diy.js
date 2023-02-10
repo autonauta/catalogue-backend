@@ -125,7 +125,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
 });
 
 router.post("/funnel/factura", async (req, res) => {
-  const clients = await bills.getClients(0);
+  const clients = await bills.createBill(true, {});
   console.log(clients);
   res.send(clients);
 });
