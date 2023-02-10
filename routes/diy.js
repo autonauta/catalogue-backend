@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const config = require("config");
 const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const Stripe = require("stripe");
-const stripe = Stripe(
-  "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"
-);
+const stripe = Stripe(config.get("STRIPE_LIVE_API_KEY"));
+const bills = require("../methods/facturacion");
 
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
@@ -122,5 +122,11 @@ router.post("/funnel/payment-intent", async (req, res) => {
     console.log(error);
     return res.status(400).send({ error: true, message: error.message });
   }
+});
+
+router.post("/funnel/factura", async (req, res) => {
+  const clients = await bills.getClients(0);
+  console.log(clients);
+  res.send(clients);
 });
 module.exports = router;

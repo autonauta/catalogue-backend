@@ -1,12 +1,14 @@
+const config = require("config");
+
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const getBestProducts = async () => {
-  const url = process.env.SYSCOM_URL + "marcas/ezviz/productos";
+  const url = config.get("SYSCOM_URL") + "marcas/ezviz/productos";
   const resSyscomProducts = await fetch(url, {
     method: "GET",
     headers: {
-      Authorization: process.env.SYSCOM_AUTH,
+      Authorization: config.get("SYSCOM_AUTH"),
       "Content-Type": "application/x-www-form-urlencoded",
     },
   });

@@ -11,10 +11,8 @@ const products = require("./routes/products");
 const diy = require("./routes/diy");
 const stripe = require("./routes/stripe");
 
-module.exports = stripe;
 //Middleware
 app.use(express.json());
-require("dotenv").config();
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -27,7 +25,7 @@ app.use("/api/v1/diy", diy);
 app.use("/api/v1/stripe", stripe);
 
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
-const db = process.env.ATLASDB;
+const db = config.get("ATLASDB");
 mongoose.connect(
   db,
   {
@@ -45,7 +43,7 @@ mongoose.connect(
 
 //Update prices every day
 updatePrices.start();
-const port = process.env.PORT;
+const port = config.get("PORT");
 app.listen(port, () => {
   console.log(`HighData Server listening on port: ${port}...`);
 });

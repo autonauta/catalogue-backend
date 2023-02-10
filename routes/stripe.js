@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const config = require("config");
 const Stripe = require("stripe");
-const stripe = Stripe(
-  "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"
-);
+const stripe = Stripe(config.get("STRIPE_LIVE_API_KEY"));
 router.get("/delete/payment-intents", async (req, res) => {
   try {
     const paymentIntents = await stripe.paymentIntents.list({
