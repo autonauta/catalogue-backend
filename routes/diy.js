@@ -125,8 +125,12 @@ router.post("/funnel/payment-intent", async (req, res) => {
 });
 
 router.post("/funnel/factura", async (req, res) => {
-  const { isGlobal, price, description } = req.body;
-  const newBill = await bills.createBill(isGlobal, { price, description });
+  const { isGlobal, price, description, quantity } = req.body;
+  const newBill = await bills.createBill(isGlobal, {
+    price,
+    description,
+    quantity,
+  });
   console.log(newBill);
   res.send(newBill);
 });
