@@ -131,6 +131,7 @@ router.post("/funnel/factura", async (req, res) => {
     description,
     quantity,
   });
+  console.log(req.body);
   console.log(newBill);
   res.send(newBill);
 });
