@@ -38,11 +38,13 @@ exports.getBills = async (type) => {
   }
 };
 
-exports.createBill = async (general, data) => {
+exports.createBill = async (isGlobal, product) => {
+  const { price, description, quantity } = product;
   var Receiver = {};
   var data = {};
   var Items = [];
-  if (general) {
+  if (isGlobal) {
+    const date = new Date();
     Receiver = {
       Name: "PUBLICO EN GENERAL",
       FiscalRegime: "616",
@@ -54,31 +56,33 @@ exports.createBill = async (general, data) => {
     };
     data = {
       CfdiType: "I",
-      NameId: "1",
       ExpeditionPlace: "76904",
       PaymentForm: "03",
       PaymentMethod: "PUE",
-      Folio: "100",
-      Date: "2023-02-10T14:11:39",
+      GlobalInformation: {
+        Periodicity: "04",
+        Months: date.getMonth() + 1,
+        Year: date.getFullYear,
+      },
     };
     Items = [
       {
-        Quantity: "1",
+        Quantity: quantity,
         ProductCode: "52161545",
         UnitCode: "H87",
-        Description: "Cámara digital de vigilancia de batería recargable",
-        UnitPrice: "3100.00",
-        Subtotal: "3100.00",
+        Description: description,
+        UnitPrice: price,
+        Subtotal: price,
         Taxes: [
           {
             Name: "IVA",
             Rate: "0.16",
-            Total: "496",
-            Base: "3100",
+            Total: price * 0.16,
+            Base: price,
             IsRetention: "false",
           },
         ],
-        Total: "3596",
+        Total: price * (1 + 0.16),
       },
     ];
   } else {
