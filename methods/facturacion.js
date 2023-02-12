@@ -101,6 +101,7 @@ exports.createBill = async (isGlobal, product) => {
         Items,
       }),
     });
+    console.log({ Receiver, ...data, Items });
     const res = await response.json();
     return { res };
   } catch (err) {
