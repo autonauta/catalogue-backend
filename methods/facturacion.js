@@ -89,7 +89,7 @@ exports.createBill = async (isGlobal, product) => {
     console.log("Factura a cliente, tomar los datos por favor");
   }
   try {
-    const response = await fetch(`https://apisandbox.facturama.mx/2/cfdis`, {
+    const response = await fetch(`https://apisandbox.facturama.mx/3/cfdis`, {
       method: "POST",
       headers: {
         Authorization: config.get("FACTURAMA_SANDBOX_KEY"),
