@@ -67,22 +67,22 @@ exports.createBill = async (isGlobal, product) => {
     };
     Items = [
       {
-        Quantity: quantity.toString(),
+        Quantity: quantity.toFixed(2),
         ProductCode: "52161545",
         UnitCode: "H87",
         Description: description,
-        UnitPrice: price.toString(),
-        Subtotal: price.toString(),
+        UnitPrice: price.toFixed(2),
+        Subtotal: price.toFixed(2),
         Taxes: [
           {
             Name: "IVA",
             Rate: "0.16",
-            Total: (price * 0.16).toString(),
-            Base: price,
+            Total: (price * 0.16).toFixed(2),
+            Base: price.toFixed(2),
             IsRetention: "false",
           },
         ],
-        Total: price * quantity * (1 + 0.16),
+        Total: (price * quantity * (1 + 0.16)).toFixed(2),
       },
     ];
   } else {
