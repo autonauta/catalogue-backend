@@ -1,3 +1,4 @@
+const config = require("config");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const fetch = (...args) =>
@@ -14,11 +15,11 @@ const getPrices = async () => {
     }
     productsString = productsString.slice(0, -1);
     console.log(productsString);
-    const url = process.env.SYSCOM_URL + "productos/" + productsString;
+    const url = config.get("SYSCOM_URL") + "productos/" + productsString;
     const resSyscomProducts = await fetch(url, {
       method: "GET",
       headers: {
-        Authorization: process.env.SYSCOM_AUTH,
+        Authorization: config.get("SYSCOM_AUTH"),
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
@@ -38,7 +39,7 @@ const updateDollarPrice = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: process.env.SYSCOM_AUTH,
+          Authorization: config.get("SYSCOM_AUTH"),
           "Content-Type": "application/x-www-form-urlencoded",
         },
       }

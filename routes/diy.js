@@ -5,7 +5,7 @@ const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const Stripe = require("stripe");
-const stripe = Stripe(config.get("STRIPE_LIVE_API_KEY"));
+const stripe = Stripe(config.get("STRIPE_TEST_API_KEY"));
 const bills = require("../methods/facturacion");
 
 router.post("/funnel", async (req, res) => {
@@ -105,17 +105,18 @@ router.post("/funnel/new", async (req, res) => {
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
-    const { price, email } = req.body;
+    const { price, email, quantity } = req.body;
     //Check for product stock abvailability
     //
     //----------------------->
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "mxn",
-      amount: Math.ceil(price * 100),
+      amount: Math.ceil(price * 100 * quantity),
       automatic_payment_methods: {
         enabled: true,
       },
       receipt_email: email,
+      metadata: { name: "Cesar", lastName: "Alanis", quantity },
     });
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
