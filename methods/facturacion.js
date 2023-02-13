@@ -45,6 +45,9 @@ exports.createBill = async (isGlobal, product) => {
   var Items = [];
   if (isGlobal) {
     const date = new Date();
+    let month = date.getMonth() + 1;
+    if (month <= 9) month = "0" + month.toString();
+    else month = month.toString();
     Receiver = {
       Name: "PUBLICO EN GENERAL",
       FiscalRegime: "616",
@@ -61,8 +64,8 @@ exports.createBill = async (isGlobal, product) => {
       PaymentMethod: "PUE",
       GlobalInformation: {
         Periodicity: "04",
-        Months: date.getMonth() + 1,
-        Year: date.getFullYear,
+        Months: month,
+        Year: date.getFullYear(),
       },
     };
     Items = [
@@ -73,6 +76,7 @@ exports.createBill = async (isGlobal, product) => {
         Description: description,
         UnitPrice: price.toFixed(2),
         Subtotal: price.toFixed(2),
+        TaxObject: "02",
         Taxes: [
           {
             Name: "IVA",
