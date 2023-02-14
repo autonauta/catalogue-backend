@@ -217,9 +217,9 @@ router.post("/funnel/complete-payment", async (req, res) => {
     metodo_pago: "03",
     productos: [
       {
-        id: payment.productId,
-        tipo: "nuevo",
-        cantidad: payment.quantity.toString(),
+        id: Number(payment.productId),
+        tipo: "1",
+        cantidad: payment.quantity,
       },
     ],
     moneda: "mxn",
