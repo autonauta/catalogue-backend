@@ -231,7 +231,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     directo_cliente: true,
   };
   try {
-    const response = await fetch(url, {
+    const sysResponse = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: config.get("SYSCOM_AUTH"),
@@ -239,9 +239,9 @@ router.post("/funnel/complete-payment", async (req, res) => {
       },
       body: JSON.stringify(order),
     });
-    const res = await response.json();
-    console.log("Respuesta de syscom: ", res);
-    res.send({ res });
+    const response = await response.json();
+    console.log("Respuesta de syscom: ", response);
+    res.send({ response });
   } catch (error) {
     console.log(error);
     res.status(400).send({
