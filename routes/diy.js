@@ -4,6 +4,7 @@ const config = require("config");
 const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
+const { Payment } = require("../models/Payment");
 const Stripe = require("stripe");
 const stripe = Stripe(config.get("STRIPE_TEST_API_KEY"));
 const bills = require("../methods/facturacion");
@@ -114,6 +115,15 @@ router.post("/funnel/payment-intent", async (req, res) => {
       name,
       lastName,
       address,
+      street,
+      colony,
+      num,
+      postal_code,
+      city,
+      state,
+      country,
+      phone,
+      sysId,
     } = req.body;
     //Check for product stock abvailability
     //
@@ -134,6 +144,31 @@ router.post("/funnel/payment-intent", async (req, res) => {
       },
       description,
     });
+
+    if (paymentIntent.client_secret) {
+      var newPayment = new Payment({
+        stripeId: paymentIntent.client_secret,
+        status: paymentIntent.status,
+        userName: name,
+        userLastName: lastName,
+        amount: paymentIntent.amount,
+        productId: sysId,
+        dateCreated: paymentIntent.created,
+        description,
+        quantity: quantity,
+        userAddress: {
+          calle: street,
+          colonia: colony,
+          num_ext: num,
+          codigo_postal: postal_code,
+          ciudad: city,
+          estado: state,
+          pais: country,
+          telefono: phone,
+        },
+      });
+    }
+    await newPayment.save();
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     console.log(error);
@@ -150,5 +185,69 @@ router.post("/funnel/factura", async (req, res) => {
   });
   console.log(newBill);
   res.send(newBill);
+});
+
+router.post("/funnel/complete-payment", async (req, res) => {
+  const { stripeId } = req.body;
+  const payment = await Payment.findOne({ stripeId });
+  if (!payment) {
+    res.status(400).send({
+      error: true,
+      message: "No existe ese payment intent",
+    });
+    return;
+  }
+  payment.status = "succeeded";
+  await payment.save();
+  //Crear pedido en syscom
+  const url = config.get("SYSCOM_URL") + "carrito/generar";
+  const order = {
+    tipo_entrega: "domicilio",
+    direccion: {
+      atencion_a: payment.name,
+      calle: payment.calle,
+      colonia: payment.colonia,
+      num_ext: payment.num_ext,
+      codigo_postal: payment.codigo_postal,
+      ciudad: payment.ciudad,
+      estado: payment.estado,
+      pais: payment.pais,
+      telefono: payment.telefono,
+    },
+    metodo_pago: "03",
+    productos: [
+      {
+        id: payment.productId,
+        tipo: "nuevo",
+        cantidad: payment.quantity.toString(),
+      },
+    ],
+    moneda: "mxn",
+    uso_cfdi: "G03",
+    fletera: "estafeta",
+    ordenar: true,
+    orden_compra: payment.stripeId,
+    test_mode: true,
+    directo_cliente: true,
+  };
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: config.get("SYSCOM_AUTH"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: JSON.stringify(order),
+    });
+    const res = await response.json();
+    console.log("Respuesta de syscom: ", res);
+    res.send({ res });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      error: true,
+      message: error.message,
+    });
+  }
 });
 module.exports = router;
