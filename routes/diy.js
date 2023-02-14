@@ -222,6 +222,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
         cantidad: payment.quantity,
       },
     ],
+    tipo_pago: "pue",
     moneda: "mxn",
     uso_cfdi: "G03",
     fletera: "estafeta",
