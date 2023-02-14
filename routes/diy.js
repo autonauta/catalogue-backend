@@ -105,7 +105,7 @@ router.post("/funnel/new", async (req, res) => {
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
-    const { price, email, quantity } = req.body;
+    const { price, email, quantity, description } = req.body;
     //Check for product stock abvailability
     //
     //----------------------->
@@ -117,6 +117,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
       },
       receipt_email: email,
       metadata: { name: "Cesar", lastName: "Alanis", quantity },
+      description,
     });
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
