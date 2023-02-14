@@ -239,7 +239,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       },
       body: JSON.stringify(order),
     });
-    const response = await response.json();
+    const response = await sysResponse.json();
     console.log("Respuesta de syscom: ", response);
     res.send({ response });
   } catch (error) {
