@@ -22,6 +22,7 @@ router.post("/estados", async (req, res) => {
     if (response.estado) res.send({ estado: response.estado[0].codigo_estado });
   } catch (error) {
     console.log("Error: ", error);
+    res.send({ error: true, message: error.message });
   }
 });
 
