@@ -198,21 +198,20 @@ router.post("/funnel/complete-payment", async (req, res) => {
     return;
   }
   payment.status = "succeeded";
-  await payment.save();
   //Crear pedido en syscom
   const url = config.get("SYSCOM_URL") + "carrito/generar";
   const order = {
     tipo_entrega: "domicilio",
     direccion: {
-      atencion_a: payment.name,
-      calle: payment.calle,
-      colonia: payment.colonia,
-      num_ext: payment.num_ext,
-      codigo_postal: payment.codigo_postal,
-      ciudad: payment.ciudad,
-      estado: payment.estado,
+      atencion_a: payment.userAddress.name,
+      calle: payment.userAddress.calle,
+      colonia: payment.userAddress.colonia,
+      num_ext: payment.userAddress.num_ext,
+      codigo_postal: payment.userAddress.codigo_postal,
+      ciudad: payment.userAddress.ciudad,
+      estado: payment.userAddress.estado,
       pais: "MEX",
-      telefono: payment.telefono,
+      telefono: payment.userAddress.telefono,
     },
     metodo_pago: "03",
     productos: [
@@ -231,6 +230,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     testmode: true,
     directo_cliente: true,
   };
+  await payment.save();
   try {
     console.log("Order: ", order);
     const sysResponse = await fetch(url, {
