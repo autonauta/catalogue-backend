@@ -19,7 +19,8 @@ router.post("/estados", async (req, res) => {
     );
     const response = await sysResponse.json();
     if (response.error) throw { message: response.message };
-    if (response.estado) res.send({ estado: response.estado[0].codigo_estado });
+    else if (response.estado)
+      res.send({ estado: response.estado[0].codigo_estado });
   } catch (error) {
     console.log("Error: ", error);
     res.send({ error: true, message: error.message });
