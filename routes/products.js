@@ -2,12 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { Product } = require("../models/Product");
 
-const printProducts = async (products) => {
-  for (let i = 0; i < products.length; i++) {
-    console.log(products[i]);
-  }
-};
-
 router.get("/", async (req, res) => {
   const products = await Product.find({});
   if (!products) {

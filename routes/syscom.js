@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const config = require("config");
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 router.post("/estados", async (req, res) => {
   const { postal_code } = req.body;
