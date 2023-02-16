@@ -203,7 +203,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
   const order = {
     tipo_entrega: "domicilio",
     direccion: {
-      atencion_a: payment.userName + payment.userLasteName,
+      atencion_a: payment.userName + payment.userLastName,
       calle: payment.userAddress.calle,
       colonia: payment.userAddress.colonia,
       num_ext: payment.userAddress.num_ext,
@@ -230,7 +230,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     testmode: true,
     directo_cliente: true,
   };
-  await payment.save();
+
   try {
     console.log("Order: ", order);
     const sysResponse = await fetch(url, {
@@ -243,6 +243,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     });
     const response = await sysResponse.json();
     console.log("Respuesta de syscom: ", response);
+    await payment.save();
     res.send({ response });
   } catch (error) {
     console.log(error);
