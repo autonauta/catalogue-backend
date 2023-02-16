@@ -125,7 +125,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
       phone,
       sysId,
     } = req.body;
-    //Check for product stock abvailability
+    //Check for product stock abvailability and return error of stock not available and the stock
     //
     //----------------------->
     const paymentIntent = await stripe.paymentIntents.create({
