@@ -1,0 +1,26 @@
+const express = require("express");
+const router = express.Router();
+const config = require("config");
+
+router.post("/estados", async (req, res) => {
+  const { postal_code } = req.body;
+  try {
+    const sysResponse = await fetch(
+      config.get("SYSCOM_URL") + "/carrito/estados/" + postal_code,
+      {
+        method: "GET",
+        headers: {
+          Authorization: config.get("SYSCOM_AUTH"),
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    const response = await sysResponse.json();
+    if (response.error) throw { message: response.message };
+    if (response.estado) res.send({ estado: response.estado[0].codigo_estado });
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
+
+module.exports = router;

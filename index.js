@@ -11,6 +11,7 @@ const { updatePrices } = require("./config/scheduledJobs");
 const products = require("./routes/products");
 const diy = require("./routes/diy");
 const stripe = require("./routes/stripe");
+const syscom = require("./routes/syscom");
 
 //Middleware
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use(morgan("tiny"));
 //----Routes
 app.use("/api/v1/products", products);
 app.use("/api/v1/diy", diy);
+app.use("/api/v1/syscom", syscom);
 app.use("/api/v1/stripe", stripe);
 
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology

@@ -211,14 +211,14 @@ router.post("/funnel/complete-payment", async (req, res) => {
       codigo_postal: payment.codigo_postal,
       ciudad: payment.ciudad,
       estado: payment.estado,
-      pais: payment.pais,
+      pais: "MEX",
       telefono: payment.telefono,
     },
     metodo_pago: "03",
     productos: [
       {
-        producto_id: Number(payment.productId),
-        tipo: "1",
+        id: Number(payment.productId),
+        tipo: "nuevo",
         cantidad: payment.quantity,
       },
     ],
@@ -228,7 +228,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     fletera: "estafeta",
     ordenar: true,
     orden_compra: payment.stripeId,
-    test_mode: true,
+    testmode: true,
     directo_cliente: true,
   };
   try {
