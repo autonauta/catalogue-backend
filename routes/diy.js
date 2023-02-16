@@ -203,7 +203,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
   const order = {
     tipo_entrega: "domicilio",
     direccion: {
-      atencion_a: payment.name,
+      atencion_a: payment.userName + payment.userLasteName,
       calle: payment.userAddress.calle,
       colonia: payment.userAddress.colonia,
       num_ext: payment.userAddress.num_ext,
