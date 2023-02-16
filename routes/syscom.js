@@ -13,7 +13,7 @@ router.post("/estados", async (req, res) => {
         method: "GET",
         headers: {
           Authorization: config.get("SYSCOM_AUTH"),
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
       }
     );

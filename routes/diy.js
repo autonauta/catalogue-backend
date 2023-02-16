@@ -237,7 +237,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       method: "POST",
       headers: {
         Authorization: config.get("SYSCOM_AUTH"),
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(order),
     });
