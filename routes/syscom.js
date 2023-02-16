@@ -8,7 +8,7 @@ router.post("/estados", async (req, res) => {
   const { postal_code } = req.body;
   try {
     const sysResponse = await fetch(
-      config.get("SYSCOM_URL") + "/carrito/estados/" + postal_code,
+      config.get("SYSCOM_URL") + "carrito/estados/" + postal_code,
       {
         method: "GET",
         headers: {
