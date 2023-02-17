@@ -205,7 +205,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     direccion: {
       atencion_a: payment.userName + payment.userLastName,
       calle: payment.userAddress.calle,
-      colonia: payment.userAddress.colonia,
+      colonia: payment.userAddress.colonia.value,
       num_ext: payment.userAddress.num_ext,
       codigo_postal: payment.userAddress.codigo_postal,
       ciudad: payment.userAddress.ciudad,
