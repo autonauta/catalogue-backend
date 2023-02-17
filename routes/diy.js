@@ -140,7 +140,6 @@ router.post("/funnel/payment-intent", async (req, res) => {
         Apellido: lastName,
         producto: title,
         cantidad: quantity,
-        envio: address,
       },
       description,
     });
@@ -158,7 +157,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
         quantity: quantity,
         userAddress: {
           calle: street,
-          colonia: colony,
+          colonia: colony.value,
           num_ext: num,
           codigo_postal: postal_code,
           ciudad: city,
@@ -205,7 +204,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     direccion: {
       atencion_a: payment.userName + payment.userLastName,
       calle: payment.userAddress.calle,
-      colonia: payment.userAddress.colonia.value,
+      colonia: payment.userAddress.colonia,
       num_ext: payment.userAddress.num_ext,
       codigo_postal: payment.userAddress.codigo_postal,
       ciudad: payment.userAddress.ciudad,
