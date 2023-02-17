@@ -19,6 +19,7 @@ const paymentSchema = new mongoose.Schema({
     pais: { type: String },
     telefono: { type: String },
   },
+  syscomOrder: { type: Object },
   dateCreated: { type: Date },
 });
 
