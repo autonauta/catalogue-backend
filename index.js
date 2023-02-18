@@ -65,6 +65,7 @@ client.on("ready", () => {
 });
 client.on("message", (message) => {
   console.log(message);
+  client.sendMessage("5214421818265@c.us", message.body);
 });
 
 client.initialize();
