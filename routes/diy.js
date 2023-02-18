@@ -252,6 +252,12 @@ router.post("/funnel/complete-payment", async (req, res) => {
         "Compra: $" +
         (payment.amount / 100).toLocaleString("en-US")
     );
+    await whatsappClient.sendMessage(
+      `521${payment.userAddress.telefono}@c.us`,
+      "¡Pedido realizado con éxito!\n" +
+        "Gracias por ser parte de la comunidad DIY.\n" +
+        "Recibirás un mensaje cuando tu pedido esté en camino."
+    );
     res.send({ response });
   } catch (error) {
     console.log(error);
