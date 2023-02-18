@@ -67,6 +67,10 @@ client.on("ready", () => {
     "5214423592361@c.us",
     "Message from ARIES server: Whatsap-web server just started!"
   );
+  client.sendMessage(
+    "5214423961263@c.us",
+    "Message from HIGHDATA server: Whatsap-web server just started!"
+  );
 });
 client.on("message", (message) => {
   console.log(message.body);
