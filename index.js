@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { updatePrices } = require("./config/scheduledJobs");
-const { Client } = require("whatsapp-web.js");
+const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 
 //Routes Requirements
@@ -51,6 +51,7 @@ updatePrices.start();
 
 //Whatsapp web JS implementation
 const client = new Client({
+  authStrategy: new LocalAuth(),
   puppeteer: {
     args: ["--no-sandbox"],
   },
