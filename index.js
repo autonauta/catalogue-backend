@@ -75,8 +75,6 @@ whatsappClient.on("ready", () => {
 });
 whatsappClient.on("message", async (message) => {
   console.log(message.body);
-  const contact = await message.getContact();
-  console.log("contact: ", contact);
 });
 
 whatsappClient.initialize();
