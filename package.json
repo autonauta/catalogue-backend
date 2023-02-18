@@ -16,7 +16,8 @@
     "node-cron": "^3.0.2",
     "node-fetch": "^3.3.0",
     "nodemon": "^2.0.20",
-    "stripe": "^11.9.1"
+    "stripe": "^11.9.1",
+    "whatsapp-web.js": "^1.19.4"
   },
   "scripts": {
     "dev": "nodemon index.js"

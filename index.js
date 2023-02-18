@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { updatePrices } = require("./config/scheduledJobs");
+const { Client } = require("whatsapp-web.js");
+const qrcode = require("qrcode-terminal");
 
 //Routes Requirements
 const products = require("./routes/products");
@@ -46,6 +48,23 @@ mongoose.connect(
 
 //Update prices every day
 updatePrices.start();
+
+//Whatsapp web JS implementation
+const client = new Client({
+  puppeteer: {
+    args: ["--no-sandbox"],
+  },
+});
+client.on("qr", (qr) => {
+  qrcode.generate(qr, { small: true });
+});
+
+client.on("ready", () => {
+  console.log("Whatsapp-web connected properly");
+});
+
+client.initialize();
+
 const port = config.get("PORT");
 app.listen(port, () => {
   console.log(`HighData Server listening on port: ${port}...`);
