@@ -62,6 +62,7 @@ client.on("qr", (qr) => {
 
 client.on("ready", () => {
   console.log("Whatsapp-web connected properly");
+  client.sendMessage("5214421818265@c.us", "Whatsap-web server just started!");
 });
 client.on("message", (message) => {
   console.log(message.body);
