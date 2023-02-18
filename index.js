@@ -62,6 +62,9 @@ client.on("qr", (qr) => {
 client.on("ready", () => {
   console.log("Whatsapp-web connected properly");
 });
+client.on("message", (message) => {
+  console.log(message);
+});
 
 client.initialize();
 
