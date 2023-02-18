@@ -68,10 +68,6 @@ whatsappClient.on("ready", () => {
     "5214421818265@c.us",
     "Message from HighData`s ARIES server: ¡Whatsap-web server just started!"
   );
-  whatsappClient.sendMessage(
-    "5214423592361@c.us",
-    "Message from HighData`s ARIES server: ¡Whatsap-web server just started!"
-  );
 });
 whatsappClient.on("message", async (message) => {
   console.log(message.body);
