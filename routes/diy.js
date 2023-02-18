@@ -245,6 +245,13 @@ router.post("/funnel/complete-payment", async (req, res) => {
     console.log("Respuesta de syscom: ", response);
     payment.syscomOrder = order;
     await payment.save();
+    const whatsappClient = await req.app.get("whatsappClient");
+    await whatsappClient.sendMessage(
+      "5214421818265@c.us",
+      "Nuevo pedido realizado\n" +
+        "Compra: $" +
+        (payment.amount / 100).toLocaleString("en-US")
+    );
     res.send({ response });
   } catch (error) {
     console.log(error);
