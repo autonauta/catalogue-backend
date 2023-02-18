@@ -71,9 +71,9 @@ client.on("ready", () => {
     "Message from HighData`s ARIES server: ¡Whatsap-web server just started!"
   );
 });
-client.on("message", (message) => {
+client.on("message", async (message) => {
   console.log(message.body);
-  const contact = message.getContact();
+  const contact = await message.getContact();
   console.log("contact: ", contact);
 });
 
