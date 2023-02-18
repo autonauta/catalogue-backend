@@ -62,14 +62,13 @@ client.on("qr", (qr) => {
 
 client.on("ready", () => {
   console.log("Whatsapp-web connected properly");
-  client.sendMessage("5214421818265@c.us", "Whatsap-web server just started!");
   client.sendMessage(
-    "5214423592361@c.us",
-    "Message from ARIES server: Whatsap-web server just started!"
+    "5214421818265@c.us",
+    "Message from HighData`s ARIES server: ¡Whatsap-web server just started!"
   );
   client.sendMessage(
-    "5214423961263@c.us",
-    "Message from HIGHDATA server: Whatsap-web server just started!"
+    "5214423592361@c.us",
+    "Message from HighData`s ARIES server: ¡Whatsap-web server just started!"
   );
 });
 client.on("message", (message) => {
