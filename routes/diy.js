@@ -257,6 +257,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       "¡Pedido realizado con éxito!\n" +
         "Folio del pedido: " +
         response.resumen.folio +
+        "\n" +
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."
     );
