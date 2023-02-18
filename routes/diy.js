@@ -255,6 +255,8 @@ router.post("/funnel/complete-payment", async (req, res) => {
     await whatsappClient.sendMessage(
       `521${payment.userAddress.telefono}@c.us`,
       "¡Pedido realizado con éxito!\n" +
+        "Folio del pedido: " +
+        response.resumen.folio +
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."
     );
