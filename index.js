@@ -73,7 +73,8 @@ client.on("ready", () => {
 });
 client.on("message", (message) => {
   console.log(message.body);
-  client.sendMessage("5214421818265@c.us", message.body);
+  const contact = message.getContact();
+  console.log("contact: ", contact);
 });
 
 client.initialize();
