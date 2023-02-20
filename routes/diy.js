@@ -238,7 +238,6 @@ router.post("/funnel/complete-payment", async (req, res) => {
   };
 
   try {
-    console.log("Order: ", order);
     const sysResponse = await fetch(url, {
       method: "POST",
       headers: {
@@ -248,9 +247,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       body: JSON.stringify(order),
     });
     const response = await sysResponse.json();
-
-    console.log("Respuesta de syscom: ", response);
-    payment.syscomOrder = order;
+    payment.syscomOrder = response.resumen;
     await payment.save();
     const whatsappClient = await req.app.get("whatsappClient");
     await whatsappClient.sendMessage(
