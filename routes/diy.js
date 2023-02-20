@@ -140,13 +140,17 @@ router.post("/funnel/payment-intent", async (req, res) => {
         Apellido: lastName,
         producto: title,
         cantidad: quantity,
+        ciudad: city,
+        estado: state,
+        codigo_postal: postal_code,
+        telefono: phone,
       },
       description,
     });
 
     if (paymentIntent.client_secret) {
       var newPayment = new Payment({
-        stripeId: paymentIntent.client_secret,
+        stripeId: paymentIntent.id,
         status: paymentIntent.status,
         userName: name,
         userLastName: lastName,
@@ -166,8 +170,11 @@ router.post("/funnel/payment-intent", async (req, res) => {
           telefono: phone,
         },
       });
+      await newPayment.save();
+    } else {
+      console.log("paymentIntent: ", paymentIntent);
+      return res.send({ error: true, message: paymentIntent });
     }
-    await newPayment.save();
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     console.log(error);
