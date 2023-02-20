@@ -72,8 +72,11 @@ whatsappClient.on("ready", () => {
 whatsappClient.on("message", async (message) => {
   console.log(message.body);
 });
-
-whatsappClient.initialize();
+try {
+  whatsappClient.initialize();
+} catch (error) {
+  console.log(error);
+}
 
 const port = config.get("PORT");
 app.listen(port, () => {
