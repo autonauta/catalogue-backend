@@ -9,6 +9,16 @@ const Stripe = require("stripe");
 const stripe = Stripe(config.get("STRIPE_TEST_API_KEY"));
 const bills = require("../methods/facturacion");
 
+const getFOLIO = async () => {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+  const charactersLength = characters.length;
+  for (let i = 0; i < 6; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
   if (!funnelId) {
@@ -247,7 +257,10 @@ router.post("/funnel/complete-payment", async (req, res) => {
       body: JSON.stringify(order),
     });
     const response = await sysResponse.json();
+    const folio = getFOLIO();
     payment.syscomOrder = response.resumen;
+    payment.syscomOrderId =
+      response.resumen.folio === "TESTMODE" ? folio : response.resumen.folio;
     await payment.save();
     const whatsappClient = await req.app.get("whatsappClient");
     await whatsappClient.sendMessage(
@@ -260,7 +273,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       `521${payment.userAddress.telefono}@c.us`,
       "¡Pedido realizado con éxito!\n" +
         "Folio del pedido: " +
-        response.resumen.folio +
+        folio +
         "\n" +
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."

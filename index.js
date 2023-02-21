@@ -8,6 +8,7 @@ const cors = require("cors");
 const { updatePrices } = require("./config/scheduledJobs");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
+const { Payment } = require("./models/Payment");
 
 //Routes Requirements
 const products = require("./routes/products");
@@ -70,7 +71,21 @@ whatsappClient.on("ready", () => {
   );
 });
 whatsappClient.on("message", async (message) => {
-  console.log(message.body);
+  const phone = message.from.split("@")[0];
+  if (phone === "5214423961263") {
+    const message = message.body;
+    const firstWord = message.split(" ")[0];
+    if (firstWord === "¡GRACIAS!") {
+      const guia = message.split(" ")[4];
+      whatsappClient.sendMessage(
+        "5214421818265@c.us",
+        "La clave de rastreo de tu pedido es: " +
+          guia +
+          "\n" +
+          "Visita https://estafeta.com/Herramientas/Rastreo para conocer el estatus del envío\n"
+      );
+    }
+  }
 });
 try {
   whatsappClient.initialize();
