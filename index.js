@@ -70,10 +70,10 @@ whatsappClient.on("ready", () => {
     "Message from HighData`s ARIES server: ¡Whatsap-web server just started!"
   );
 });
-whatsappClient.on("message", async (message) => {
-  const phone = message.from.split("@")[0];
+whatsappClient.on("message", async (msg) => {
+  const phone = msg.from.split("@")[0];
   if (phone === "5214423961263") {
-    const message = message.body;
+    const message = msg.body;
     const firstWord = message.split(" ")[0];
     if (firstWord === "¡GRACIAS!") {
       const guia = message.split(" ")[4];
