@@ -53,7 +53,7 @@ updatePrices.start();
 
 //Whatsapp web JS implementation
 const whatsappClient = new Client({
-  authStrategy: new LocalAuth(),
+  authStrategy: new LocalAuth({ dataPath: "./whatsapp-auth-sessions" }),
   puppeteer: {
     args: ["--no-sandbox"],
   },
