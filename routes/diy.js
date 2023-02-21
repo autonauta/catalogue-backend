@@ -257,7 +257,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       body: JSON.stringify(order),
     });
     const response = await sysResponse.json();
-    const folio = getFOLIO();
+    const folio = await getFOLIO();
     payment.syscomOrder = response.resumen;
     payment.syscomOrderId =
       response.resumen.folio === "TESTMODE" ? folio : response.resumen.folio;
