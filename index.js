@@ -48,7 +48,7 @@ mongoose.connect(
   }
 );
 
-//Update prices every day
+//Update prices every days
 updatePrices.start();
 
 //Whatsapp web JS implementation
