@@ -72,7 +72,7 @@ whatsappClient.on("ready", () => {
 });
 whatsappClient.on("message", async (msg) => {
   const phone = msg.from.split("@")[0];
-  if (phone === "5214423961263") {
+  if (phone === "5219156132561") {
     const message = msg.body;
     const firstWord = message.split(" ")[0];
     if (firstWord === "¡GRACIAS!") {
