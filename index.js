@@ -55,7 +55,7 @@ updatePrices.start();
 const whatsappClient = new Client({
   authStrategy: new LocalAuth({ dataPath: "./whatsapp-auth-sessions" }),
   puppeteer: {
-    args: ["--no-sandbox"],
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   },
 });
 app.set("whatsappClient", whatsappClient);
