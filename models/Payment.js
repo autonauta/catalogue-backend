@@ -13,6 +13,7 @@ const paymentSchema = new mongoose.Schema({
     calle: { type: String },
     colonia: { type: String },
     num_ext: { type: String },
+    num_int: { type: String},
     codigo_postal: { type: String },
     ciudad: { type: String },
     estado: { type: String },

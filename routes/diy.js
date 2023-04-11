@@ -128,6 +128,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
       street,
       colony,
       num,
+      numInt,
       postal_code,
       city,
       state,
@@ -173,6 +174,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
           calle: street,
           colonia: colony.value,
           num_ext: num,
+          num_int: numInt,
           codigo_postal: postal_code,
           ciudad: city,
           estado: state,
@@ -223,6 +225,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       calle: payment.userAddress.calle,
       colonia: payment.userAddress.colonia,
       num_ext: payment.userAddress.num_ext,
+      num_int: payment.userAddress.num_int ? payment.userAddress.num_int : "-",
       codigo_postal: payment.userAddress.codigo_postal,
       ciudad: payment.userAddress.ciudad,
       estado: payment.userAddress.estado,
@@ -266,6 +269,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     await whatsappClient.sendMessage(
       "5214421818265@c.us",
       "Nuevo pedido realizado\n" +
+      "Folio: " + payment.syscomOrderId + "\n" +
         "Compra: $" +
         (payment.amount / 100).toLocaleString("en-US")
     );
@@ -273,7 +277,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       `521${payment.userAddress.telefono}@c.us`,
       "¡Pedido realizado con éxito!\n" +
         "Folio del pedido: " +
-        folio +
+        payment.syscomOrderId +
         "\n" +
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."
