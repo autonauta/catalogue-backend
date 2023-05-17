@@ -60,12 +60,25 @@ router.post("/funnel", async (req, res) => {
     return;
   }
   const tax = 1.16;
-  const markup = 1.2;
-  const stripeComission = 1.041;
-  const productPrice =
-    product.price * dollar[0].price * tax * markup * stripeComission;
-  console.log(productPrice);
-  funnel.productPrice = productPrice.toFixed(2);
+  const fakeMarkup = 1.9;
+  const markupOne = 1.7;
+  const markupThree = 1.6;
+  const markupFive = 1.5;
+  const stripeComission = 1.045;
+  const fakeProductPrice =
+    product.price * dollar[0].price * tax * fakeMarkup * stripeComission;
+  const productPriceOne =
+  product.price * dollar[0].price * tax * markupOne * stripeComission;
+  const productPriceThree =
+  product.price * dollar[0].price * tax * markupThree * stripeComission;
+  const productPriceFive =
+  product.price * dollar[0].price * tax * markupFive * stripeComission;
+  funnel.productPrice = {
+    fakeProductPrice: fakeProductPrice.toFixed(2),
+    productPriceOne: productPriceOne.toFixed(2),
+    productPriceThree: productPriceThree.toFixed(2),
+    productPriceFive: productPriceFive.toFixed(2)
+  }
   await funnel.save();
   res.send(funnel);
 });
