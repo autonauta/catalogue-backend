@@ -87,10 +87,9 @@ router.post("/funnel/new", async (req, res) => {
   const {
     title,
     subtitle,
+    main_text,
     image,
     video,
-    buttonOne,
-    buttonTwo,
     features,
     productId,
   } = req.body;
@@ -126,6 +125,18 @@ router.post("/funnel/new", async (req, res) => {
   );
   res.send({ link: "https://diy.highdatamx.com/" + saved._id });
 });
+
+router.post("/funnel/edit", async (req, res)=>{
+  const {id, feature} = req.body;
+  const funnel = await Funnel.findById(id);
+  if(!funnel) return res.status(400).send({
+    error: true,
+    message: "No existe ese funnel revisa la información.",
+  });
+  funnel.features.push(feature);
+  await funnel.save();
+  res.send({funnel});
+})
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
