@@ -60,10 +60,10 @@ router.post("/funnel", async (req, res) => {
     return;
   }
   const tax = 1.16;
-  const fakeMarkup = 1.9;
+  const fakeMarkup = 2.1;
   const markupOne = 1.7;
-  const markupThree = 1.6;
-  const markupFive = 1.5;
+  const markupThree = 1.5;
+  const markupFive = 1.25;
   const stripeComission = 1.045;
   const fakeProductPrice =
     product.price * dollar[0].price * tax * fakeMarkup * stripeComission;
