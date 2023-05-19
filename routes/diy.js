@@ -163,6 +163,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
     //Check for product stock abvailability and return error of stock not available and the stock
     //
     //----------------------->
+    console.log(req.body);
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "mxn",
       amount: Math.ceil(price * 100 * quantity),
