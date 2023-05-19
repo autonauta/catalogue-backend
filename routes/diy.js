@@ -197,7 +197,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
         quantity: quantity,
         userAddress: {
           calle: street,
-          colonia: colony.value,
+          colonia: colony,
           num_ext: num,
           num_int: numInt,
           codigo_postal: postal_code,
