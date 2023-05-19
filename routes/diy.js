@@ -273,7 +273,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     testmode: true,
     directo_cliente: true,
   };
-
+  console.log(order);
   try {
     const sysResponse = await fetch(url, {
       method: "POST",
