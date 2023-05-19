@@ -79,7 +79,7 @@ router.post("/funnel", async (req, res) => {
     productPriceThree: productPriceThree.toFixed(2),
     productPriceFive: productPriceFive.toFixed(2)
   }
-  await funnel.save();
+  await funnel.save()
   res.send(funnel);
 });
 //Endpoint for creating new Funnels
@@ -284,6 +284,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       body: JSON.stringify(order),
     });
     const response = await sysResponse.json();
+    console.log("Syscom response: ", response);
     const folio = await getFOLIO();
     payment.syscomOrder = response.resumen;
     payment.syscomOrderId =
