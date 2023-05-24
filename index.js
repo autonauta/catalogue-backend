@@ -14,7 +14,12 @@ const { Payment } = require("./models/Payment");
 
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 app.set("socketio", io);
 
 //Routes Requirements
