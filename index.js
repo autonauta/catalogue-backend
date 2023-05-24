@@ -1,4 +1,6 @@
 const express = require("express");
+import http from "http";
+import {Server} from "socket.io";
 const app = express();
 const config = require("config");
 const morgan = require("morgan");
@@ -9,6 +11,11 @@ const { updatePrices } = require("./config/scheduledJobs");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const { Payment } = require("./models/Payment");
+
+
+const server = http.createServer(app);
+const io = new Server(server);
+app.set("socketio", io);
 
 //Routes Requirements
 const products = require("./routes/products");
@@ -92,8 +99,21 @@ try {
 } catch (error) {
   console.log(error);
 }
+let onlineFunnelUsers = 0;
+//IO socket server functions
+io.on("connection", (socket) => {
+  console.log(`User connected with socket: ${socket.id}`);
+  onlineFunnelUsers++;
+  io.emit("onlineFunnelUsers", {onlineFunnelUsers});
+  //Handler for when a socket closes connection
+  socket.on("disconnect", () => {
+    console.log("User disconnected with socket:", socket.id);
+    onlineFunnelUsers--;
+    io.emit("onlineFunnelUsers", {onlineFunnelUsers});
+  });
+});
 
 const port = config.get("PORT");
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`HighData Server listening on port: ${port}...`);
 });
