@@ -27,7 +27,7 @@ const whatsapp = require("./routes/whatsapp");
 //Middleware
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({exposedHeaders: ['X-Total-Count']}));
 
 //morgan Logging
 app.use(morgan("tiny"));
