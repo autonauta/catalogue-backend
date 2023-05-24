@@ -104,7 +104,7 @@ try {
 } catch (error) {
   console.log(error);
 }
-let onlineFunnelUsers = 1;
+let onlineFunnelUsers = 0;
 //IO socket server functions
 io.on("connection", (socket) => {
   console.log(`User connected with socket: ${socket.id}`);
