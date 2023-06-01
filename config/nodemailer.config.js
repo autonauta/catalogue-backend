@@ -30,7 +30,7 @@ var transporter = nodemailer.createTransport({
   
   transporter.use("compile", hbs(hbOptions));
 
-  export function sendConfirmationEmail(email, phone, syscomOrderId, product, quantity, ammount, date) {
+  function sendConfirmationEmail(email, phone, syscomOrderId, product, quantity, ammount, date) {
     transporter.sendMail(
       {
         from: user,
@@ -55,3 +55,4 @@ var transporter = nodemailer.createTransport({
   };
 
   export default {nodemailer}
+  export {sendConfirmationEmail}
