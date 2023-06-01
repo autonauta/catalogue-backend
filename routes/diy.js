@@ -336,6 +336,7 @@ router.post("/funnel/send-tracking-number", async (req, res)=>{
       "Puedes rastrear tu pedido directamente en la página de Estafeta.\n" +
       "¡Disfruta tu pedido!"
   );
+  res.json({message: "Enviado correctamente"});
 })
 
 router.post("/funnel/email-test", async (req,res)=>{
