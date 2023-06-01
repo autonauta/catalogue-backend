@@ -6,7 +6,7 @@ const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const { Payment } = require("../models/Payment");
 const Stripe = require("stripe");
-const stripe = Stripe(config.get("STRIPE_LIVE_API_KEY"));
+const stripe = Stripe(config.get("STRIPE_TEST_API_KEY"));
 const bills = require("../methods/facturacion");
 const {sendConfirmationEmail} = require("../config/nodemailer.config")
 
@@ -273,7 +273,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     fletera: "estafeta",
     ordenar: true,
     orden_compra: payment.stripeId,
-    testmode: false,
+    testmode: true,
     directo_cliente: true,
   };
   console.log(order);
