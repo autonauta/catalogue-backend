@@ -19,6 +19,7 @@ const paymentSchema = new mongoose.Schema({
     estado: { type: String },
     pais: { type: String },
     telefono: { type: String },
+    correo: {type: String}
   },
   syscomOrder: { type: Object },
   syscomOrderId: { type: String },

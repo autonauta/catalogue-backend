@@ -180,6 +180,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
         estado: state,
         codigo_postal: postal_code,
         telefono: phone,
+        correo: email
       },
       description,
     });
@@ -205,6 +206,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
           estado: state,
           pais: country,
           telefono: phone,
+          correo: email
         },
       });
       await newPayment.save();
@@ -246,7 +248,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
   const order = {
     tipo_entrega: "domicilio",
     direccion: {
-      atencion_a: payment.userName + payment.userLastName,
+      atencion_a: payment.userName,
       calle: payment.userAddress.calle,
       colonia: payment.userAddress.colonia,
       num_ext: payment.userAddress.num_ext,
@@ -308,6 +310,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."
     );
+    sendConfirmationEmail(payment.userAddress.correo, payment.userAddress.telefono, payment.userAddress.syscomOrderId, payment.description, payment.quantity, payment.amount, new Date());
     res.send({ response });
   } catch (error) {
     console.log(error);
@@ -321,9 +324,18 @@ router.post("/funnel/complete-payment", async (req, res) => {
 router.post("/funnel/send-tracking-number", async (req, res)=>{
   const { syscomOrderId, syscomTracking  } = req.body;
   const payment = await Payment.findOne({ syscomOrderId });
-
-  //CHECK
+  //check error
+  const whatsappClient = await req.app.get("whatsappClient");
   const phone = payment.userAddress.telefono;
+  await whatsappClient.sendMessage(
+    `521${phone}@c.us`,
+    "¡Pedido enviado!\n" +
+      "Código de rastreo: " +
+      syscomTracking +
+      "\n" +
+      "Puedes rastrear tu pedido directamente en la página de Estafeta.\n" +
+      "¡Disfruta tu pedido!"
+  );
 })
 
 router.post("/funnel/email-test", async (req,res)=>{
