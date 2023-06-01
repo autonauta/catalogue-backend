@@ -330,6 +330,7 @@ router.post("/funnel/email-test", async (req,res)=>{
   const {email, phone, syscomOrderId, product, quantity, ammount, date} = req.body;
   try {
     sendConfirmationEmail(email, phone, syscomOrderId, product, quantity, ammount, date);
+    res.json({message: "Correo enviado correctamente."})
   } catch (error) {
     console.log(error);
     res.json({error: true, message: error});
