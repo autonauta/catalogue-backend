@@ -3,10 +3,10 @@ const {config} = require( "config");
 const {path} = require( "path");
 const {hbs} = require( "nodemailer-express-handlebars");
 
-const user = config.get.mailUser;
-const psw = config.get.mailPassword;
-const server = config.get.mailServer;
-const port = config.get.mailPort;
+const user = config.get("mailUser");
+const psw = config.get("mailPassword");
+const server = config.get("mailServer");
+const port = config.get("mailPort");
 
 var transporter = nodemailer.createTransport({
     host: server,
