@@ -1,7 +1,7 @@
-const nodemailer = require( "nodemailer");
+const {nodemailer} = require( "nodemailer");
 const config = require( "config");
 const path = require( "path");
-const hbs = require( "nodemailer-express-handlebars");
+const {hbs} = require( "nodemailer-express-handlebars");
 
 const user = config.mailUser;
 const psw = config.mailPassword;
