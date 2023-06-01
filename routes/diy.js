@@ -329,7 +329,7 @@ router.post("/funnel/send-tracking-number", async (req, res)=>{
   const phone = payment.userAddress.telefono;
   await whatsappClient.sendMessage(
     `521${phone}@c.us`,
-    "¡Pedido enviado!\n" +
+    "¡Pedido con folio " + syscomOrderId + " enviado!\n" +
       "Código de rastreo: " +
       syscomTracking +
       "\n" +
