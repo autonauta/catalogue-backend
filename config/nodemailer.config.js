@@ -54,5 +54,4 @@ var transporter = nodemailer.createTransport({
     );
   };
 
-  export default {nodemailer}
-  export {sendConfirmationEmail}
+  module.exports = {nodemailer, sendConfirmationEmail}
