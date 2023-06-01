@@ -8,6 +8,7 @@ const { Payment } = require("../models/Payment");
 const Stripe = require("stripe");
 const stripe = Stripe(config.get("STRIPE_LIVE_API_KEY"));
 const bills = require("../methods/facturacion");
+const {sendConfirmationEmail} = require("../config/nodemailer.config")
 
 const getFOLIO = async () => {
   let result = "";
@@ -316,4 +317,23 @@ router.post("/funnel/complete-payment", async (req, res) => {
     });
   }
 });
+
+router.post("/funnel/send-tracking-number", async (req, res)=>{
+  const { syscomOrderId, syscomTracking  } = req.body;
+  const payment = await Payment.findOne({ syscomOrderId });
+
+  //CHECK
+  const phone = payment.userAddress.telefono;
+})
+
+router.post("/funnel/email-test", async (req,res)=>{
+  const {email, phone, syscomOrderId, product, quantity, ammount, date} = req.body;
+  try {
+    sendConfirmationEmail(email, phone, syscomOrderId, product, quantity, ammount, date);
+  } catch (error) {
+    console.log(error);
+    res.json({error: true, message: error});
+  }
+  
+})
 module.exports = router;
