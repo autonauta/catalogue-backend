@@ -36,7 +36,7 @@ var transporter = nodemailer.createTransport({
         from: user,
         to: email,
         subject: "Pedido confirmado",
-        template: "confirmationEmail",
+        template: "test",
         context: {
           email,
           phone,
