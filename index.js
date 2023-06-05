@@ -104,12 +104,11 @@ try {
 } catch (error) {
   console.log(error);
 }
-let onlineFunnelUsers = -1;
+let onlineFunnelUsers = 15;
 //IO socket server functions
 io.on("connection", (socket) => {
   console.log(`User connected with socket: ${socket.id}`);
   onlineFunnelUsers++;
-  if(onlineFunnelUsers < 10) io.emit("onlineFunnelUsers", {onlineFunnelUsers: onlineFunnelUsers + (Math.floor(Math.random() * 11) + 10)});
   io.emit("onlineFunnelUsers", {onlineFunnelUsers});
   //Handler for when a socket closes connection
   socket.on("disconnect", () => {
