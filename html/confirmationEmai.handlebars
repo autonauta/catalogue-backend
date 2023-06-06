@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <title>Gracias!</title>
+</head>
+<style>
+    *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+    body {
+    width: 100vw;
+    color: #FFFFFF;
+    overflow-x: hidden;
+    padding: 0;
+    background-color: #FFFFFF;
+    margin: 0;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #FFFFFF;
+    }
+    table, th, td, tr {
+      border:none;
+      padding: 0;
+      margin: 0;
+    }
+    tr {
+        margin-bottom: 1rem;
+    }
+    td {
+    text-align: center;
+    }
+    tr {
+    margin: 0;
+    padding: 0;
+    }
+    .container {
+        width: 100%;
+        margin: 1rem 1rem 0 1rem;
+        background-color: black;
+    }
+    .content {
+    width: 100%;
+    }
+    </style>
+    <body>
+        <center style="width: 100%">
+
+            <div bgcolor="#202020" style="background-color:#202020  ; max-width: 30rem; padding: 2rem 1rem 2rem 2rem; margin: 0" class="container">
+                <table style="width:100%;">
+                    <tr>
+                        <td style="height: 100%;">
+                            <tr>
+                                <img src='https://res.cloudinary.com/highdatamx/image/upload/v1678250963/WEB_ASSETS/wanevdhmy6s4d9q99kyt.png' style="width: 60%; height: auto">
+                            </tr>
+                        </td>
+                    </tr>
+                    <br/><br><br/>
+                    
+                    <tr>
+                        <td><center style="max-width: 20rem;  color: #FF4163; font-size: 3.2rem; text-align: left; font-weight: 800;">!Tu pedido se realizó con Éxito!</center></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center style=" text-align: left;  font-weight: 400">
+                                <p style="color: #555555; font-weight: 800;  font-size: 2.3rem; margin-top: 2rem;">Gracias por tu compra, el folio es <span style="font-weight: 600; color: white">{{syscomOrderId}}</span>. Guarda este correo para futuras aclaraciones.</p>
+                            </center>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center style=" text-align: left;  font-weight: 400">
+                                <p style=" color: grey; font-weight: 800;  font-size: 2.3rem; margin-top: 2rem;">Pronto recibirás un whatsapp en el número <span style="font-weight: 600; color: white">{{phone}}</span> y al correo <span style="font-weight: 600; color: white; text-decoration: none;">{{email}}</span> con tu código de rastreo para que puedas monitorear tu pedido en cualquier momento.</p>
+                            </center>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center style=" text-align: left;  font-weight: 400">
+                                <p style="margin-bottom: 4rem; color: grey; font-weight: 800;  font-size: 2.3rem; margin-top: 2rem;">Gracias por ser parte de la <span style="font-weight: 600; color: white">comunidad DIY.</span> ¡Pronto recibirás las mejores promociones para que sigas haciendo tu casa un <span style="font-weight: 600; color: white">hogar inteligente!</span></p>
+                            </center>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h2 style="width: 100%; text-align: left; font-size: 1.6rem;">Producto: {{product}}</h2><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h2 style="width: 100%; text-align: left; font-size: 1.6rem;">Cantidad: {{quantity}}</h2><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h2 style="width: 100%; text-align: left; font-size: 1.6rem;">Total pagado: {{ammount}}</h2><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h2 style="width: 100%; text-align: left; font-size: 1.6rem;">Fecha de compra: {{date}}</h2><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>
+                                <p style="margin-top: 3rem; color: grey; font-weight: 800;  font-size: 1.3rem; margin-top: 2rem;">Consulta nuestros <span><a target="_blank" href="https://highdatamx.com/#terminos-y-condiciones" style="color: #FF4163; text-decoration: none;">términos y condiciones</a></span> así como la <span><a target="_blank" href="https://highdatamx.com/#terminos-y-condiciones" style="color: #FF4163; text-decoration: none;">declaración de privacidad</a></span></p>
+                            </center>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </div>
+        </center>
+    </body>
+</html>
