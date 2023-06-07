@@ -328,7 +328,8 @@ router.post("/funnel/complete-payment", async (req, res) => {
       "Nuevo pedido realizado\n" +
       "Folio: " + payment.syscomOrderId + "\n" +
         "Compra: $" +
-        (payment.amount / 100).toLocaleString("en-US")
+        (payment.amount / 100).toLocaleString("en-US") + "\n" +
+      ": " + payment.syscomOrderId + "\n"
     );
     await whatsappClient.sendMessage(
       `521${payment.userAddress.telefono}@c.us`,
@@ -356,15 +357,23 @@ router.post("/funnel/send-tracking-number", async (req, res)=>{
   //check error
   const whatsappClient = await req.app.get("whatsappClient");
   const phone = payment.userAddress.telefono;
-  await whatsappClient.sendMessage(
-    `521${phone}@c.us`,
-    "¡Pedido con folio " + syscomOrderId + " enviado!\n" +
-      "Código de rastreo: " +
-      syscomTracking +
-      "\n" +
-      "Puedes rastrear tu pedido directamente en la página de Estafeta.\n" +
-      "¡Disfruta tu pedido!"
-  );
+  try {
+    await whatsappClient.sendMessage(
+      `521${phone}@c.us`,
+      "¡Tu pedido con folio " + syscomOrderId + "  ha sido enviado!\n" +
+        "El código de rastreo es: " +
+        syscomTracking +
+        "\n" +
+        "Puedes rastrear tu pedido en el link que te llegará después de este mensaje.\n" +
+        "¡Disfruta tu pedido!"
+    );
+    await whatsappClient.sendMessage(
+      `521${phone}@c.us`,
+      "https://estafeta.com/Herramientas/Rastreo"
+    );
+  }catch(err){
+    res.status(400).json({error: true, message: err});
+  }
   res.json({message: "Enviado correctamente"});
 })
 
