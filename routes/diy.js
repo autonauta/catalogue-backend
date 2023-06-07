@@ -329,7 +329,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       "Folio: " + payment.syscomOrderId + "\n" +
         "Compra: $" +
         (payment.amount / 100).toLocaleString("en-US") + "\n" +
-      "Usuario: " + payment.syscomOrderId + "\n"
+      "Usuario: " + payment.userName + "\n"
     );
     await whatsappClient.sendMessage(
       `521${payment.userAddress.telefono}@c.us`,
