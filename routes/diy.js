@@ -329,7 +329,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
       "Folio: " + payment.syscomOrderId + "\n" +
         "Compra: $" +
         (payment.amount / 100).toLocaleString("en-US") + "\n" +
-      ": " + payment.syscomOrderId + "\n"
+      "Usuario: " + payment.syscomOrderId + "\n"
     );
     await whatsappClient.sendMessage(
       `521${payment.userAddress.telefono}@c.us`,
@@ -366,6 +366,10 @@ router.post("/funnel/send-tracking-number", async (req, res)=>{
         "\n" +
         "Puedes rastrear tu pedido en el link que te llegará después de este mensaje.\n" +
         "¡Disfruta tu pedido!"
+    );
+    await whatsappClient.sendMessage(
+      `521${phone}@c.us`,
+      syscomTracking
     );
     await whatsappClient.sendMessage(
       `521${phone}@c.us`,
