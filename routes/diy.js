@@ -339,7 +339,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."
     );
-    sendConfirmationEmail(payment.userAddress.correo, payment.userAddress.telefono, payment.syscomOrderId, payment.description, payment.quantity, payment.amount, new Date().toUTCString());
+    sendConfirmationEmail(payment.userAddress.correo, payment.userAddress.telefono, payment.syscomOrderId, payment.description, payment.quantity, (payment.amount / 100).toLocaleString("en-US"), new Date().toUTCString());
     res.send({ response });
   } catch (error) {
     console.log(error);
