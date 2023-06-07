@@ -401,7 +401,6 @@ router.post("/funnel/send-tracking-number", async (req, res) => {
     console.log(error);
     res.json({ error: true, message: error });
   }
-  res.json({ message: "Enviado correctamente" });
 });
 
 router.post("/funnel/email-test", async (req, res) => {
