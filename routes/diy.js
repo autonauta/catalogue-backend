@@ -5,6 +5,7 @@ const { Funnel } = require("../models/Funnel");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const { Payment } = require("../models/Payment");
+const { WhiteList } = require("../models/WhiteList");
 const Stripe = require("stripe");
 const stripe = Stripe(config.get("STRIPE_TEST_API_KEY"));
 const bills = require("../methods/facturacion");
@@ -159,6 +160,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
       country,
       phone,
       sysId,
+      promotion
     } = req.body;
     //Check for product stock abvailability and return error of stock not available and the stock
     //
@@ -213,6 +215,15 @@ router.post("/funnel/payment-intent", async (req, res) => {
     } else {
       console.log("paymentIntent: ", paymentIntent);
       return res.send({ error: true, message: paymentIntent });
+    }
+    if(promotion) {
+      let whiteList = await WhiteList.find();
+      whiteList.userList.push({
+        userName: newPayment.userName, 
+        userLastName: newPayment.userLastName, 
+        userAddress: newPayment.userAddress, 
+        userEmail: newPayment.userAddress.correo
+      })
     }
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
