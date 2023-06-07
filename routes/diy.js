@@ -218,7 +218,8 @@ router.post("/funnel/payment-intent", async (req, res) => {
     }
     var newWhiteList;
     if(promotion) {
-      let whiteList = await WhiteList.find();
+      let whiteList = await WhiteList.findOne();
+      console.log("Found in data base: ", whiteList);
       if(!whiteList) {
         newWhiteList = new WhiteList({
           userList: [
