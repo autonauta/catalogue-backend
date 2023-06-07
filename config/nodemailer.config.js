@@ -1,7 +1,7 @@
-const nodemailer = require( "nodemailer");
-const config = require( "config");
-const path = require( "path");
-const hbs = require( "nodemailer-express-handlebars");
+const nodemailer = require("nodemailer");
+const config = require("config");
+const path = require("path");
+const hbs = require("nodemailer-express-handlebars");
 
 const user = config.get("mailUser");
 const psw = config.get("mailPassword");
@@ -9,49 +9,96 @@ const server = config.get("mailServer");
 const port = config.get("mailPort");
 
 var transporter = nodemailer.createTransport({
-    host: server,
-    port: port,
-    secure: true,
-    auth: {
-      user: user,
-      pass: psw,
-    },
-  });
-  
-  const hbOptions = {
-    viewEngine: {
-      extName: ".handlebars",
-      partialsDir: path.resolve("html"),
-      defaultLayout: false,
-    },
-    viewPath: path.resolve("html"),
+  host: server,
+  port: port,
+  secure: true,
+  auth: {
+    user: user,
+    pass: psw,
+  },
+});
+
+const hbOptions = {
+  viewEngine: {
     extName: ".handlebars",
-  };
-  
-  transporter.use("compile", hbs(hbOptions));
+    partialsDir: path.resolve("html"),
+    defaultLayout: false,
+  },
+  viewPath: path.resolve("html"),
+  extName: ".handlebars",
+};
 
-  function sendConfirmationEmail(email, phone, syscomOrderId, product, quantity, ammount, date) {
-    transporter.sendMail(
-      {
-        from: user,
-        to: email,
-        subject: "Pedido confirmado",
-        template: "confirmationEmail",
-        context: {
-          email,
-          phone,
-          syscomOrderId,
-          product,
-          quantity,
-          ammount, 
-          date
-        },
+transporter.use("compile", hbs(hbOptions));
+
+function sendConfirmationEmail(
+  email,
+  phone,
+  syscomOrderId,
+  product,
+  quantity,
+  ammount,
+  date
+) {
+  transporter.sendMail(
+    {
+      from: user,
+      to: email,
+      subject: "Pedido confirmado",
+      template: "confirmationEmail",
+      context: {
+        phone,
+        syscomOrderId,
+        product,
+        quantity,
+        ammount,
+        date,
       },
-      (err, inf) => {
-        if (err) console.log(err);
-        else console.log(`Correo enviado correctamente a ${email}: `, inf.response);
-      }
-    );
-  };
+    },
+    (err, inf) => {
+      if (err) console.log(err);
+      else
+        console.log(`Correo enviado correctamente a ${email}: `, inf.response);
+    }
+  );
+}
+function sendTrackingEmail(
+  email,
+  syscomTracking,
+  syscomOrderId,
+  date,
+  state,
+  city,
+  colony,
+  street,
+  numExt,
+  numInt,
+  phone
+) {
+  transporter.sendMail(
+    {
+      from: user,
+      to: email,
+      subject: "Pedido enviado",
+      template: "trackingEmail",
+      context: {
+        syscomTracking,
+        syscomOrderId,
+        date,
+        state,
+        city,
+        colony,
+        street,
+        numExt,
+        numInt,
+        phone
+      },
+    },
+    (err, inf) => {
+      if (err) console.log(err);
+      else
+        console.log(`Correo enviado correctamente a ${email}: `, inf.response);
+    }
+  );
+}
 
-  module.exports = {nodemailer, sendConfirmationEmail}
+module.exports = { nodemailer, sendConfirmationEmail, sendTrackingEmail };

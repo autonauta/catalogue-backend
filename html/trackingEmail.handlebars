@@ -5,7 +5,7 @@
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800;900&display=swap"
         rel="stylesheet">
-    <title>Confirmación de Compra</title>
+    <title>Confirmación de Envío</title>
     <style>
         /* Global Styles */
         body {
@@ -86,16 +86,21 @@
             <img src='https://res.cloudinary.com/highdatamx/image/upload/v1678250963/WEB_ASSETS/wanevdhmy6s4d9q99kyt.png' >
         </div>
         <div class="content">
-            <h2>!Tu pedido se realizó con Éxito!</h2>
-            <p>Gracias por tu compra, el folio es <span style="font-weight: 600; color: white">{{syscomOrderId}}</span>. Guarda este correo para futuras aclaraciones.</p>
-            <p>Datos de tu compra:</p>
+            <h2>!Tu pedido ha sido enviado!</h2>
+            <p>Queremos informarte que tu pedido con folio <span style="font-weight: 600; color: white">{{syscomOrderId}}</span> ha sido enviado exitosamente a la dirección de envío:</p>
+            <p>Datos de envío:</p>
             <ul>
-                <li><strong>Producto:</strong> {{product}}</li>
-                <li><strong>Cantidad:</strong> {{quantity}}</li>
-                <li><strong>Pagado:</strong> {{ammount}} MXN</li>
-                <li><strong>Fecha de Compra:</strong> {{date}}</li>
+                <li><strong>Estado:</strong> {{state}}</li>
+                <li><strong>Ciudad:</strong> {{city}}</li>
+                <li><strong>Colonia:</strong> {{colony}} MXN</li>
+                <li><strong>Calle:</strong> {{street}} MXN</li>
+                <li><strong>Núm ext:</strong> {{numExt}} MXN</li>
+                <li><strong>Num int:</strong> {{numInt}} MXN</li>
+                <li><strong>Guía Estafeta:</strong> {{syscomTracking}} MXN</li>
             </ul>
-            <p>Pronto recibirás un whatsapp en el número <span style="font-weight: 600; color: white">{{phone}}</span> y a este correo con tu código de rastreo para que puedas monitorear tu pedido en cualquier momento.</p>
+            <p>Puedes rastrear tu pedido haciendo click en el siguiente link:</p>
+            <a href="https://estafeta.com/Herramientas/Rastreo" target="_blank">¡Rastrea tu pedido aquí!</a>
+            <p>También recibirás un whatsapp en el número <span style="font-weight: 600; color: white">{{phone}}</span> con la información de tu envío.</p>
             <p>Si tienes alguna pregunta o necesita asistencia adicional, no dudes en ponerte en contacto con nuestro servicio de atención al cliente. Estaremos encantados de ayudarte.</p>
             <p class="marked-text">¡Gracias nuevamente por tu compra!</p>
             <p>Atentamente,</p>

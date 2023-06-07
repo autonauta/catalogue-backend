@@ -9,7 +9,10 @@ const { WhiteList } = require("../models/WhiteList");
 const Stripe = require("stripe");
 const stripe = Stripe(config.get("STRIPE_TEST_API_KEY"));
 const bills = require("../methods/facturacion");
-const {sendConfirmationEmail} = require("../config/nodemailer.config")
+const {
+  sendConfirmationEmail,
+  sendTrackingEmail,
+} = require("../config/nodemailer.config");
 
 const getFOLIO = async () => {
   let result = "";
@@ -66,34 +69,23 @@ router.post("/funnel", async (req, res) => {
   const markupOne = 1.7;
   const markupThree = 1.47;
   const markupFive = 1.325;
-  const fakeProductPrice =
-    product.price * dollar[0].price * tax * fakeMarkup;
-  const productPriceOne =
-  product.price * dollar[0].price * tax * markupOne;
-  const productPriceThree =
-  product.price * dollar[0].price * tax * markupThree;
-  const productPriceFive =
-  product.price * dollar[0].price * tax * markupFive;
+  const fakeProductPrice = product.price * dollar[0].price * tax * fakeMarkup;
+  const productPriceOne = product.price * dollar[0].price * tax * markupOne;
+  const productPriceThree = product.price * dollar[0].price * tax * markupThree;
+  const productPriceFive = product.price * dollar[0].price * tax * markupFive;
   funnel.productPrice = {
     fakeProductPrice: fakeProductPrice.toFixed(2),
     productPriceOne: productPriceOne.toFixed(2),
     productPriceThree: productPriceThree.toFixed(2),
-    productPriceFive: productPriceFive.toFixed(2)
-  }
-  await funnel.save()
+    productPriceFive: productPriceFive.toFixed(2),
+  };
+  await funnel.save();
   res.send(funnel);
 });
 //Endpoint for creating new Funnels
 router.post("/funnel/new", async (req, res) => {
-  const {
-    title,
-    subtitle,
-    main_text,
-    image,
-    video,
-    features,
-    productId,
-  } = req.body;
+  const { title, subtitle, main_text, image, video, features, productId } =
+    req.body;
   if (
     !title ||
     !subtitle ||
@@ -127,17 +119,18 @@ router.post("/funnel/new", async (req, res) => {
   res.send({ link: "https://diy.highdatamx.com/" + saved._id });
 });
 
-router.post("/funnel/edit", async (req, res)=>{
-  const {id, feature} = req.body;
+router.post("/funnel/edit", async (req, res) => {
+  const { id, feature } = req.body;
   const funnel = await Funnel.findById(id);
-  if(!funnel) return res.status(400).send({
-    error: true,
-    message: "No existe ese funnel revisa la información.",
-  });
+  if (!funnel)
+    return res.status(400).send({
+      error: true,
+      message: "No existe ese funnel revisa la información.",
+    });
   funnel.features.push(feature);
   await funnel.save();
-  res.send({funnel});
-})
+  res.send({ funnel });
+});
 
 router.post("/funnel/payment-intent", async (req, res) => {
   try {
@@ -160,7 +153,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
       country,
       phone,
       sysId,
-      promotion
+      promotion,
     } = req.body;
     //Check for product stock abvailability and return error of stock not available and the stock
     //
@@ -182,7 +175,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
         estado: state,
         codigo_postal: postal_code,
         telefono: phone,
-        correo: email
+        correo: email,
       },
       description,
     });
@@ -208,7 +201,7 @@ router.post("/funnel/payment-intent", async (req, res) => {
           estado: state,
           pais: country,
           telefono: phone,
-          correo: email
+          correo: email,
         },
       });
       await newPayment.save();
@@ -217,31 +210,30 @@ router.post("/funnel/payment-intent", async (req, res) => {
       return res.send({ error: true, message: paymentIntent });
     }
     var newWhiteList;
-    if(promotion) {
+    if (promotion) {
       let whiteList = await WhiteList.findOne();
       console.log("Found in data base: ", whiteList);
-      if(!whiteList) {
+      if (!whiteList) {
         newWhiteList = new WhiteList({
           userList: [
-            { 
-              userName: newPayment.userName, 
-              userLastName: newPayment.userLastName, 
-              userAddress: newPayment.userAddress, 
-              userEmail: newPayment.userAddress.correo
-            }
-          ]
-        })
+            {
+              userName: newPayment.userName,
+              userLastName: newPayment.userLastName,
+              userAddress: newPayment.userAddress,
+              userEmail: newPayment.userAddress.correo,
+            },
+          ],
+        });
         await newWhiteList.save();
-      }else {
+      } else {
         whiteList.userList.push({
-          userName: newPayment.userName, 
-          userLastName: newPayment.userLastName, 
-          userAddress: newPayment.userAddress, 
-          userEmail: newPayment.userAddress.correo
-        })
+          userName: newPayment.userName,
+          userLastName: newPayment.userLastName,
+          userAddress: newPayment.userAddress,
+          userEmail: newPayment.userAddress.correo,
+        });
         await whiteList.save();
       }
-      
     }
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
@@ -326,10 +318,15 @@ router.post("/funnel/complete-payment", async (req, res) => {
     await whatsappClient.sendMessage(
       "5214421818265@c.us",
       "Nuevo pedido realizado\n" +
-      "Folio: " + payment.syscomOrderId + "\n" +
+        "Folio: " +
+        payment.syscomOrderId +
+        "\n" +
         "Compra: $" +
-        (payment.amount / 100).toLocaleString("en-US") + "\n" +
-      "Usuario: " + payment.userName + "\n"
+        (payment.amount / 100).toLocaleString("en-US") +
+        "\n" +
+        "Usuario: " +
+        payment.userName +
+        "\n"
     );
     await whatsappClient.sendMessage(
       `521${payment.userAddress.telefono}@c.us`,
@@ -340,7 +337,15 @@ router.post("/funnel/complete-payment", async (req, res) => {
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."
     );
-    sendConfirmationEmail(payment.userAddress.correo, payment.userAddress.telefono, payment.syscomOrderId, payment.description, payment.quantity, (payment.amount / 100).toLocaleString("en-US"), new Date().toUTCString());
+    sendConfirmationEmail(
+      payment.userAddress.correo,
+      payment.userAddress.telefono,
+      payment.syscomOrderId,
+      payment.description,
+      payment.quantity,
+      (payment.amount / 100).toLocaleString("en-US"),
+      new Date().toUTCString()
+    );
     res.send({ response });
   } catch (error) {
     console.log(error);
@@ -351,8 +356,8 @@ router.post("/funnel/complete-payment", async (req, res) => {
   }
 });
 
-router.post("/funnel/send-tracking-number", async (req, res)=>{
-  const { syscomOrderId, syscomTracking  } = req.body;
+router.post("/funnel/send-tracking-number", async (req, res) => {
+  const { syscomOrderId, syscomTracking } = req.body;
   const payment = await Payment.findOne({ syscomOrderId });
   //check error
   const whatsappClient = await req.app.get("whatsappClient");
@@ -360,36 +365,62 @@ router.post("/funnel/send-tracking-number", async (req, res)=>{
   try {
     await whatsappClient.sendMessage(
       `521${phone}@c.us`,
-      "¡Tu pedido con folio " + syscomOrderId + "  ha sido enviado!\n" +
+      "¡Tu pedido con folio " +
+        syscomOrderId +
+        "  ha sido enviado!\n" +
         "El código de rastreo es: " +
         syscomTracking +
         "\n" +
         "Puedes rastrear tu pedido en el link que te llegará después de este mensaje.\n" +
         "¡Disfruta tu pedido!"
     );
-    await whatsappClient.sendMessage(
-      `521${phone}@c.us`,
-      syscomTracking
-    );
+    await whatsappClient.sendMessage(`521${phone}@c.us`, syscomTracking);
     await whatsappClient.sendMessage(
       `521${phone}@c.us`,
       "https://estafeta.com/Herramientas/Rastreo"
     );
-  }catch(err){
-    res.status(400).json({error: true, message: err});
+  } catch (err) {
+    res.status(400).json({ error: true, message: err });
   }
-  res.json({message: "Enviado correctamente"});
-})
-
-router.post("/funnel/email-test", async (req,res)=>{
-  const {email, phone, syscomOrderId, product, quantity, ammount, date} = req.body;
   try {
-    sendConfirmationEmail(email, phone, syscomOrderId, product, quantity, ammount, date);
-    res.json({message: "Correo enviado correctamente."})
+    sendTrackingEmail(
+      payment.userAddress.correo,
+      syscomTracking,
+      syscomOrderId,
+      new Date().toUTCString(),
+      payment.userAddress.estado,
+      payment.userAddress.ciudad,
+      payment.userAddress.colonia,
+      payment.userAddress.calle,
+      payment.userAddress.num_ext,
+      payment.userAddress.num_int,
+      payment.userAddress.telefono
+    );
+    res.json({ message: "Correo enviado correctamente." });
   } catch (error) {
     console.log(error);
-    res.json({error: true, message: error});
+    res.json({ error: true, message: error });
   }
-  
-})
+  res.json({ message: "Enviado correctamente" });
+});
+
+router.post("/funnel/email-test", async (req, res) => {
+  const { email, phone, syscomOrderId, product, quantity, ammount, date } =
+    req.body;
+  try {
+    sendConfirmationEmail(
+      email,
+      phone,
+      syscomOrderId,
+      product,
+      quantity,
+      ammount,
+      date
+    );
+    res.json({ message: "Correo enviado correctamente." });
+  } catch (error) {
+    console.log(error);
+    res.json({ error: true, message: error });
+  }
+});
 module.exports = router;
