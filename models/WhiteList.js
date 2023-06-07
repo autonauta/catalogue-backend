@@ -11,6 +11,6 @@ const whitelistSchema = new mongoose.Schema({
   ],
 });
 
-const Product = mongoose.model("WhiteList", whitelistSchema);
+const WhiteList = mongoose.model("WhiteList", whitelistSchema);
 
 module.exports.WhiteList = WhiteList;
