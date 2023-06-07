@@ -216,14 +216,31 @@ router.post("/funnel/payment-intent", async (req, res) => {
       console.log("paymentIntent: ", paymentIntent);
       return res.send({ error: true, message: paymentIntent });
     }
+    var newWhiteList;
     if(promotion) {
       let whiteList = await WhiteList.find();
-      whiteList.userList.push({
-        userName: newPayment.userName, 
-        userLastName: newPayment.userLastName, 
-        userAddress: newPayment.userAddress, 
-        userEmail: newPayment.userAddress.correo
-      })
+      if(!whiteList) {
+        newWhiteList = new WhiteList({
+          userList: [
+            { 
+              userName: newPayment.userName, 
+              userLastName: newPayment.userLastName, 
+              userAddress: newPayment.userAddress, 
+              userEmail: newPayment.userAddress.correo
+            }
+          ]
+        })
+        await newWhiteList.save();
+      }else {
+        whiteList.userList.push({
+          userName: newPayment.userName, 
+          userLastName: newPayment.userLastName, 
+          userAddress: newPayment.userAddress, 
+          userEmail: newPayment.userAddress.correo
+        })
+        await whiteList.save();
+      }
+      
     }
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
