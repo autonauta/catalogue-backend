@@ -5,7 +5,7 @@ const whitelistSchema = new mongoose.Schema({
     {
       userName: { type: String, default: "" },
       userLastName: { type: String, default: "" },
-      userAddress: { type: String, default: "" },
+      userAddress: { type: Object, default: {} },
       userEmail: { type: String, default: "" },
     },
   ],
