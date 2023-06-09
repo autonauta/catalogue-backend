@@ -23,7 +23,7 @@ const getFOLIO = async () => {
   }
   return result;
 };
-
+//FUNNEL
 router.post("/funnel", async (req, res) => {
   const funnelId = req.body.funnelId;
   if (!funnelId) {
@@ -264,6 +264,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     return;
   }
   payment.status = "succeeded";
+  //
   //Crear pedido en syscom
   const url = config.get("SYSCOM_URL") + "carrito/generar";
   const order = {
