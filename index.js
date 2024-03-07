@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { updatePrices } = require("./config/scheduledJobs");
-const { Client, LocalAuth } = require("whatsapp-web.js");
+//const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const { Payment } = require("./models/Payment");
 
@@ -26,7 +26,7 @@ const products = require("./routes/products");
 const diy = require("./routes/diy");
 const stripe = require("./routes/stripe");
 const syscom = require("./routes/syscom");
-const whatsapp = require("./routes/whatsapp");
+//const whatsapp = require("./routes/whatsapp");
 const landing = require("./routes/landing");
 
 //Middleware
@@ -42,7 +42,7 @@ app.use("/api/v1/products", products);
 app.use("/api/v1/diy", diy);
 app.use("/api/v1/syscom", syscom);
 app.use("/api/v1/stripe", stripe);
-app.use("/api/v1/whatsapp", whatsapp);
+//app.use("/api/v1/whatsapp", whatsapp);
 app.use("/api/v1/landing", landing);
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
 const db = config.get("ATLASDB");
@@ -64,7 +64,7 @@ mongoose.connect(
 //Update prices every days
 updatePrices.start();
 
-//Whatsapp web JS implementation
+/* //Whatsapp web JS implementation
 const whatsappClient = new Client({
   authStrategy: new LocalAuth({ dataPath: "./whatsapp-auth-sessions" }),
   puppeteer: {
@@ -104,7 +104,7 @@ try {
   whatsappClient.initialize();
 } catch (error) {
   console.log(error);
-}
+} */
 let onlineFunnelUsers = 15;
 //IO socket server functions
 io.on("connection", (socket) => {

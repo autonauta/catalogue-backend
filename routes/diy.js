@@ -315,7 +315,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
     payment.syscomOrderId =
       response.resumen.folio === "TESTMODE" ? folio : response.resumen.folio;
     await payment.save();
-    const whatsappClient = await req.app.get("whatsappClient");
+    /* const whatsappClient = await req.app.get("whatsappClient");
     await whatsappClient.sendMessage(
       "5214421818265@c.us",
       "Nuevo pedido realizado\n" +
@@ -337,7 +337,7 @@ router.post("/funnel/complete-payment", async (req, res) => {
         "\n" +
         "Gracias por ser parte de la comunidad DIY.\n" +
         "Recibirás un mensaje cuando tu pedido esté en camino."
-    );
+    ); */
     sendConfirmationEmail(
       payment.userAddress.correo,
       payment.userAddress.telefono,
@@ -361,7 +361,7 @@ router.post("/funnel/send-tracking-number", async (req, res) => {
   const { syscomOrderId, syscomTracking } = req.body;
   const payment = await Payment.findOne({ syscomOrderId });
   //check error
-  const whatsappClient = await req.app.get("whatsappClient");
+  //const whatsappClient = await req.app.get("whatsappClient");
   const phone = payment.userAddress.telefono;
   try {
     await whatsappClient.sendMessage(
@@ -375,11 +375,11 @@ router.post("/funnel/send-tracking-number", async (req, res) => {
         "Puedes rastrear tu pedido en el link que te llegará después de este mensaje.\n" +
         "¡Disfruta tu pedido!"
     );
-    await whatsappClient.sendMessage(`521${phone}@c.us`, syscomTracking);
+    /* await whatsappClient.sendMessage(`521${phone}@c.us`, syscomTracking);
     await whatsappClient.sendMessage(
       `521${phone}@c.us`,
       "https://estafeta.com/Herramientas/Rastreo"
-    );
+    ); */
   } catch (err) {
     res.status(400).json({ error: true, message: err });
   }
