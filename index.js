@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require("http");
-const {Server} = require("socket.io");
+const { Server } = require("socket.io");
 const app = express();
 const config = require("config");
 const morgan = require("morgan");
@@ -12,13 +12,12 @@ const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const { Payment } = require("./models/Payment");
 
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 app.set("socketio", io);
 
@@ -28,11 +27,12 @@ const diy = require("./routes/diy");
 const stripe = require("./routes/stripe");
 const syscom = require("./routes/syscom");
 const whatsapp = require("./routes/whatsapp");
+const landing = require("./routes/landing");
 
 //Middleware
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors({exposedHeaders: ['X-Total-Count']}));
+app.use(cors({ exposedHeaders: ["X-Total-Count"] }));
 
 //morgan Logging
 app.use(morgan("tiny"));
@@ -43,6 +43,7 @@ app.use("/api/v1/diy", diy);
 app.use("/api/v1/syscom", syscom);
 app.use("/api/v1/stripe", stripe);
 app.use("/api/v1/whatsapp", whatsapp);
+app.use("/api/v1/landing", landing);
 //Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
 const db = config.get("ATLASDB");
 mongoose.connect(
@@ -109,12 +110,12 @@ let onlineFunnelUsers = 15;
 io.on("connection", (socket) => {
   console.log(`User connected with socket: ${socket.id}`);
   onlineFunnelUsers++;
-  io.emit("onlineFunnelUsers", {onlineFunnelUsers});
+  io.emit("onlineFunnelUsers", { onlineFunnelUsers });
   //Handler for when a socket closes connection
   socket.on("disconnect", () => {
     console.log("User disconnected with socket:", socket.id);
     onlineFunnelUsers--;
-    io.emit("onlineFunnelUsers", {onlineFunnelUsers});
+    io.emit("onlineFunnelUsers", { onlineFunnelUsers });
   });
 });
 
