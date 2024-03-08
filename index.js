@@ -44,7 +44,8 @@ app.use("/api/v1/syscom", syscom);
 app.use("/api/v1/stripe", stripe);
 //app.use("/api/v1/whatsapp", whatsapp);
 app.use("/api/v1/landing", landing);
-//Config - connect to DB. Tiene que llevar forzosamente los parametros useCreateIndex y useUnifiedTopology
+//
+//Config - connect to catlogueDB.
 const db = config.get("ATLASDB");
 mongoose.connect(
   db,
@@ -60,8 +61,26 @@ mongoose.connect(
     }
   }
 );
-
-//Update prices every days
+//
+const db2 = config.get("ATLASDB2");
+const crmDB = mongoose.createConnection(
+  db2,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  (err) => {
+    if (err) {
+      console.log("error in connection" + err);
+    } else {
+      console.log("¡CRM Database connected succesfully!");
+    }
+  }
+);
+// Exports connection with CRM database
+module.exports = { crmDB };
+//Config - connect to catlogueDB.
+//Update prices every day
 updatePrices.start();
 
 /* //Whatsapp web JS implementation
