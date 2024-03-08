@@ -5,7 +5,7 @@ const { Customer } = require("../models/Customer");
 router.post("/contacto", async (req, res) => {
   const { nombre, telefono, correo, mensaje } = req.body;
   if (!nombre || !telefono || !correo || !mensaje) {
-    res.status(400).send({
+    res.status(401).send({
       error: true,
       message: "No estan completos los datos.",
     });
@@ -13,7 +13,7 @@ router.post("/contacto", async (req, res) => {
   }
   const customer = await Customer.find({ correo });
   if (customer) {
-    res.status(400).send({
+    res.status(402).send({
       error: true,
       message: "Ya existe un usuario con ese correo.",
     });
@@ -33,7 +33,7 @@ router.post("/contacto", async (req, res) => {
         res.send(customer);
       }
     } catch (err) {
-      res.status(400).send(err);
+      res.status(403).send(err);
     }
   }
 });
