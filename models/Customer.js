@@ -29,7 +29,7 @@ const customerSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-let crmDB = mongoose.connection.useDb(crm);
+let crmDB = mongoose.connection.useDb("crm");
 
 const Customer = crmDB.model("Customer", customerSchema);
 
