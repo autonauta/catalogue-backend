@@ -63,21 +63,11 @@ mongoose.connect(
 );
 //
 const db2 = config.get("ATLASDB2");
-module.exports.crmDB = mongoose.createConnection(
-  db2,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
-  (err) => {
-    if (err) {
-      console.log("error in connection" + err);
-    } else {
-      console.log("¡CRM Database connected succesfully!");
-    }
-  }
-);
-
+const crmDB = mongoose.createConnection(db2, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+module.exports = { crmDB };
 //Update prices every day
 updatePrices.start();
 
