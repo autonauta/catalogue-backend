@@ -82,7 +82,11 @@ const crmDBPromise = new Promise((resolve, reject) => {
   crmDB.once("open", resolve);
   crmDB.on("error", reject);
 });
-module.exports = { crmDB, crmDBPromise };
+module.exports.crmDBPromise = crmDBPromise;
+crmDBPromise.then(() => {
+  module.exports.crmDB = crmDB;
+});
+
 //Update prices every day
 updatePrices.start();
 
