@@ -26,6 +26,9 @@ const customerSchema = new mongoose.Schema(
     consumo: {
       type: String,
     },
+    mensaje: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
