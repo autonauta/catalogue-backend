@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { crmDB } = require("../index");
 
 const customerSchema = new mongoose.Schema(
