@@ -57,17 +57,10 @@ mongoose.connect(
     if (err) {
       console.log("error in connection" + err);
     } else {
-      console.log("¡HighData Database connected succesfully!");
+      console.log("¡Database connected succesfully!");
     }
   }
 );
-//
-const db2 = config.get("ATLASDB2");
-const crmDB = mongoose.createConnection(db2, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-module.exports = { crmDB };
 //Update prices every day
 updatePrices.start();
 

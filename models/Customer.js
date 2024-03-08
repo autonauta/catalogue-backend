@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { crmDB } = require("../index");
 
 const customerSchema = new mongoose.Schema(
   {
@@ -30,6 +29,7 @@ const customerSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+let crmDB = mongoose.connection.useDb(crm);
 
 const Customer = crmDB.model("Customer", customerSchema);
 
