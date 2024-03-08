@@ -73,12 +73,12 @@ const crmDB = mongoose.createConnection(
     if (err) {
       console.log("error in connection" + err);
     } else {
-      // Exports connection with CRM database
-      module.exports = { crmDB };
       console.log("¡CRM Database connected succesfully!");
     }
   }
 );
+// Exports connection with CRM database
+module.exports.crmDB = crmDB;
 //Update prices every day
 updatePrices.start();
 
