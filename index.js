@@ -63,7 +63,7 @@ mongoose.connect(
 );
 //
 const db2 = config.get("ATLASDB2");
-const crmDB = mongoose.createConnection(
+module.exports.crmDB = mongoose.createConnection(
   db2,
   {
     useNewUrlParser: true,
@@ -77,15 +77,6 @@ const crmDB = mongoose.createConnection(
     }
   }
 );
-// Exports connection with CRM database
-const crmDBPromise = new Promise((resolve, reject) => {
-  crmDB.once("open", resolve);
-  crmDB.on("error", reject);
-});
-module.exports.crmDBPromise = crmDBPromise;
-crmDBPromise.then(() => {
-  module.exports.crmDB = crmDB;
-});
 
 //Update prices every day
 updatePrices.start();
