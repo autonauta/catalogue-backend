@@ -17,46 +17,25 @@ router.post("/contacto", async (req, res) => {
       error: true,
       message: "Ya existe un usuario con ese correo.",
     });
-  } 
-  else if (!customer) {
+  } else if (!customer) {
     const newCustomer = new Customer({
       nombre,
       telefono,
       correo,
     });
     try {
-      const product = await newProduct.save();
-      if (!product) {
-        console.log("No product saved");
-        res.send({ error: true, message: "No product saved" });
+      const customer = await newCustomer.save();
+      if (!customer) {
+        console.log("No se guardó el cliente");
+        res.send({ error: true, message: "No se guardó el cliente" });
       } else {
-        console.log("Product saved");
-        res.send(product);
+        console.log("Cliente guardado");
+        res.send(customer);
       }
     } catch (err) {
       res.status(400).send(err);
     }
   }
-  /* const newProduct = new Product({
-    name,
-    sysId,
-    price,
-    category,
-  }); 
-  try {
-    const product = await newProduct.save();
-    if (!product) {
-      console.log("No product saved");
-      res.send({ error: true, message: "No product saved" });
-    } else {
-      console.log("Product saved");
-      res.send(product);
-    }
-  } catch (err) {
-    res.status(400).send(err);
-  }*/
-  const respuesta = { nombre, telefono, correo, mensaje };
-  res.send(respuesta);
 });
 
 module.exports = router;
