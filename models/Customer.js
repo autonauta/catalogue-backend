@@ -33,4 +33,4 @@ const customerSchema = new mongoose.Schema(
 
 const Customer = crmDB.model("Customer", customerSchema);
 
-export default Customer;
+module.exports.Customer = Customer;
