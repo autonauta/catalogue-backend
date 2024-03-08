@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const crmDB = require("../index");
+const { crmDB } = require("../index");
 
 const customerSchema = new mongoose.Schema(
   {
