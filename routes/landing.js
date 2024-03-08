@@ -12,7 +12,6 @@ router.post("/contacto", async (req, res) => {
     return;
   }
   const customer = await Customer.findOne({ email });
-  console.log("Customer: ", customer);
   if (customer) {
     res.status(402).send({
       error: true,
@@ -23,6 +22,7 @@ router.post("/contacto", async (req, res) => {
       nombre,
       telefono,
       email,
+      mensaje,
     });
     try {
       const customer = await newCustomer.save();
