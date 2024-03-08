@@ -24,17 +24,13 @@ router.post("/contacto", async (req, res) => {
       email,
       mensaje,
     });
-    try {
-      const customer = await newCustomer.save();
-      if (!customer) {
-        console.log("No se guardó el cliente");
-        res.send({ error: true, message: "No se guardó el cliente" });
-      } else {
-        console.log("Cliente guardado");
-        res.send(customer);
-      }
-    } catch (err) {
-      res.status(403).send(err);
+    const customer = await newCustomer.save();
+    if (!customer) {
+      console.log("No se guardó el cliente");
+      res.send({ error: true, message: "No se guardó el cliente" });
+    } else {
+      console.log("Cliente guardado");
+      res.send(customer);
     }
   }
 });
