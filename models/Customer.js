@@ -31,6 +31,7 @@ const customerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Customer = crmDB.model("Customer", customerSchema);
+var Customer;
+if (crmDB) Customer = crmDB.model("Customer", customerSchema);
 
 module.exports.Customer = Customer;
