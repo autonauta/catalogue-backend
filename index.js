@@ -78,7 +78,11 @@ const crmDB = mongoose.createConnection(
   }
 );
 // Exports connection with CRM database
-module.exports.crmDB = crmDB;
+const crmDBPromise = new Promise((resolve, reject) => {
+  crmDB.once("open", resolve);
+  crmDB.on("error", reject);
+});
+module.exports = { crmDB, crmDBPromise };
 //Update prices every day
 updatePrices.start();
 
