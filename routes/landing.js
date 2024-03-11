@@ -19,7 +19,7 @@ router.post("/contacto", async (req, res) => {
       message: "Ya existe un usuario con ese correo.",
     });
   } else if (!customer) {
-    getConsumption("files/pdf");
+    getConsumption("../files/pdf.pdf");
     /* const newCustomer = new Customer({
       nombre,
       telefono,
