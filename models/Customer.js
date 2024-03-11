@@ -24,7 +24,7 @@ const customerSchema = new mongoose.Schema(
       required: true,
     },
     consumo: {
-      type: String,
+      type: Number,
     },
     mensaje: {
       type: String,
