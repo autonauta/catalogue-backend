@@ -4,7 +4,7 @@ const path = require("path");
 
 const getConsumption = async (folder, file) => {
   // Construct a path to myfile.txt relative to script.js
-  const filePath = path.join(__dirname, "..", folder, file);
+  const filePath = path.join(__dirname, ".", folder, file);
   let dataBuffer = fs.readFileSync(file);
   let pdf = await pdf(dataBuffer);
   console.log("PDF dATA", pdf);
