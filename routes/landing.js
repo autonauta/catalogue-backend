@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const path = require("path");
 const { Customer } = require("../models/Customer");
 const { getConsumption } = require("../methods/getConsumption");
 
@@ -19,7 +20,14 @@ router.post("/contacto", async (req, res) => {
       message: "Ya existe un usuario con ese correo.",
     });
   } else if (!customer) {
-    getConsumption("/files/PDF/044150704119.pdf");
+    // Construct a path to myfile.txt relative to script.js
+    const filePath = path.join(
+      __dirname,
+      "..",
+      "files/pdf",
+      "044150704119.pdf"
+    );
+    getConsumption(filePath);
     /* const newCustomer = new Customer({
       nombre,
       telefono,
