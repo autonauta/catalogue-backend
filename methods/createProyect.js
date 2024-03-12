@@ -5,7 +5,7 @@ const regex2 =
   /del (\d{2} [A-Z]{3} \d{2}) al (\d{2} [A-Z]{3} )(\d{2})(\d{3})\$(\d+,\d+\.\d+)/; //Filtro para re acomodar las lineas correctamente
 const regex3 =
   /(\d{2} [A-Z]{3} \d{2} al \d{2} [A-Z]{3} \d{2} )(\d+) \$\d+,\d+\.\d+/; //Filtro para obtener únicamente los consumos
-
+const defaultDistance = 40;
 const inversores = [
   { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
   { modelo: "Inversor 6000W", potencia: 6000, strings: 2 },
@@ -91,8 +91,79 @@ const getInversores = async (max) => {
 
   return resultado;
 };
-const getStrings = async (inversores) => {
-  return inversores.reduce((suma, inversor) => suma + inversor.strings, 0);
+const getStrings = async (paneles) => {
+  const panelVoltage = 50;
+  const maxVoltage = 500;
+  const maxPanelsPerString = maxVoltage / panelVoltage;
+  const completeStrings = Math.floor(paneles / maxPanelsPerString);
+  const lastString = paneles - completeStrings * 10;
+  const strings = {
+    completeStrings,
+    lastString,
+    totalStrings: lastString > 0 ? completeStrings + 1 : completeStrings,
+  };
+  return strings;
+};
+const getCables = async (strings) => {
+  let blackCable = strings * defaultDistance;
+  let redCable = blackCable;
+  let greenCable = defaultDistance;
+  const cables = {
+    blackCable,
+    redCable,
+    greenCable,
+  };
+};
+const getSoporteria = async (paneles) => {
+  return paneles / 4;
+};
+const getMaterials = async (strings) => {
+  var diametroTubo = 0;
+  if (strings > 0 && strings <= 3) {
+    diametroTubo = 0.75;
+  } else if (strings > 3 && strings <= 5) {
+    diametroTubo = 1;
+  } else if (strings > 5 && strings <= 7) {
+    diametroTubo = 1.15;
+  }
+  let tubos = Math.ceil(defaultDistance / 3);
+  let condulets = Math.ceil(cantidadTubos / 3);
+  let conectores = Math.ceil(cantidadCondulets * 6);
+  let coples = Math.ceil(cantidadTubos * 2);
+  const materiales = {
+    diametroTubo,
+    tubos,
+    condulets,
+    conectores,
+    coples,
+  };
+  return materiales;
+};
+const getManoObra = async (paneles) => {
+  var precioPorPanel = 0;
+  var precioInversor = 0;
+  if (paneles > 0 && paneles <= 8) {
+    precioPorPanel = 1000;
+    precioInversor = 0;
+  } else if (paneles > 8 && paneles <= 16) {
+    precioPorPanel = 800;
+    precioInversor = 1000;
+  } else if (paneles > 16 && paneles <= 24) {
+    precioPorPanel = 700;
+    precioInversor = 1000;
+  } else if (paneles > 24 && paneles <= 32) {
+    precioPorPanel = 600;
+    precioInversor = 2000;
+  } else if (paneles > 32 && paneles <= 100) {
+    precioPorPanel = 500;
+    precioInversor = 3000;
+  }
+  const materiales = {
+    precioPorPanel,
+    precioInversor,
+    total: precioPorPanel * paneles + precioInversor,
+  };
+  return materiales;
 };
 
 const createProyect = async (consumoMax) => {
@@ -107,12 +178,15 @@ const createProyect = async (consumoMax) => {
   //Calcular el inversor
   let inversoresRequeridos = await getInversores(consumoMax);
   //Calcular cuantos strings
-  let stringsRequeridos = await getStrings(inversoresRequeridos);
+  let stringsRequeridos = await getStrings(panelesRequeridos);
   //Calcular el cable
-  //let cablesRequeridos = await getCables(stringsRequeridos);
+  let cablesRequeridos = await getCables(stringsRequeridos.totalStrings);
   //Calcular soportería
+  let soporteriaRequerida = await getSoporteria(panelesRequeridos);
   //Calcular ductería y materiales
+  let materials = await getMaterials(stringsRequeridos.totalStrings);
   //Calcular mano de obra
+  let manoDeObra = await getManoObra(panelesRequeridos);
   //regresar el objeto del proyecto
   const proyect = {
     consumo: consumoMax,
@@ -120,10 +194,10 @@ const createProyect = async (consumoMax) => {
     paneles: panelesRequeridos,
     inversores: inversoresRequeridos,
     strings: stringsRequeridos,
-    cable: null,
-    soporteria: null,
-    ducteria: null,
-    mo: null,
+    cables: cablesRequeridos,
+    soporteria: soporteriaRequerida,
+    materiales: materials,
+    manoDeObra,
   };
   return proyect;
 };
