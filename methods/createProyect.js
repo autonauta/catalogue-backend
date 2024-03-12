@@ -1,5 +1,3 @@
-const { getPDFText } = require("./methods/getPDFText");
-
 const panelPower = 550;
 const regex =
   /del \d{2} [A-Z]{3} \d{2} al \d{2} [A-Z]{3} \d{2}.*?\$\d+,\d+\.\d+/g; //Filtro para encontrar unicamente las lineas de los consumos
@@ -38,7 +36,7 @@ const getMaxConsumption = async (text) => {
 const getPanelesRequeridos = async (max) => {
   const consumoDiario = (max * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
-  const numPaneles = Math.ceil(potenciaRequerida / 550);
+  const numPaneles = Math.ceil(potenciaRequerida / panelPower);
   return numPaneles;
 };
 const getInversores = async (max) => {
