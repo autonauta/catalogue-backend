@@ -119,7 +119,7 @@ const getSoporteria = async (paneles) => {
   return paneles / 4;
 };
 const getMaterials = async (strings) => {
-  let diametroTubo = 0;
+  let diametroTubo;
   if (strings > 0 && strings <= 3) {
     diametroTubo = 0.75;
   }
