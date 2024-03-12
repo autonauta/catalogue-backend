@@ -79,7 +79,12 @@ const getInversores = async (max) => {
     if (existente) {
       existente.cantidad++;
     } else {
-      acc.push({ modelo: curr.modelo, potencia: curr.potencia, cantidad: 1 });
+      acc.push({
+        modelo: curr.modelo,
+        potencia: curr.potencia,
+        cantidad: 1,
+        strings: curr.strings,
+      });
     }
     return acc;
   }, []);
