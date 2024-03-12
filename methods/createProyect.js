@@ -128,7 +128,7 @@ const getMaterials = async (strings) => {
   }
   let tubos = Math.ceil(defaultDistance / 3);
   let condulets = Math.ceil(tubos / 3);
-  let conectores = Math.ceil(cantidadCondulets * 6);
+  let conectores = Math.ceil(condulets * 6);
   let coples = Math.ceil(tubos * 2);
   const materiales = {
     diametroTubo,
