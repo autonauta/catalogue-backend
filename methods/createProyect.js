@@ -119,12 +119,14 @@ const getSoporteria = async (paneles) => {
   return paneles / 4;
 };
 const getMaterials = async (strings) => {
-  var diametroTubo = 0;
+  let diametroTubo = 0;
   if (strings > 0 && strings <= 3) {
     diametroTubo = 0.75;
-  } else if (strings > 3 && strings <= 5) {
+  }
+  if (strings > 3 && strings <= 5) {
     diametroTubo = 1;
-  } else if (strings > 5 && strings <= 7) {
+  }
+  if (strings > 5 && strings <= 7) {
     diametroTubo = 1.15;
   }
   let tubos = Math.ceil(defaultDistance / 3);
