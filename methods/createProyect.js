@@ -7,10 +7,10 @@ const regex3 =
   /(\d{2} [A-Z]{3} \d{2} al \d{2} [A-Z]{3} \d{2} )(\d+) \$\d+,\d+\.\d+/; //Filtro para obtener únicamente los consumos
 
 const inversores = [
-  { modelo: "Inversor 3000W", potencia: 3000 },
-  { modelo: "Inversor 6000W", potencia: 6000 },
-  { modelo: "Inversor 10000W", potencia: 10000 },
-  { modelo: "Inversor 36000W", potencia: 36000 },
+  { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
+  { modelo: "Inversor 6000W", potencia: 6000, strings: 2 },
+  { modelo: "Inversor 10000W", potencia: 10000, strings: 6 },
+  { modelo: "Inversor 36000W", potencia: 36000, strings: 12 },
 ];
 
 const getMaxConsumption = async (text) => {
@@ -86,32 +86,35 @@ const getInversores = async (max) => {
 
   return resultado;
 };
+const getStrings = async (inversores) => {
+  return inversores.reduce((suma, inversor) => suma + inversor.strings, 0);
+};
 
 const createProyect = async (consumoMax) => {
   //Leer el documento recibido
   //let processedText = await getPDFText("files/pdf", "pdfFile.pdf");
   //Obtener consumo máximo
   //let consumoMaximo = await getMaxConsumption(processedText);
-  console.log("consumo maximo: ", consumoMax);
   const consumoDiario = (consumoMax * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
   //Calcular cuantos paneles se necesitan
   let panelesRequeridos = await getPanelesRequeridos(consumoMax);
-  console.log("Paneles requeridos: ", panelesRequeridos);
   //Calcular el inversor
-  let inversor = await getInversores(consumoMax);
-  console.log("Inversor requerido: ", inversor);
+  let inversoresRequeridos = await getInversores(consumoMax);
   //Calcular cuantos strings
+  let stringsRequeridos = await getStrings(inversor);
   //Calcular el cable
+  //let cablesRequeridos = await getCables(stringsRequeridos);
   //Calcular soportería
   //Calcular ductería y materiales
   //Calcular mano de obra
   //regresar el objeto del proyecto
   const proyect = {
+    consumo: consumoMax,
     potencia: potenciaRequerida,
     paneles: panelesRequeridos,
-    inversores: inversor,
-    strings: null,
+    inversores: inversoresRequeridos,
+    strings: stringsRequeridos,
     cable: null,
     soporteria: null,
     ducteria: null,
