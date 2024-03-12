@@ -8,10 +8,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     // Crea un nombre de archivo único
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
+    cb(null, file.fieldname + path.extname(file.originalname));
   },
 });
 
