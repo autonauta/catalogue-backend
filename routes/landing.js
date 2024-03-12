@@ -6,12 +6,12 @@ const { Customer } = require("../models/Customer");
 const { getConsumption } = require("../methods/getConsumption");
 
 //path
-const filePath = path.join(__dirname, ".", "TEST");
+//const filePath = path.join(__dirname, ".", "TEST");
 
 // Configuración de almacenamiento de Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, filePath); // Define la carpeta de destino de los archivos subidos
+    cb(null, "./TEST"); // Define la carpeta de destino de los archivos subidos
   },
   filename: function (req, file, cb) {
     // Crea un nombre de archivo único
