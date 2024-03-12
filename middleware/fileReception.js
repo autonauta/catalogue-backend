@@ -4,7 +4,7 @@ const multer = require("multer");
 // Configuración de almacenamiento de Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./TEST"); // Define la carpeta de destino de los archivos subidos
+    cb(null, "./files/pdf"); // Define la carpeta de destino de los archivos subidos
   },
   filename: function (req, file, cb) {
     // Crea un nombre de archivo único
