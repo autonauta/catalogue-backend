@@ -11,8 +11,8 @@ const inversores = [
   { modelo: "Inversor 6000W", potencia: 6000 },
   { modelo: "Inversor 10000W", potencia: 10000 },
   { modelo: "Inversor 20000W", potencia: 20000 },
-  { modelo: "Inversor 50000W", potencia: 50000 },
-  { modelo: "Inversor 70000W", potencia: 70000 },
+  { modelo: "Inversor 36000W", potencia: 50000 },
+  { modelo: "Inversor 50000W", potencia: 70000 },
 ];
 
 const getMaxConsumption = async (text) => {
