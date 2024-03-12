@@ -3,10 +3,9 @@ const router = express.Router();
 const path = require("path");
 const { upload } = require("../middleware/fileReception");
 const { Customer } = require("../models/Customer");
-const { getConsumption } = require("../methods/getConsumption");
 
 router.post("/contacto", upload.single("pdfFile"), async (req, res) => {
-  const { nombre, telefono, email, mensaje } = req.body;
+  const { nombre, telefono, email, mensaje, consumo } = req.body;
   if (!nombre || !telefono || !email || !mensaje) {
     res.status(401).send({
       error: true,
@@ -23,19 +22,11 @@ router.post("/contacto", upload.single("pdfFile"), async (req, res) => {
       message: "Ya existe un usuario con ese correo.",
     });
     //Si no existe procede a crearlo
-  } else if (req.file) {
+  } else if (consumo) {
     //Calcula el proyecto
-
-    const processedText = getConsumption("/files/pdf", "044150704119.pdf");
-  }
-  if (req.file) {
-    //Si se recibe un documento pdf primero se guarda
-    console.log("Archivo recibido:", req.file.path);
-  } else {
-    return res.status(401).send({
-      error: true,
-      message: "No se recibió el archivo PDF.",
-    });
+    const proyect = await createProyect(consumo);
+    console.log("Proyecto: ", proyect);
+    //const processedText = getConsumption("/files/pdf", "pdfFile.pdf");
   }
   /* 
   

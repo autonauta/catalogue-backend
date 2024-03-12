@@ -97,6 +97,8 @@ const createProyect = async (consumoMax) => {
   //Obtener consumo máximo
   //let consumoMaximo = await getMaxConsumption(processedText);
   console.log("consumo maximo: ", consumoMax);
+  const consumoDiario = (consumoMax * 1000) / 60;
+  const potenciaRequerida = consumoDiario / 5;
   //Calcular cuantos paneles se necesitan
   let panelesRequeridos = await getPanelesRequeridos(consumoMax);
   console.log("Paneles requeridos: ", panelesRequeridos);
@@ -109,6 +111,17 @@ const createProyect = async (consumoMax) => {
   //Calcular ductería y materiales
   //Calcular mano de obra
   //regresar el objeto del proyecto
+  const proyect = {
+    potencia: potenciaRequerida,
+    paneles: panelesRequeridos,
+    inversores: inversor,
+    strings: null,
+    cable: null,
+    soporteria: null,
+    ducteria: null,
+    mo: null,
+  };
+  return proyect;
 };
 
-createProyect();
+module.exports.createProyect = createProyect;
