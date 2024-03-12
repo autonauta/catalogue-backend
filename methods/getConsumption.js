@@ -7,6 +7,9 @@ const getConsumption = async (folder, file) => {
   const filePath = path.join(__dirname, "..", folder, file);
   let dataBuffer = fs.readFileSync(filePath);
   let processedPDF = await pdf(dataBuffer);
-  console.log("PDF dATA", processedPDF);
+
+  return processedPDF.text;
+  //print in console the result of reading the pdf
+  //console.log("PDF dATA", processedPDF);
 };
 module.exports.getConsumption = getConsumption;
