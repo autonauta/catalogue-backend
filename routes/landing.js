@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const path = require("path");
+const createProyect = require("../methods/createProyect");
 const { upload } = require("../middleware/fileReception");
 const { Customer } = require("../models/Customer");
 
