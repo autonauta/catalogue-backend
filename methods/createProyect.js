@@ -113,6 +113,7 @@ const getCables = async (strings) => {
     redCable,
     greenCable,
   };
+  return cables;
 };
 const getSoporteria = async (paneles) => {
   return paneles / 4;
