@@ -102,7 +102,7 @@ const createProyect = async (consumoMax) => {
   //Calcular el inversor
   let inversoresRequeridos = await getInversores(consumoMax);
   //Calcular cuantos strings
-  let stringsRequeridos = await getStrings(inversor);
+  let stringsRequeridos = await getStrings(inversoresRequeridos);
   //Calcular el cable
   //let cablesRequeridos = await getCables(stringsRequeridos);
   //Calcular soportería
