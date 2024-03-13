@@ -35,11 +35,12 @@ const getPrices = async () => {
 const getPanelPrices = async () => {
   var panelString = "";
   const panels = await Panel.find({});
+  console.log("Panels: ", panels);
   if (!panels) {
     console.log("No panels");
   } else {
     panelString = await createProductString(panels);
-    console.log(panelString);
+    console.log("Panel String: ", panelString);
     const url = config.get("SYSCOM_URL") + "productos/" + panelString;
     const resSyscomPanels = await fetch(url, {
       method: "GET",
@@ -132,8 +133,8 @@ const updatePanels = async (panels) => {
       precio: (panels[i].precios.precio_descuento / 1.0417).toFixed(2),
       lastUpdate: new Date().toLocaleString(),
     };
-    let panelCreated = await Product.findOneAndUpdate(filter, update);
-    panelCreated = await Product.findOne(filter);
+    let panelCreated = await Panel.findOneAndUpdate(filter, update);
+    panelCreated = await Panel.findOne(filter);
     if (!panelCreated.price === panels[i].price) {
       console.log("Product " + panels[i].producto_id + " was not updated");
     } else updateCounter++;
