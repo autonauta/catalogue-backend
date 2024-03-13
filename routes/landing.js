@@ -24,7 +24,7 @@ router.post("/contacto", upload.single("pdfFile"), async (req, res) => {
     //Si no existe procede a crearlo
   } else if (consumo) {
     //Calcula el proyecto
-    const proyect = await createProyect(consumo);
+    const proyect = await createProyect((data = { ...req.body }));
     console.log("Proyecto: ", proyect);
     res.send(proyect);
     //const processedText = getConsumption("/files/pdf", "pdfFile.pdf");

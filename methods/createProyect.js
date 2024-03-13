@@ -167,12 +167,12 @@ const getManoObra = async (paneles) => {
   return materiales;
 };
 
-const createProyect = async (consumoMax) => {
+const createProyect = async (data) => {
   //Leer el documento recibido
   //let processedText = await getPDFText("files/pdf", "pdfFile.pdf");
   //Obtener consumo máximo
   //let consumoMaximo = await getMaxConsumption(processedText);
-  const consumoDiario = (consumoMax * 1000) / 60;
+  const consumoDiario = (data.consumo * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
   //Calcular cuantos paneles se necesitan
   let panelesRequeridos = await getPanelesRequeridos(consumoMax);
@@ -190,7 +190,12 @@ const createProyect = async (consumoMax) => {
   let manoDeObra = await getManoObra(panelesRequeridos);
   //regresar el objeto del proyecto
   const proyect = {
-    consumo: consumoMax,
+    cliente: {
+      nombre: data.nombre,
+      telefono: data.telefono,
+      email: data.email,
+    },
+    consumoMaximo: consumoMax,
     potencia: potenciaRequerida,
     paneles: panelesRequeridos,
     inversores: inversoresRequeridos,
