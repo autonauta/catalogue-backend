@@ -1,6 +1,8 @@
 const config = require("config");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
+const { Panel } = require("../models/Panels");
+
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -10,10 +12,7 @@ const getPrices = async () => {
   if (!products) {
     console.log("No products");
   } else {
-    for (let i = 0; i < products.length; i++) {
-      productsString += products[i].sysId + ",";
-    }
-    productsString = productsString.slice(0, -1);
+    productsString = await createProductString(products);
     console.log(productsString);
     const url = config.get("SYSCOM_URL") + "productos/" + productsString;
     const resSyscomProducts = await fetch(url, {
@@ -32,6 +31,46 @@ const getPrices = async () => {
     }
   }
 };
+
+const getPanelPrices = async () => {
+  var panelString = "";
+  const panels = await Panel.find({});
+  if (!panels) {
+    console.log("No panels");
+  } else {
+    panelString = await createProductString(panels);
+    console.log(panelString);
+    const url = config.get("SYSCOM_URL") + "productos/" + panelString;
+    const resSyscomPanels = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: config.get("SYSCOM_AUTH"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    const syscomPanels = await resSyscomPanels.json();
+    if (syscomPanels.status || !syscomPanels) {
+      console.log("Error de comunicación con syscom: " + syscomPanels.detail);
+    } else {
+      updatePanels(syscomPanels);
+    }
+  }
+};
+
+module.exports = { getPrices, getPanelPrices };
+
+//
+/////////////////////////////////////////     UTILITIES    /////////////////////////////////////////////////////
+//
+
+const createProductString = async (products) => {
+  for (let i = 0; i < products.length; i++) {
+    productsString += products[i].sysId + ",";
+  }
+  productsString = productsString.slice(0, -1);
+  return productsString;
+};
+
 const updateDollarPrice = async () => {
   try {
     const resSyscom = await fetch(
@@ -59,6 +98,7 @@ const updateDollarPrice = async () => {
     console.log(error);
   }
 };
+
 const updateProducts = async (products) => {
   var updateCounter = 0;
   for (let i = 0; i < products.length; i++) {
@@ -83,4 +123,26 @@ const updateProducts = async (products) => {
   );
 };
 
-module.exports = getPrices;
+const updatePanels = async (panels) => {
+  var updateCounter = 0;
+  for (let i = 0; i < panels.length; i++) {
+    let filter = { sysId: panels[i].producto_id };
+    let update = {
+      precio: (panels[i].precios.precio_descuento / 1.0417).toFixed(2),
+      lastUpdate: new Date().toLocaleString(),
+    };
+    let panelCreated = await Product.findOneAndUpdate(filter, update);
+    panelCreated = await Product.findOne(filter);
+    if (!panelCreated.price === panels[i].price) {
+      console.log("Product " + panels[i].producto_id + " was not updated");
+    } else updateCounter++;
+  }
+  console.log(
+    new Date().toLocaleString() +
+      ": " +
+      updateCounter +
+      " panels of " +
+      panels.length +
+      " in total, were succesfully updated."
+  );
+};
