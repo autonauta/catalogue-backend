@@ -64,6 +64,7 @@ module.exports = { getPrices, getPanelPrices };
 //
 
 const createProductString = async (products) => {
+  let productsString = "";
   for (let i = 0; i < products.length; i++) {
     productsString += products[i].sysId + ",";
   }
