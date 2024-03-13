@@ -53,6 +53,6 @@ panelSchema.index({ precio: 1, potencia: -1 });
 
 let crmDB = mongoose.connection.useDb("crm");
 
-const Panel = crmDB.model("Customer", panelSchema);
+const Panel = crmDB.model("Panel", panelSchema);
 
 module.exports.Panel = Panel;
