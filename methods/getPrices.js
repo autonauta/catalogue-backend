@@ -124,6 +124,7 @@ const updateProducts = async (products) => {
 
 const updatePanels = async (panels) => {
   var Counter = 0;
+  console.log("Panels length: ", panels.length);
   for (let i = 0; i < panels.length; i++) {
     let filter = { sysId: panels[i].producto_id };
     let update = {
