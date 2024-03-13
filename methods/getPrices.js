@@ -132,11 +132,12 @@ const updatePanels = async (panels) => {
     };
     console.log("Update: ", update);
     let panelCreated = await Panel.findOneAndUpdate(filter, update);
+    console.log("Panel created 1: ", panelCreated);
     panelCreated = await Panel.findOne(filter);
-    console.log("Panel created: ", panelCreated);
+    console.log("Panel created 2: ", panelCreated);
     if (!panelCreated.precio === panels[i].precio) {
       console.log("Panel " + panels[i].producto_id + " was not updated");
-    } else updateCounter++;
+    } else Counter++;
   }
   console.log(
     new Date().toLocaleString() +
