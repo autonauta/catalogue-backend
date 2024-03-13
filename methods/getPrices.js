@@ -122,13 +122,13 @@ const updateProducts = async (products) => {
   );
 };
 
-const updatePanels = async (panels) => {
+const updatePanels = async (paneles) => {
   var Counter = 0;
-  console.log("Panels length: ", panels.length);
-  for (let i = 0; i < panels.length; i++) {
-    let filter = { sysId: panels[i].producto_id };
+  console.log("Panels length: ", paneles.length);
+  for (let i = 0; i < paneles.length; i++) {
+    let filter = { sysId: paneles[i].producto_id };
     let update = {
-      precio: (panels[i].precios.precio_descuento / 1.0417).toFixed(2),
+      precio: (paneles[i].precios.precio_descuento / 1.0417).toFixed(2),
       lastUpdate: new Date().toLocaleString(),
     };
     console.log("Update: ", update);
@@ -136,8 +136,8 @@ const updatePanels = async (panels) => {
     console.log("Panel created 1: ", panelCreated);
     panelCreated = await Panel.findOne(filter);
     console.log("Panel created 2: ", panelCreated);
-    if (!panelCreated.precio === panels[i].precio) {
-      console.log("Panel " + panels[i].producto_id + " was not updated");
+    if (!panelCreated.precio === paneles[i].precio) {
+      console.log("Panel " + paneles[i].producto_id + " was not updated");
     } else Counter++;
   }
   console.log(
@@ -145,7 +145,7 @@ const updatePanels = async (panels) => {
       ": " +
       Counter +
       " panels of " +
-      panels.length +
+      paneles.length +
       " in total, were succesfully updated."
   );
 };
