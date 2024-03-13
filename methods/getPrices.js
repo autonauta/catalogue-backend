@@ -132,6 +132,7 @@ const updatePanels = async (panels) => {
     };
     let panelCreated = await Panel.findOneAndUpdate(filter, update);
     panelCreated = await Panel.findOne(filter);
+    console.log("Panel created: ", panelCreated);
     if (!panelCreated.precio === panels[i].precio) {
       console.log("Panel " + panels[i].producto_id + " was not updated");
     } else updateCounter++;
