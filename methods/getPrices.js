@@ -179,7 +179,6 @@ const updatePanels = async (paneles) => {
 };
 
 const updateInverters = async (inverters) => {
-  console.log("inverters: ", inverters);
   var Counter = 0;
   for (let i = 0; i < inverters.length; i++) {
     let filter = { sysId: inverters[i].producto_id };
