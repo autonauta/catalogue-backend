@@ -54,7 +54,6 @@ const getPanelPrices = async () => {
     if (syscomPanels.status || !syscomPanels) {
       console.log("Error de comunicación con syscom: " + syscomPanels.detail);
     } else {
-      console.log("Syscom panels from fecth: ", syscomPanels);
       updatePanels(syscomPanels);
     }
   }
@@ -128,7 +127,6 @@ const updateProducts = async (products) => {
 };
 
 const updatePanels = async (panels) => {
-  console.log("Syscom panels received: ", panels);
   var updateCounter = 0;
   for (let i = 0; i < panels.length; i++) {
     let filter = { sysId: panels[i].producto_id };
