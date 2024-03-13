@@ -128,6 +128,7 @@ const updateProducts = async (products) => {
 };
 
 const updatePanels = async (panels) => {
+  console.log("Syscom panels received: ", panels);
   var updateCounter = 0;
   for (let i = 0; i < panels.length; i++) {
     let filter = { sysId: panels[i].producto_id };
@@ -137,7 +138,7 @@ const updatePanels = async (panels) => {
     };
     let panelCreated = await Panel.findOneAndUpdate(filter, update);
     panelCreated = await Panel.findOne(filter);
-    if (!panelCreated.price === panels[i].price) {
+    if (!panelCreated.precio === panels[i].precio) {
       console.log("Panel " + panels[i].producto_id + " was not updated");
     } else updateCounter++;
   }
