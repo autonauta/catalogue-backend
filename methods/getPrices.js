@@ -70,6 +70,7 @@ const createProductString = async (products) => {
     productsString += products[i].sysId + ",";
   }
   productsString = productsString.slice(0, -1);
+  console.log("Product String after slice: ", productsString);
   return productsString;
 };
 
