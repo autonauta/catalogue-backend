@@ -62,9 +62,10 @@ const getInverterPrices = async () => {
   var inverterString = "";
   const inverters = await Inverter.find({});
   if (!inverters) {
-    console.log("No panels");
+    console.log("No inverters");
   } else {
     inverterString = await createProductString(inverters);
+    console.log("inverter string: ", inverterString);
     const url = config.get("SYSCOM_URL") + "productos/" + inverterString;
     const resSyscomInverters = await fetch(url, {
       method: "GET",
@@ -79,6 +80,7 @@ const getInverterPrices = async () => {
         "Error de comunicación con syscom: " + syscomInverters.detail
       );
     } else {
+      console.log("Syscom inverters: ", syscomInverters);
       if (typeof syscomInverters == "object")
         updateInverters([syscomInverters]);
       else updateInverters(syscomInverters);

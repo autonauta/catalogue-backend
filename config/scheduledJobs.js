@@ -13,9 +13,6 @@ const updatePrices = cron.schedule("* * * * *", () => {
   getPrices();
   getPanelPrices();
   getInverterPrices();
-  console.log("<------------------Update Prices-------------------->");
-  console.log("<---------Started the daily prices updater---------->");
-  console.log("<--------------------------------------------------->");
 });
 
 /* const bestProducts = cron.schedule("* * * * *", () => {
