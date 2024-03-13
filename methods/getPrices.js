@@ -80,7 +80,6 @@ const getInverterPrices = async () => {
         "Error de comunicación con syscom: " + syscomInverters.detail
       );
     } else {
-      console.log("Syscom inverters: ", syscomInverters);
       if (typeof syscomInverters == "object")
         updateInverters([syscomInverters]);
       else updateInverters(syscomInverters);
@@ -176,6 +175,7 @@ const updatePanels = async (paneles) => {
 };
 
 const updateInverters = async (inverters) => {
+  console.log("inverters: ", inverters);
   var Counter = 0;
   for (let i = 0; i < inverters.length; i++) {
     let filter = { sysId: inverters[i].producto_id };
