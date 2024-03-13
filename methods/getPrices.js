@@ -123,13 +123,14 @@ const updateProducts = async (products) => {
 };
 
 const updatePanels = async (panels) => {
-  var updateCounter = 0;
+  var Counter = 0;
   for (let i = 0; i < panels.length; i++) {
     let filter = { sysId: panels[i].producto_id };
     let update = {
       precio: (panels[i].precios.precio_descuento / 1.0417).toFixed(2),
       lastUpdate: new Date().toLocaleString(),
     };
+    console.log("Update: ", update);
     let panelCreated = await Panel.findOneAndUpdate(filter, update);
     panelCreated = await Panel.findOne(filter);
     console.log("Panel created: ", panelCreated);
@@ -140,7 +141,7 @@ const updatePanels = async (panels) => {
   console.log(
     new Date().toLocaleString() +
       ": " +
-      updateCounter +
+      Counter +
       " panels of " +
       panels.length +
       " in total, were succesfully updated."
