@@ -136,7 +136,7 @@ const updatePanels = async (panels) => {
     let panelCreated = await Panel.findOneAndUpdate(filter, update);
     panelCreated = await Panel.findOne(filter);
     if (!panelCreated.price === panels[i].price) {
-      console.log("Product " + panels[i].producto_id + " was not updated");
+      console.log("Panel " + panels[i].producto_id + " was not updated");
     } else updateCounter++;
   }
   console.log(
