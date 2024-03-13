@@ -73,7 +73,7 @@ const getInverterPrices = async () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    const syscomInverters = await ressyscomInverters.json();
+    const syscomInverters = await resSyscomInverters.json();
     if (syscomInverters.status || !syscomInverters) {
       console.log(
         "Error de comunicación con syscom: " + syscomInverters.detail
