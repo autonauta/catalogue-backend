@@ -1,13 +1,21 @@
 var cron = require("node-cron");
-const { getPrices, getPanelPrices } = require("../methods/getPrices");
+const {
+  getPrices,
+  getPanelPrices,
+  getInverterPrices,
+} = require("../methods/getPrices");
 
 //Update prices of all products in the data base every 4 hours
-const updatePrices = cron.schedule("0 */1 * * *", () => {
+const updatePrices = cron.schedule("0 */1 * * *", async () => {
   console.log("<------------------Update Prices-------------------->");
   console.log("<---------Started the daily prices updater---------->");
   console.log("<--------------------------------------------------->");
-  getPrices();
-  getPanelPrices();
+  await getPrices();
+  await getPanelPrices();
+  await getInverterPrices();
+  console.log("<------------------Update Prices-------------------->");
+  console.log("<---------Started the daily prices updater---------->");
+  console.log("<--------------------------------------------------->");
 });
 
 /* const bestProducts = cron.schedule("* * * * *", () => {

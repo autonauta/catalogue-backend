@@ -88,7 +88,7 @@ const getInverterPrices = async () => {
   }
 };
 
-module.exports = { getPrices, getPanelPrices };
+module.exports = { getPrices, getPanelPrices, getInverterPrices };
 
 //
 /////////////////////////////////////////     UTILITIES    /////////////////////////////////////////////////////
@@ -186,7 +186,7 @@ const updateInverters = async (inverters) => {
     let inverterCreated = await Inverter.findOneAndUpdate(filter, update);
     inverterCreated = await Inverter.findOne(filter);
     if (!inverterCreated.precio === inverters[i].precio) {
-      console.log("Panel " + inverters[i].producto_id + " was not updated");
+      console.log("Inverter " + inverters[i].producto_id + " was not updated");
     } else Counter++;
   }
   console.log(
@@ -194,7 +194,7 @@ const updateInverters = async (inverters) => {
       ": " +
       Counter +
       " inverters of " +
-      paneles.length +
+      inverters.length +
       " in total, were succesfully updated."
   );
 };
