@@ -61,6 +61,6 @@ inversorSchema.index({ precio: 1, potencia: -1 });
 
 let crmDB = mongoose.connection.useDb("crm");
 
-const Inversor = crmDB.model("Inversor", inversorSchema);
+const Inversor = crmDB.model("Inverter", inversorSchema);
 
-module.exports.Inversor = Inversor;
+module.exports.Inverter = Inverter;

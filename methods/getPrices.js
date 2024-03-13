@@ -2,7 +2,7 @@ const config = require("config");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const { Panel } = require("../models/Panels");
-const { Inversor } = require("../models/Inversors");
+const { Inverter } = require("../models/Inverters");
 
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
@@ -61,7 +61,7 @@ const getPanelPrices = async () => {
 
 const getInverterPrices = async () => {
   var inverterString = "";
-  const inverters = await Inversor.find({});
+  const inverters = await Inverter.find({});
   if (!inverters) {
     console.log("No panels");
   } else {
@@ -183,8 +183,8 @@ const updateInverters = async (inverters) => {
       precio: (inverters[i].precios.precio_descuento / 1.0417).toFixed(2),
       lastUpdate: new Date().toLocaleString(),
     };
-    let inverterCreated = await Inversor.findOneAndUpdate(filter, update);
-    inverterCreated = await Inversor.findOne(filter);
+    let inverterCreated = await Inverter.findOneAndUpdate(filter, update);
+    inverterCreated = await Inverter.findOne(filter);
     if (!inverterCreated.precio === inverters[i].precio) {
       console.log("Panel " + inverters[i].producto_id + " was not updated");
     } else Counter++;
