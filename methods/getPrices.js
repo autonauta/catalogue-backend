@@ -52,7 +52,8 @@ const getPanelPrices = async () => {
     if (syscomPanels.status || !syscomPanels) {
       console.log("Error de comunicación con syscom: " + syscomPanels.detail);
     } else {
-      if (typeof syscomPanels == "object") updatePanels([syscomPanels]);
+      if (typeof syscomPanels === "object" && !Array.isArray(syscomPanels))
+        updatePanels([syscomPanels]);
       else updatePanels(syscomPanels);
     }
   }
@@ -80,7 +81,10 @@ const getInverterPrices = async () => {
         "Error de comunicación con syscom: " + syscomInverters.detail
       );
     } else {
-      if (typeof syscomInverters == "object")
+      if (
+        typeof syscomInverters === "object" &&
+        !Array.isArray(syscomInverters)
+      )
         updateInverters([syscomInverters]);
       else updateInverters(syscomInverters);
     }
