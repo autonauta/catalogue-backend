@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 // const User = require('./userModel');
 // const validator = require('validator');
 
