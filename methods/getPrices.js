@@ -2,6 +2,7 @@ const config = require("config");
 const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const { Panel } = require("../models/Panels");
+const { Inversor } = require("../models/Inversors");
 
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
@@ -54,6 +55,35 @@ const getPanelPrices = async () => {
     } else {
       if (typeof syscomPanels == "object") updatePanels([syscomPanels]);
       else updatePanels(syscomPanels);
+    }
+  }
+};
+
+const getInverterPrices = async () => {
+  var inverterString = "";
+  const inverters = await Inversor.find({});
+  if (!inverters) {
+    console.log("No panels");
+  } else {
+    inverterString = await createProductString(inverters);
+    console.log("Panel String: ", inverterString);
+    const url = config.get("SYSCOM_URL") + "productos/" + inverterString;
+    const resSyscomInverters = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: config.get("SYSCOM_AUTH"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    const syscomInverters = await ressyscomInverters.json();
+    if (syscomInverters.status || !syscomInverters) {
+      console.log(
+        "Error de comunicación con syscom: " + syscomInverters.detail
+      );
+    } else {
+      if (typeof syscomInverters == "object")
+        updateInverters([syscomInverters]);
+      else updateInverters(syscomInverters);
     }
   }
 };
@@ -140,6 +170,30 @@ const updatePanels = async (paneles) => {
       ": " +
       Counter +
       " panels of " +
+      paneles.length +
+      " in total, were succesfully updated."
+  );
+};
+
+const updateInverters = async (inverters) => {
+  var Counter = 0;
+  for (let i = 0; i < inverters.length; i++) {
+    let filter = { sysId: inverters[i].producto_id };
+    let update = {
+      precio: (inverters[i].precios.precio_descuento / 1.0417).toFixed(2),
+      lastUpdate: new Date().toLocaleString(),
+    };
+    let inverterCreated = await Inversor.findOneAndUpdate(filter, update);
+    inverterCreated = await Inversor.findOne(filter);
+    if (!inverterCreated.precio === inverters[i].precio) {
+      console.log("Panel " + inverters[i].producto_id + " was not updated");
+    } else Counter++;
+  }
+  console.log(
+    new Date().toLocaleString() +
+      ": " +
+      Counter +
+      " inverters of " +
       paneles.length +
       " in total, were succesfully updated."
   );
