@@ -54,7 +54,7 @@ const getPanelPrices = async () => {
     if (syscomPanels.status || !syscomPanels) {
       console.log("Error de comunicación con syscom: " + syscomPanels.detail);
     } else {
-      console.log("Syscom panels length: "syscomPanels.length);
+      console.log("Syscom panels length: ", syscomPanels.length);
       updatePanels(syscomPanels);
     }
   }
