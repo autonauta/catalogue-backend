@@ -6,8 +6,8 @@ const updatePrices = cron.schedule("* * * * *", () => {
   console.log("<------------------Update Prices-------------------->");
   console.log("<---------Started the daily prices updater---------->");
   console.log("<--------------------------------------------------->");
-  getPrices();
-  //getPanelPrices();
+  //getPrices();
+  getPanelPrices();
 });
 
 /* const bestProducts = cron.schedule("* * * * *", () => {

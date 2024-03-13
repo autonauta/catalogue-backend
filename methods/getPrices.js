@@ -87,16 +87,12 @@ const updateDollarPrice = async () => {
       }
     );
     const responseSyscom = await resSyscom.json();
-    console.log(
-      "Received from syscom: " + JSON.stringify(responseSyscom, null, 4)
-    );
     let filter = {};
     let update = {
       price: responseSyscom.normal,
       lastUpdate: new Date().toLocaleString(),
     };
     let dollarCreated = await Dollar.findOneAndUpdate(filter, update);
-    console.log(dollarCreated);
   } catch (error) {
     console.log(error);
   }
