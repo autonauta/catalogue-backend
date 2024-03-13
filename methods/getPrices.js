@@ -40,7 +40,6 @@ const getPanelPrices = async () => {
     console.log("No panels");
   } else {
     panelString = await createProductString(panels);
-    console.log("Panel String: ", panelString);
     const url = config.get("SYSCOM_URL") + "productos/" + panelString;
     const resSyscomPanels = await fetch(url, {
       method: "GET",
@@ -66,7 +65,6 @@ const getInverterPrices = async () => {
     console.log("No panels");
   } else {
     inverterString = await createProductString(inverters);
-    console.log("Panel String: ", inverterString);
     const url = config.get("SYSCOM_URL") + "productos/" + inverterString;
     const resSyscomInverters = await fetch(url, {
       method: "GET",
