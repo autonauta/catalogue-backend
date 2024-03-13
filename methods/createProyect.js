@@ -1,3 +1,13 @@
+const {
+  getPanelesRequeridos,
+  getInversores,
+  getStrings,
+  getSoporteria,
+  getMaterials,
+  getCables,
+  getManoObra,
+} = require("../methods/proyectCalculations");
+
 const createProyect = async (data) => {
   //Leer el documento recibido
   //let processedText = await getPDFText("files/pdf", "pdfFile.pdf");
