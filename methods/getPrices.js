@@ -42,6 +42,7 @@ const getPanelPrices = async () => {
     panelString = await createProductString(panels);
     console.log("Panel String: ", panelString);
     const url = config.get("SYSCOM_URL") + "productos/" + panelString;
+    console.log("URL: ", url);
     const resSyscomPanels = await fetch(url, {
       method: "GET",
       headers: {
@@ -53,6 +54,7 @@ const getPanelPrices = async () => {
     if (syscomPanels.status || !syscomPanels) {
       console.log("Error de comunicación con syscom: " + syscomPanels.detail);
     } else {
+      console.log("Syscom panels from fecth: ", syscomPanels);
       updatePanels(syscomPanels);
     }
   }
@@ -70,7 +72,6 @@ const createProductString = async (products) => {
     productsString += products[i].sysId + ",";
   }
   productsString = productsString.slice(0, -1);
-  console.log("Product String after slice: ", productsString);
   return productsString;
 };
 
