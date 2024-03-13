@@ -175,9 +175,9 @@ const createProyect = async (data) => {
   const consumoDiario = (data.consumo * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
   //Calcular cuantos paneles se necesitan
-  let panelesRequeridos = await getPanelesRequeridos(consumoMax);
+  let panelesRequeridos = await getPanelesRequeridos(data.consumo);
   //Calcular el inversor
-  let inversoresRequeridos = await getInversores(consumoMax);
+  let inversoresRequeridos = await getInversores(data.consumo);
   //Calcular cuantos strings
   let stringsRequeridos = await getStrings(panelesRequeridos);
   //Calcular el cable
