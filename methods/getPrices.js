@@ -94,6 +94,7 @@ const getInverterPrices = async () => {
 const getFramePrices = async () => {
   var frameString = "";
   const frames = await Frame.find({});
+  console.log("Frames: ", frames);
   if (!frames) {
     console.log("No frames");
   } else {
