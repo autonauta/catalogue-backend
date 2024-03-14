@@ -135,7 +135,7 @@ const createProductString = async (products) => {
     productsString += products[i].sysId + ",";
     console.log("product: ", products[i]);
     console.log("product2: ", products[i].sysId);
-    console.log("product2: ", Object.keys(products));
+    console.log("product2: ", Object.keys(products[i]));
   }
   productsString = productsString.slice(0, -1);
   console.log("Product string: ", productsString);
