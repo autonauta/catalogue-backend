@@ -8,7 +8,7 @@ const frameSchema = new mongoose.Schema(
       type: String,
       required: [true, "El nombre es obligatorio."],
     },
-    syId: {
+    sysId: {
       type: String,
       required: [true, "El El id de syscom es obligatorio."],
     },
