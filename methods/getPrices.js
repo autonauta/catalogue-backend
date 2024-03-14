@@ -15,7 +15,6 @@ const getPrices = async () => {
     console.log("No products");
   } else {
     productsString = await createProductString(products);
-    console.log(productsString);
     const url = config.get("SYSCOM_URL") + "productos/" + productsString;
     const resSyscomProducts = await fetch(url, {
       method: "GET",
@@ -130,7 +129,6 @@ module.exports = {
 //
 
 const createProductString = async (products) => {
-  console.log("products: ", products);
   let productsString = "";
   for (let i = 0; i < products.length; i++) {
     productsString += products[i].sysId + ",";
