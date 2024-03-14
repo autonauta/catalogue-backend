@@ -132,7 +132,7 @@ const createProductString = async (products) => {
   var productsString = "";
   console.log("Products1: ", products);
   for (let i = 0; i < products.length; i++) {
-    productsString += (await products[i].marca) + ",";
+    productsString += products[i].sysId + ",";
     console.log("product: ", products[i]);
   }
   productsString = productsString.slice(0, -1);
