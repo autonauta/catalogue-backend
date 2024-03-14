@@ -130,9 +130,9 @@ module.exports = {
 
 const createProductString = async (products) => {
   var productsString = "";
-  console.log("Products: ", products);
+  console.log("Products1: ", products);
   for (let i = 0; i < products.length; i++) {
-    productsString += products[i].sysId + ",";
+    productsString += products[i].nombre + ",";
     console.log("products: ", productsString);
   }
   productsString = productsString.slice(0, -1);
