@@ -94,7 +94,6 @@ const getInverterPrices = async () => {
 const getFramePrices = async () => {
   var frameString = "";
   const frames = await Frame.find({});
-  console.log("Frames: ", frames);
   if (!frames) {
     console.log("No frames");
   } else {
@@ -131,6 +130,7 @@ module.exports = {
 //
 
 const createProductString = async (products) => {
+  console.log("products: ", products);
   let productsString = "";
   for (let i = 0; i < products.length; i++) {
     productsString += products[i].sysId + ",";
