@@ -129,7 +129,7 @@ module.exports = {
 //
 
 const createProductString = async (products) => {
-  let productsString = "";
+  var productsString = "";
   console.log("Products: ", products);
   for (let i = 0; i < products.length; i++) {
     productsString += products[i].sysId + ",";
