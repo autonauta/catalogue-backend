@@ -128,14 +128,14 @@ module.exports = {
 /////////////////////////////////////////     UTILITIES    /////////////////////////////////////////////////////
 //
 
-const createProductString = async (products) => {
+const createProductString = (products) => {
   var productsString = "";
   console.log("Products1: ", products);
   for (let i = 0; i < products.length; i++) {
     productsString += products[i].sysId + ",";
     console.log("product: ", products[i]);
     console.log("product2: ", products[i].sysId);
-    console.log("product2: ", Object.keys(products[i]));
+    console.log("product3: ", Object.keys(products[i]));
   }
   productsString = productsString.slice(0, -1);
   console.log("Product string: ", productsString);
