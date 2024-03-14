@@ -13,8 +13,8 @@ const updatePrices = cron.schedule("* * * * *", () => {
   console.log("<--------------------------------------------------->");
   //getPrices();
   //getPanelPrices();
-  getInverterPrices();
-  //getFramePrices();
+  //getInverterPrices();
+  getFramePrices();
 });
 
 /* const bestProducts = cron.schedule("* * * * *", () => {

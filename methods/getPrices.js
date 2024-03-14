@@ -131,12 +131,18 @@ module.exports = {
 const createProductString = (products) => {
   var productsString = "";
   console.log("Products1: ", products);
-  for (let i = 0; i < products.length; i++) {
+  /* for (let i = 0; i < products.length; i++) {
     productsString += products[i].sysId + ",";
     console.log("product: ", products[i]);
     console.log("product2: ", products[i].sysId);
     console.log("product3: ", Object.keys(products[i]));
-  }
+  } */
+  products.forEach((product) => {
+    productsString += product.sysId + ",";
+    console.log("product: ", product);
+    console.log("product2: ", product.sysId);
+    console.log("product3: ", Object.keys(product));
+  });
   productsString = productsString.slice(0, -1);
   console.log("Product string: ", productsString);
   return productsString;
