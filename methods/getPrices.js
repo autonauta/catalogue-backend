@@ -3,6 +3,7 @@ const { Product } = require("../models/Product");
 const { Dollar } = require("../models/Dollar");
 const { Panel } = require("../models/Panels");
 const { Inverter } = require("../models/Inverters");
+const { Frame } = require("../models/Frame");
 
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
@@ -90,8 +91,39 @@ const getInverterPrices = async () => {
     }
   }
 };
+const getFramePrices = async () => {
+  var frameString = "";
+  const frames = await Frame.find({});
+  if (!frames) {
+    console.log("No frames");
+  } else {
+    frameString = await createProductString(frames);
+    console.log("frames string: ", frameString);
+    const url = config.get("SYSCOM_URL") + "productos/" + frameString;
+    const resSyscomFrames = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: config.get("SYSCOM_AUTH"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    const syscomFrames = await resSyscomFrames.json();
+    if (syscomFrames.status || !syscomFrames) {
+      console.log("Error de comunicación con syscom: " + syscomFrames.detail);
+    } else {
+      if (typeof syscomFrames === "object" && !Array.isArray(syscomFrames))
+        updateFrames([syscomFrames]);
+      else updateFrames(syscomFrames);
+    }
+  }
+};
 
-module.exports = { getPrices, getPanelPrices, getInverterPrices };
+module.exports = {
+  getPrices,
+  getPanelPrices,
+  getInverterPrices,
+  getFramePrices,
+};
 
 //
 /////////////////////////////////////////     UTILITIES    /////////////////////////////////////////////////////
@@ -198,6 +230,30 @@ const updateInverters = async (inverters) => {
       Counter +
       " inverters of " +
       inverters.length +
+      " in total, were succesfully updated."
+  );
+};
+
+const updateFrames = async (frames) => {
+  var Counter = 0;
+  for (let i = 0; i < frames.length; i++) {
+    let filter = { sysId: frames[i].producto_id };
+    let update = {
+      precio: (frames[i].precios.precio_descuento / 1.0417).toFixed(2),
+      lastUpdate: new Date().toLocaleString(),
+    };
+    let frameCreated = await Frame.findOneAndUpdate(filter, update);
+    frameCreated = await Frame.findOne(filter);
+    if (!frameCreated.precio === frames[i].precio) {
+      console.log("Frame " + frames[i].producto_id + " was not updated");
+    } else Counter++;
+  }
+  console.log(
+    new Date().toLocaleString() +
+      ": " +
+      Counter +
+      " frames of " +
+      frames.length +
       " in total, were succesfully updated."
   );
 };

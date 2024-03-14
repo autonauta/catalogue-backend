@@ -3,6 +3,7 @@ const {
   getPrices,
   getPanelPrices,
   getInverterPrices,
+  getFramePrices,
 } = require("../methods/getPrices");
 
 //Update prices of all products in the data base every 4 hours
@@ -13,6 +14,7 @@ const updatePrices = cron.schedule("0 */1 * * *", () => {
   getPrices();
   getPanelPrices();
   getInverterPrices();
+  getFramePrices();
 });
 
 /* const bestProducts = cron.schedule("* * * * *", () => {
