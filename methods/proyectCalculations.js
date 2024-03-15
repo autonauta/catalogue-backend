@@ -102,7 +102,7 @@ const getInversores = async (max) => {
 
   // Agrupa y cuenta los inversores seleccionados
   const resultado = seleccionados.reduce((acc, curr) => {
-    const existente = acc.find((item) => item.nombre === curr.nombre);
+    const existente = acc.find((item) => item.modelo === curr.nombre);
     if (existente) {
       existente.cantidad++;
     } else {
