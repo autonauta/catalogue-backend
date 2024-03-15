@@ -34,12 +34,14 @@ const getPanelesRequeridos = async (max) => {
   };
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
+  console.log("Dollar: ", dollarUpdate);
   if (dollarUpdate) dollarPrice = dollarUpdate.price;
   else dollarPrice = 17.1;
   const consumoDiario = (max * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
   const numPaneles = Math.ceil(potenciaRequerida / panelPower);
   let panel = await Panel.find({});
+  console.log("panel: ", panel);
   if (!panel) panel = defaultPanel;
   console.log("panel.precio: ", panel.precio);
   console.log("dollarPrice: ", dollarPrice);
