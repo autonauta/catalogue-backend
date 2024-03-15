@@ -22,7 +22,7 @@ const createProyect = async (data) => {
   //Calcular el inversor
   let inversoresRequeridos = await getInversores(data.consumo);
   //Calcular cuantos strings
-  let stringsRequeridos = await getStrings(panelesRequeridos.cantidad);
+  let stringsRequeridos = await getStrings(panelesRequeridos);
   //Calcular el cable
   let cablesRequeridos = await getCables(stringsRequeridos.totalStrings);
   //Calcular soportería
