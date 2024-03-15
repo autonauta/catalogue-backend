@@ -35,7 +35,7 @@ const getPanelesRequeridos = async (max) => {
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
   console.log("Dollar: ", dollarUpdate);
-  if (dollarUpdate) dollarPrice = dollarUpdate.price;
+  if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
   else dollarPrice = 17.1;
   const consumoDiario = (max * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
@@ -59,7 +59,7 @@ const getPanelesRequeridos = async (max) => {
 const getInversores = async (max) => {
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
-  if (dollarUpdate) dollarPrice = dollarUpdate.price;
+  if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
   else dollarPrice = 17.1;
   const consumoDiario = (max * 1000) / 60;
   const potenciaRequeridaEnWatts = consumoDiario / 5;
@@ -155,7 +155,7 @@ const getCables = async (strings) => {
 const getSoporteria = async (paneles) => {
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
-  if (dollarUpdate) dollarPrice = dollarUpdate.price;
+  if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
   else dollarPrice = 17.1;
   const frame = await Frame.find({});
   if (!frame)
