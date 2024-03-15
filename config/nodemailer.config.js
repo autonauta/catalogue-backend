@@ -90,7 +90,7 @@ function sendTrackingEmail(
         street,
         numExt,
         numInt,
-        phone
+        phone,
       },
     },
     (err, inf) => {

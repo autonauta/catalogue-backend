@@ -1,3 +1,5 @@
+const puppeteer = require("puppeteer");
+const nodemailer = require("nodemailer");
 const {
   getPanelesRequeridos,
   getInversores,
@@ -7,7 +9,7 @@ const {
   getCables,
   getManoObra,
   calculateProjectPrice,
-} = require("../methods/proyectCalculations");
+} = require("./proyectCalculations");
 
 const createProyect = async (data) => {
   //Leer el documento recibido

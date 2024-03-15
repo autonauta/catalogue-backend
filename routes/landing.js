@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { createProyect } = require("../methods/createProyect");
+const { createProject } = require("../methods/createProject");
 const { upload } = require("../middleware/fileReception");
 const { Customer } = require("../models/Customer");
+const { createPDF } = require("../methods/createPDF");
 
-router.post("/contacto", upload.single("pdfFile"), async (req, res) => {
+router.post("/contacto", async (req, res) => {
   const { nombre, telefono, email, mensaje, consumo } = req.body;
   if (!nombre || !telefono || !email || !mensaje) {
     res.status(401).send({
@@ -24,9 +25,13 @@ router.post("/contacto", upload.single("pdfFile"), async (req, res) => {
     //Si no existe procede a crearlo
   } else if (consumo) {
     //Calcula el proyecto
-    const proyect = await createProyect((data = { ...req.body }));
-    console.log("Proyecto: ", proyect);
-    res.send(proyect);
+    const project = await createProject((data = { ...req.body }));
+    console.log("Proyecto: ", project);
+    //Crear PDF
+    await createPDF(project);
+    //Enviar por correo electrónico
+
+    //res.send(proyect);
     //const processedText = getConsumption("/files/pdf", "pdfFile.pdf");
   }
   /* 
