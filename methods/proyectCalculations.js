@@ -272,15 +272,26 @@ const getManoObra = async (paneles) => {
 const calculateProjectPrice = async (objeto) => {
   let total = 0;
 
-  function sumar(obj) {
+  function sumar(obj, esInversor = false) {
     for (const key of Object.keys(obj)) {
       const valor = obj[key];
 
-      // Comprueba si es un objeto para explorar sus propiedades recursivamente
+      // Si el valor es un objeto y no es null, se revisa si estamos en el array 'inversores'
       if (typeof valor === "object" && valor !== null) {
-        sumar(valor);
-      } else if (key.includes("precio")) {
-        // Clave contiene 'precio'
+        // Si es un array, revisamos si estamos en 'inversores' por el nombre de la clave
+        if (Array.isArray(valor) && key === "inversores") {
+          // Pasamos true para indicar que estamos procesando 'inversores'
+          valor.forEach((item) => sumar(item, true));
+        } else {
+          // Continuamos la recursión normalmente para otros objetos o arrays
+          sumar(valor);
+        }
+      } else if (esInversor && key === "precio") {
+        // Si estamos en un inversor, multiplicamos el precio por la cantidad
+        const cantidad = obj.cantidad || 1; // Aseguramos que haya una cantidad mínima de 1
+        total += valor * cantidad;
+      } else if (!esInversor && key.includes("precio")) {
+        // Sumamos si la clave es un precio y no estamos en un inversor
         total += valor;
       }
     }
