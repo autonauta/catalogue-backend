@@ -167,7 +167,12 @@ const getSoporteria = async (paneles) => {
     return {
       cantidad: Math.ceil(paneles / 4),
       precio: Number(
-        (frame[0].precio * dollarPrice * (1 + frameMarkup / 100)).toFixed(2)
+        (
+          Math.ceil(paneles / 4) *
+          frame[0].precio *
+          dollarPrice *
+          (1 + frameMarkup / 100)
+        ).toFixed(2)
       ),
     };
 };
