@@ -161,13 +161,13 @@ const getSoporteria = async (paneles) => {
   if (!frame)
     return {
       cantidad: Math.ceil(paneles / 4),
-      precio: (150 * dollarPrice * (1 + frameMarkup / 100)).toFixed(2),
+      precio: Number((150 * dollarPrice * (1 + frameMarkup / 100)).toFixed(2)),
     };
   else
     return {
       cantidad: Math.ceil(paneles / 4),
-      precio: (frame[0].precio * dollarPrice * (1 + frameMarkup / 100)).toFixed(
-        2
+      precio: Number(
+        (frame[0].precio * dollarPrice * (1 + frameMarkup / 100)).toFixed(2)
       ),
     };
 };
@@ -221,7 +221,9 @@ const getMaterials = async (strings) => {
   };
   let conectores = {
     cantidad: Math.ceil(condulets.cantidad * 6),
-    precio: (Math.ceil(condulets.cantidad * 6) * precioConector).toFixed(2),
+    precio: Number(
+      (Math.ceil(condulets.cantidad * 6) * precioConector).toFixed(2)
+    ),
   };
   let coples = {
     cantidad: Math.ceil(tubos.cantidad * 2),
@@ -266,6 +268,11 @@ const getManoObra = async (paneles) => {
 const calculateProjectPrice = async (project) => {
   console.log("Project inside price: ", project);
   //Precio de inversores
+  let precioInversores =
+  for (let i = 0; i < project.inversores.length; i++) {
+    const element = project.inversores[i];
+
+  }
   //Precio de paneles
   //Precio de soporteria
   //Precio materiales
