@@ -51,7 +51,8 @@ const createProyect = async (data) => {
     precioProyecto,
   };
   const projectPrice = await calculateProjectPrice(project);
-  project = { ...project, precioProyecto: projectPrice };
+  project = { ...project, precioProyecto: {subtotal: projectPrice, iva: (projectPrice*.16).toFixed(2), total: projectPrice + (projectPrice*.16).toFixed(2)}}
+   };
   return project;
 };
 
