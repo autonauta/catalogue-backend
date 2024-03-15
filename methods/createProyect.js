@@ -6,6 +6,7 @@ const {
   getMaterials,
   getCables,
   getManoObra,
+  calculateProjectPrice,
 } = require("../methods/proyectCalculations");
 
 const createProyect = async (data) => {
@@ -13,6 +14,7 @@ const createProyect = async (data) => {
   //let processedText = await getPDFText("files/pdf", "pdfFile.pdf");
   //Obtener consumo máximo
   //let consumoMaximo = await getMaxConsumption(processedText);
+  let precioProyecto = 0;
   const consumoDiario = (data.consumo * 1000) / 60;
   const potenciaRequerida = Math.ceil(consumoDiario / 5);
   //Calcular cuantos paneles se necesitan
@@ -30,7 +32,8 @@ const createProyect = async (data) => {
   //Calcular mano de obra
   let manoDeObra = await getManoObra(panelesRequeridos);
   //regresar el objeto del proyecto
-  const proyect = {
+
+  const project = {
     cliente: {
       nombre: data.nombre,
       telefono: data.telefono,
@@ -45,8 +48,11 @@ const createProyect = async (data) => {
     soporteria: Math.ceil(soporteriaRequerida),
     materiales: materials,
     manoDeObra,
+    precioProyecto,
   };
-  return proyect;
+  //const projectPrice = await calculateProjectPrice(project);
+  project = { ...projectPrice, precioProyecto: projectPrice };
+  return project;
 };
 
 module.exports.createProyect = createProyect;

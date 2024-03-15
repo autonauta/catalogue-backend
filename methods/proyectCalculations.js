@@ -1,12 +1,22 @@
+const { Panel } = require("../models/Panels");
+const { Inverter } = require("../models/Inverters");
+const { Frame } = require("../models/Frames");
+const { Panel } = require("../models/Panels");
+const { Dollar } = require("../models/Dollar");
+
 /* const regex =
   /del \d{2} [A-Z]{3} \d{2} al \d{2} [A-Z]{3} \d{2}.*?\$\d+,\d+\.\d+/g; //Filtro para encontrar unicamente las lineas de los consumos
 const regex2 =
   /del (\d{2} [A-Z]{3} \d{2}) al (\d{2} [A-Z]{3} )(\d{2})(\d{3})\$(\d+,\d+\.\d+)/; //Filtro para re acomodar las lineas correctamente
 const regex3 =
   /(\d{2} [A-Z]{3} \d{2} al \d{2} [A-Z]{3} \d{2} )(\d+) \$\d+,\d+\.\d+/; //Filtro para obtener únicamente los consumos */
+
+const panelMarkup = 50;
+const inverterMarkup = 35;
+const frameMarkup = 25;
 const panelPower = 550;
 const defaultDistance = 40;
-const inversores = [
+const defaultInverters = [
   { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
   { modelo: "Inversor 6000W", potencia: 6000, strings: 2 },
   { modelo: "Inversor 10000W", potencia: 10000, strings: 6 },
@@ -14,14 +24,40 @@ const inversores = [
 ];
 
 const getPanelesRequeridos = async (max) => {
+  const defaultPanel = {
+    nombre: "ETSOLAR 550W",
+    marca: "ETSOLAR",
+    potencia: 550,
+    voltaje: 50,
+    precio: 85,
+  };
+  const dollarUpdate = await Dollar.find({});
+  if (dollarUpdate) dollarPrice = dollarUpdate.price;
+  else dollarPrice = 17.1;
   const consumoDiario = (max * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
   const numPaneles = Math.ceil(potenciaRequerida / panelPower);
-  return numPaneles;
+  let panel = await Panel.find({});
+  if (!panel) panel = defaultPanel;
+
+  return {
+    numPaneles,
+    precio: (
+      numPaneles *
+      panel.precio *
+      dollarPrice *
+      (1 + panelMarkup / 100)
+    ).toFixed(2),
+  };
 };
 const getInversores = async (max) => {
+  const dollarUpdate = await Dollar.find({});
+  if (dollarUpdate) dollarPrice = dollarUpdate.price;
+  else dollarPrice = 17.1;
   const consumoDiario = (max * 1000) / 60;
   const potenciaRequeridaEnWatts = consumoDiario / 5;
+  const inversores = await Inverter.find({});
+  if (!inversores) inversores = defaultInverters;
   inversores.sort((a, b) => a.potencia - b.potencia); // Ordena los inversores por potencia de forma ascendente
 
   let potenciaRestante = potenciaRequeridaEnWatts;
@@ -57,15 +93,20 @@ const getInversores = async (max) => {
 
   // Agrupa y cuenta los inversores seleccionados
   const resultado = seleccionados.reduce((acc, curr) => {
-    const existente = acc.find((item) => item.modelo === curr.modelo);
+    const existente = acc.find((item) => item.nombre === curr.nombre);
     if (existente) {
       existente.cantidad++;
     } else {
       acc.push({
-        modelo: curr.modelo,
+        modelo: curr.nombre,
         potencia: curr.potencia,
         cantidad: 1,
-        strings: curr.strings,
+        strings: curr.cadenas,
+        precio: (
+          curr.precio *
+          dollarPrice *
+          (1 + inverterMarkup / 100)
+        ).toFixed(2),
       });
     }
     return acc;
@@ -87,9 +128,16 @@ const getStrings = async (paneles) => {
   return strings;
 };
 const getCables = async (strings) => {
-  let blackCable = strings * defaultDistance;
+  const defaultCablePrice = 17;
+  let blackCable = {
+    cantidad: strings * defaultDistance,
+    precio: strings * defaultDistance * defaultCablePrice,
+  };
   let redCable = blackCable;
-  let greenCable = defaultDistance;
+  let greenCable = {
+    cantidad: defaultDistance,
+    precio: defaultDistance * defaultCablePrice,
+  };
   const cables = {
     blackCable,
     redCable,
@@ -98,7 +146,19 @@ const getCables = async (strings) => {
   return cables;
 };
 const getSoporteria = async (paneles) => {
-  return paneles / 4;
+  const dollarUpdate = await Dollar.find({});
+  if (dollarUpdate) dollarPrice = dollarUpdate.price;
+  else dollarPrice = 17.1;
+  const frame = await Frame.find({});
+  if (!frame)
+    return {
+      cantidad: Math.ceil(paneles / 4),
+      precio: (150 * dollarPrice * (1 + frameMarkup / 100)).toFixed(2),
+    };
+  return {
+    cantidad: Math.ceil(paneles / 4),
+    precio: frame.precio * dollarPrice * (1 + frameMarkup / 100),
+  };
 };
 const getMaterials = async (strings) => {
   var diametroTubo;
@@ -108,11 +168,54 @@ const getMaterials = async (strings) => {
 
   if (strings > 5 && strings <= 7) diametroTubo = 1.15;
   if (strings > 7) diametroTubo = 1.5;
-
-  let tubos = Math.ceil(defaultDistance / 3);
-  let condulets = Math.ceil(tubos / 3);
-  let conectores = Math.ceil(condulets * 6);
-  let coples = Math.ceil(tubos * 2);
+  let precioTubo =
+    diametroTubo == 0.75
+      ? 127
+      : diametroTubo == 1
+      ? 160
+      : diametroTubo == 1.15
+      ? 190
+      : 220;
+  let precioCondulet =
+    diametroTubo == 0.75
+      ? 30
+      : diametroTubo == 1
+      ? 45
+      : diametroTubo == 1.15
+      ? 60
+      : 70;
+  let precioConector =
+    diametroTubo == 0.75
+      ? 7
+      : diametroTubo == 1
+      ? 12
+      : diametroTubo == 1.15
+      ? 18
+      : 24;
+  let precioCople =
+    diametroTubo == 0.75
+      ? 7
+      : diametroTubo == 1
+      ? 12
+      : diametroTubo == 1.15
+      ? 18
+      : 24;
+  let tubos = {
+    cantidad: Math.ceil(defaultDistance / 3),
+    precio: (Math.ceil(defaultDistance / 3) * precioTubo).toFixed(2),
+  };
+  let condulets = {
+    cantidad: Math.ceil(tubos / 3),
+    precio: (Math.ceil(tubos / 3) * precioCondulet).toFixed(2),
+  };
+  let conectores = {
+    cantidad: Math.ceil(condulets * 6),
+    precio: (Math.ceil(condulets * 6) * precioConector).toFixed(2),
+  };
+  let coples = {
+    cantidad: Math.ceil(tubos * 2),
+    precio: (Math.ceil(tubos * 2) * precioCople).toFixed(2),
+  };
   const materiales = {
     diametroTubo,
     tubos,
@@ -144,9 +247,19 @@ const getManoObra = async (paneles) => {
   const materiales = {
     precioPorPanel,
     precioInversor,
-    total: precioPorPanel * paneles + precioInversor,
+    total: (precioPorPanel * paneles + precioInversor) * (1 + markupMO / 100),
   };
   return materiales;
+};
+
+const calculateProjectPrice = async (project) => {
+  console.log("Project inside price: ", project);
+  //Precio de inversores
+  //Precio de paneles
+  //Precio de soporteria
+  //Precio materiales
+  //Sumar mano de obra
+  //Agregar IVA
 };
 
 module.exports = {
@@ -157,7 +270,9 @@ module.exports = {
   getSoporteria,
   getMaterials,
   getManoObra,
+  calculateProjectPrice,
 };
+
 //Code to read PDF BUT NOT IN USE
 /* const getMaxConsumption = async (text) => {
   const consumosLine = await text.match(regex);
