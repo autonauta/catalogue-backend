@@ -166,7 +166,9 @@ const getSoporteria = async (paneles) => {
   else
     return {
       cantidad: Math.ceil(paneles / 4),
-      precio: frame[0].precio * dollarPrice * (1 + frameMarkup / 100),
+      precio: (frame[0].precio * dollarPrice * (1 + frameMarkup / 100)).toFixed(
+        2
+      ),
     };
 };
 const getMaterials = async (strings) => {
@@ -211,19 +213,19 @@ const getMaterials = async (strings) => {
       : 24;
   let tubos = {
     cantidad: Math.ceil(defaultDistance / 3),
-    precio: (Math.ceil(defaultDistance / 3) * precioTubo).toFixed(2),
+    precio: Number((Math.ceil(defaultDistance / 3) * precioTubo).toFixed(2)),
   };
   let condulets = {
-    cantidad: Math.ceil(tubos / 3),
-    precio: (Math.ceil(tubos / 3) * precioCondulet).toFixed(2),
+    cantidad: Math.ceil(tubos.cantidad / 3),
+    precio: Number((Math.ceil(tubos.cantidad / 3) * precioCondulet).toFixed(2)),
   };
   let conectores = {
-    cantidad: Math.ceil(condulets * 6),
-    precio: (Math.ceil(condulets * 6) * precioConector).toFixed(2),
+    cantidad: Math.ceil(condulets.cantidad * 6),
+    precio: (Math.ceil(condulets.cantidad * 6) * precioConector).toFixed(2),
   };
   let coples = {
-    cantidad: Math.ceil(tubos * 2),
-    precio: (Math.ceil(tubos * 2) * precioCople).toFixed(2),
+    cantidad: Math.ceil(tubos.cantidad * 2),
+    precio: Number((Math.ceil(tubos.cantidad * 2) * precioCople).toFixed(2)),
   };
   const materiales = {
     diametroTubo,
