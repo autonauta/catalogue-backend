@@ -1,7 +1,6 @@
 const { Panel } = require("../models/Panels");
 const { Inverter } = require("../models/Inverters");
 const { Frame } = require("../models/Frames");
-const { Panel } = require("../models/Panels");
 const { Dollar } = require("../models/Dollar");
 
 /* const regex =
