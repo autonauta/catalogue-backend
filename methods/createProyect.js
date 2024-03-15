@@ -26,7 +26,7 @@ const createProyect = async (data) => {
   //Calcular el cable
   let cablesRequeridos = await getCables(stringsRequeridos.totalStrings);
   //Calcular soportería
-  let soporteriaRequerida = await getSoporteria(panelesRequeridos);
+  let soporteriaRequerida = await getSoporteria(panelesRequeridos.numPaneles);
   //Calcular ductería y materiales
   let materials = await getMaterials(stringsRequeridos.totalStrings);
   //Calcular mano de obra
