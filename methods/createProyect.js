@@ -33,7 +33,7 @@ const createProyect = async (data) => {
   let manoDeObra = await getManoObra(panelesRequeridos.numPaneles);
   //regresar el objeto del proyecto
 
-  const project = {
+  let project = {
     cliente: {
       nombre: data.nombre,
       telefono: data.telefono,
