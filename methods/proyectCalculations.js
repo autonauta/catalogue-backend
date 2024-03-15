@@ -41,7 +41,9 @@ const getPanelesRequeridos = async (max) => {
   const numPaneles = Math.ceil(potenciaRequerida / panelPower);
   let panel = await Panel.find({});
   if (!panel) panel = defaultPanel;
-
+  console.log("panel.precio: ", panel.precio);
+  console.log("dollarPrice: ", dollarPrice);
+  console.log("panelMArkup: ", panelMarkup);
   return {
     numPaneles,
     precio: (
