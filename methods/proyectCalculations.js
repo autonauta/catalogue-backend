@@ -43,14 +43,14 @@ const getPanelesRequeridos = async (max) => {
   let panel = await Panel.find({});
   console.log("panel: ", panel);
   if (!panel) panel = defaultPanel;
-  console.log("panel.precio: ", panel.precio);
+  console.log("panel.precio: ", panel[0].precio);
   console.log("dollarPrice: ", dollarPrice);
   console.log("panelMArkup: ", panelMarkup);
   return {
     numPaneles,
     precio: (
       numPaneles *
-      panel.precio *
+      panel[0].precio *
       dollarPrice *
       (1 + panelMarkup / 100)
     ).toFixed(2),
