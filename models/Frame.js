@@ -37,8 +37,6 @@ const frameSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-frameSchema.index({ precio: 1, potencia: -1 });
-
 let crmDB = mongoose.connection.useDb("crm");
 
 const Frame = crmDB.model("Frame", frameSchema);

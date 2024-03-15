@@ -155,7 +155,6 @@ const getCables = async (strings) => {
 };
 const getSoporteria = async (paneles) => {
   let dollarPrice;
-  console.log("Paneles en soporteria: ", paneles);
   const dollarUpdate = await Dollar.find({});
   if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
   else dollarPrice = 17.1;
