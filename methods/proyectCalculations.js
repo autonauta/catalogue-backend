@@ -268,11 +268,11 @@ const getManoObra = async (paneles) => {
 const calculateProjectPrice = async (project) => {
   console.log("Project inside price: ", project);
   //Precio de inversores
-  let precioInversores =
+  /* let precioInversores =
   for (let i = 0; i < project.inversores.length; i++) {
     const element = project.inversores[i];
 
-  }
+  } */
   //Precio de paneles
   //Precio de soporteria
   //Precio materiales
