@@ -9,9 +9,9 @@ const {
   getCables,
   getManoObra,
   calculateProjectPrice,
-} = require("./proyectCalculations");
+} = require("./projectCalculations");
 
-const createProyect = async (data) => {
+const createProject = async (data) => {
   //Leer el documento recibido
   //let processedText = await getPDFText("files/pdf", "pdfFile.pdf");
   //Obtener consumo máximo
@@ -64,4 +64,4 @@ const createProyect = async (data) => {
   return project;
 };
 
-module.exports.createProyect = createProyect;
+module.exports.createProject = createProject;
