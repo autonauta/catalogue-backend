@@ -42,12 +42,7 @@ const getPanelesRequeridos = async (max) => {
 
   return {
     numPaneles,
-    precio: (
-      numPaneles *
-      panel.precio *
-      dollarPrice *
-      (1 + panelMarkup / 100)
-    ).toFixed(2),
+    precio: numPaneles * panel.precio * dollarPrice * (1 + panelMarkup / 100),
   };
 };
 const getInversores = async (max) => {
