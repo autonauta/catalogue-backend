@@ -122,7 +122,6 @@ const getInversores = async (max) => {
   return resultado;
 };
 const getStrings = async (paneles) => {
-  console.log("Paneles requeridos for strings: ", paneles);
   const panelVoltage = 50;
   const maxVoltage = 500;
   const maxPanelsPerString = maxVoltage / panelVoltage;
@@ -154,6 +153,7 @@ const getCables = async (strings) => {
   return cables;
 };
 const getSoporteria = async (paneles) => {
+  console.log("Paneles requeridos for soporteria: ", paneles);
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
   if (dollarUpdate) dollarPrice = dollarUpdate[0].price;

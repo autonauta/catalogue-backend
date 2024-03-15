@@ -30,7 +30,7 @@ const createProyect = async (data) => {
   //Calcular ductería y materiales
   let materials = await getMaterials(stringsRequeridos.totalStrings);
   //Calcular mano de obra
-  let manoDeObra = await getManoObra(panelesRequeridos);
+  let manoDeObra = await getManoObra(panelesRequeridos.numPaneles);
   //regresar el objeto del proyecto
 
   const project = {
