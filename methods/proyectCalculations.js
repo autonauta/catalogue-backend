@@ -16,6 +16,7 @@ const frameMarkup = 25;
 const markupMO = 60;
 const panelPower = 550;
 const defaultDistance = 40;
+
 const defaultInverters = [
   { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
   { modelo: "Inversor 6000W", potencia: 6000, strings: 2 },
@@ -31,6 +32,7 @@ const getPanelesRequeridos = async (max) => {
     voltaje: 50,
     precio: 85,
   };
+  let dollarPrice;
   const dollarUpdate = await Dollar.find({});
   if (dollarUpdate) dollarPrice = dollarUpdate.price;
   else dollarPrice = 17.1;
@@ -42,10 +44,16 @@ const getPanelesRequeridos = async (max) => {
 
   return {
     numPaneles,
-    precio: numPaneles * panel.precio * dollarPrice * (1 + panelMarkup / 100),
+    precio: (
+      numPaneles *
+      panel.precio *
+      dollarPrice *
+      (1 + panelMarkup / 100)
+    ).toFixed(2),
   };
 };
 const getInversores = async (max) => {
+  let dollarPrice;
   const dollarUpdate = await Dollar.find({});
   if (dollarUpdate) dollarPrice = dollarUpdate.price;
   else dollarPrice = 17.1;
@@ -141,6 +149,7 @@ const getCables = async (strings) => {
   return cables;
 };
 const getSoporteria = async (paneles) => {
+  let dollarPrice;
   const dollarUpdate = await Dollar.find({});
   if (dollarUpdate) dollarPrice = dollarUpdate.price;
   else dollarPrice = 17.1;
