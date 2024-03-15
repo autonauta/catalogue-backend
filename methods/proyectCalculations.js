@@ -264,20 +264,25 @@ const getManoObra = async (paneles) => {
   };
   return materiales;
 };
+const calculateProjectPrice = async (objeto) => {
+  let total = 0;
 
-const calculateProjectPrice = async (project) => {
-  console.log("Project inside price: ", project);
-  //Precio de inversores
-  /* let precioInversores =
-  for (let i = 0; i < project.inversores.length; i++) {
-    const element = project.inversores[i];
+  function sumar(obj) {
+    for (const key of Object.keys(obj)) {
+      const valor = obj[key];
 
-  } */
-  //Precio de paneles
-  //Precio de soporteria
-  //Precio materiales
-  //Sumar mano de obra
-  //Agregar IVA
+      // Comprueba si es un objeto para explorar sus propiedades recursivamente
+      if (typeof valor === "object" && valor !== null) {
+        sumar(valor);
+      } else if (key.includes("precio")) {
+        // Clave contiene 'precio'
+        total += valor;
+      }
+    }
+  }
+
+  sumar(objeto); // Inicia la función recursiva
+  return total;
 };
 
 module.exports = {

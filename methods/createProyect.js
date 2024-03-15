@@ -50,8 +50,8 @@ const createProyect = async (data) => {
     manoDeObra,
     precioProyecto,
   };
-  //const projectPrice = await calculateProjectPrice(project);
-  //project = { ...projectPrice, precioProyecto: projectPrice };
+  const projectPrice = await calculateProjectPrice(project);
+  project = { ...projectPrice, precioProyecto: projectPrice };
   return project;
 };
 
