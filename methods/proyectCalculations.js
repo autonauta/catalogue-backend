@@ -153,7 +153,6 @@ const getCables = async (strings) => {
   return cables;
 };
 const getSoporteria = async (paneles) => {
-  console.log("Paneles requeridos for soporteria: ", paneles);
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
   if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
@@ -164,10 +163,11 @@ const getSoporteria = async (paneles) => {
       cantidad: Math.ceil(paneles / 4),
       precio: (150 * dollarPrice * (1 + frameMarkup / 100)).toFixed(2),
     };
-  return {
-    cantidad: Math.ceil(paneles / 4),
-    precio: frame.precio * dollarPrice * (1 + frameMarkup / 100),
-  };
+  else
+    return {
+      cantidad: Math.ceil(paneles / 4),
+      precio: frame[0].precio * dollarPrice * (1 + frameMarkup / 100),
+    };
 };
 const getMaterials = async (strings) => {
   var diametroTubo;

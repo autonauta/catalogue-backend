@@ -45,7 +45,7 @@ const createProyect = async (data) => {
     inversores: inversoresRequeridos,
     strings: stringsRequeridos,
     cables: cablesRequeridos,
-    soporteria: Math.ceil(soporteriaRequerida),
+    soporteria: soporteriaRequerida,
     materiales: materials,
     manoDeObra,
     precioProyecto,
