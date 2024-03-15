@@ -55,8 +55,8 @@ const createProyect = async (data) => {
     ...project,
     precioProyecto: {
       subtotal: projectPrice,
-      iva: (projectPrice * 0.16).toFixed(2),
-      total: projectPrice + (projectPrice * 0.16).toFixed(2),
+      iva: Number((projectPrice * 0.16).toFixed(2)),
+      total: projectPrice + Number((projectPrice * 0.16).toFixed(2)),
     },
   };
   return project;
