@@ -13,6 +13,7 @@ const regex3 =
 const panelMarkup = 50;
 const inverterMarkup = 35;
 const frameMarkup = 25;
+const markupMO = 60;
 const panelPower = 550;
 const defaultDistance = 40;
 const defaultInverters = [
