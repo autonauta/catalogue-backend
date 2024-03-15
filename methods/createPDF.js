@@ -5,7 +5,7 @@ const path = require("path");
 
 const createPDF = async (datos) => {
   // Leer la plantilla Handlebars del sistema de archivos
-  const plantillaPath = path.resolve("./html", "cotizacionEmail.handlebars");
+  const plantillaPath = path.resolve("/html", "cotizacionEmail.handlebars");
   const contenidoPlantilla = fs.readFileSync(plantillaPath, "utf8");
 
   // Compilar la plantilla con Handlebars
