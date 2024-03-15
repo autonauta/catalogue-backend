@@ -22,11 +22,11 @@ const createProyect = async (data) => {
   //Calcular el inversor
   let inversoresRequeridos = await getInversores(data.consumo);
   //Calcular cuantos strings
-  let stringsRequeridos = await getStrings(panelesRequeridos);
+  let stringsRequeridos = await getStrings(panelesRequeridos.numPaneles);
   //Calcular el cable
   let cablesRequeridos = await getCables(stringsRequeridos.totalStrings);
   //Calcular soportería
-  let soporteriaRequerida = await getSoporteria(panelesRequeridos.numPaneles);
+  let soporteriaRequerida = await getSoporteria(panelesRequeridos);
   //Calcular ductería y materiales
   let materials = await getMaterials(stringsRequeridos.totalStrings);
   //Calcular mano de obra
