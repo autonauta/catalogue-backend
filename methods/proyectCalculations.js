@@ -258,9 +258,9 @@ const getManoObra = async (paneles) => {
     precioInversor = 3000;
   }
   const materiales = {
-    precioPorPanel,
-    precioInversor,
-    total: (precioPorPanel * paneles + precioInversor) * (1 + markupMO / 100),
+    porPanel: precioPorPanel,
+    inversor: precioInversor,
+    precio: (precioPorPanel * paneles + precioInversor) * (1 + markupMO / 100),
   };
   return materiales;
 };
