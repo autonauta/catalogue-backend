@@ -122,6 +122,7 @@ const getInversores = async (max) => {
   return resultado;
 };
 const getStrings = async (paneles) => {
+  console.log("Paneles requeridos for strings: ", paneles);
   const panelVoltage = 50;
   const maxVoltage = 500;
   const maxPanelsPerString = maxVoltage / panelVoltage;
