@@ -48,12 +48,14 @@ const getPanelesRequeridos = async (max) => {
   console.log("panelMArkup: ", panelMarkup);
   return {
     numPaneles,
-    precio: (
-      numPaneles *
-      panel[0].precio *
-      dollarPrice *
-      (1 + panelMarkup / 100)
-    ).toFixed(2),
+    precio: Number(
+      (
+        numPaneles *
+        panel[0].precio *
+        dollarPrice *
+        (1 + panelMarkup / 100)
+      ).toFixed(2)
+    ),
   };
 };
 const getInversores = async (max) => {
@@ -109,11 +111,9 @@ const getInversores = async (max) => {
         potencia: curr.potencia,
         cantidad: 1,
         strings: curr.cadenas,
-        precio: (
-          curr.precio *
-          dollarPrice *
-          (1 + inverterMarkup / 100)
-        ).toFixed(2),
+        precio: Number(
+          (curr.precio * dollarPrice * (1 + inverterMarkup / 100)).toFixed(2)
+        ),
       });
     }
     return acc;
