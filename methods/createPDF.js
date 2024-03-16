@@ -19,7 +19,7 @@ const createPDF = async (datos) => {
     fecha: new Date().toLocaleDateString(),
     numCotizacion: 9999,
     nombre: datos.cliente.nombre,
-    consumoBimestral: (datos.consumoMaximo / 1000).toLocaleString("en-US", {
+    consumoBimestral: datos.consumoMaximo.toLocaleString("en-US", {
       minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
       maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
     }),
@@ -35,7 +35,7 @@ const createPDF = async (datos) => {
       minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
       maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
     }),
-    produccionBimestral: (((datos.potencia * 5) / 1000) * 60).toLocaleString(
+    produccionBimestral: ((datos.potencia * 5 * 60) / 1000).toLocaleString(
       "en-US",
       {
         minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
