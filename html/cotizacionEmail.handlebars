@@ -1,110 +1,189 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800;900&display=swap"
-        rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <title>Confirmación de Compra</title>
     <style>
-        /* Global Styles */
-        body {
-            font-family: "Nunito Sans", sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+      /* Global Styles */
+      body {
+        font-family: "Nunito Sans", sans-serif;
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: auto;
+      }
 
-        /* Container Styles */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #202020 ;
-            padding: 20px;
-            box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
-        }
+      /* Container Styles */
+      .container {
+        max-width: 1024px;
+        margin: 0 auto;
+        background-color: #202143;
+        padding: 80px 100px;
+        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+      }
+      .container-precio {
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        align-self: flex-end;
+        text-align: right;
+      }
+      .container-precio ul {
+        list-style: none;
+      }
 
-        /* Header Styles */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+      /* Header Styles */
+      .header {
+        text-align: left;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        color: white;
+      }
 
-        .header img {
-            width: 300px;
-            height: auto;
-        }
+      .header img {
+        width: 100px;
+        height: auto;
+      }
 
-        /* Content Styles */
-        .content {
-            margin-bottom: 20px;
-        }
+      .date-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .date,
+      .cotizacion {
+        line-height: 0.1rem;
+      }
 
-        .content h2 {
-            color: #FF4163;
-            margin: 0;
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
+      /* Content Styles */
+      .content {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+      }
 
-        .content p {
-            color: #aaaaaa;
-            margin-bottom: 16px;
-            font-size: 28px;
-        }
+      .content h2 {
+        color: #ff4163;
+        margin: 0;
+        font-size: 35px;
+      }
 
-        .content p.marked-text {
-            color: white;
-        }
+      .content p {
+        color: white;
+        margin-bottom: 16px;
+        font-size: 28px;
+      }
+      p.anuncio {
+        font-size: 16px;
+        color: #aaaaaa;
+        
+      }
 
-        .content ul {
-            color: #ffffff;
-            margin-bottom: 16px;
-            padding-left: 20px;
-            font-size: 22px;
-        }
+      .content p.marked-text {
+        color: #aaaaaa;
+        margin-top: 60px;
+      }
 
-        .content ul li {
-            margin-bottom: 8px;
-        }
+      .content ul {
+        color: #ffffff;
+        margin-bottom: 16px;
+        padding-left: 20px;
+        font-size: 20px;
+      }
 
-        .content a {
-            color: #007bff;
-            text-decoration: none;
-        }
+      .content ul li {
+        margin-bottom: 8px;
+        color: #aaaaaa;
+      }
+      .content ul li strong {
+        color: #aaaaaa;
+      }
 
-        /* Footer Styles */
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #888888;
-        }
+      .content a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .line {
+        width: 100%;
+        height: 2px;
+        background-color: #ff4163;
+        margin-bottom: 15px;
+      }
+
+      /* Footer Styles */
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #888888;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <img src='https://res.cloudinary.com/highdatamx/image/upload/v1678250963/WEB_ASSETS/wanevdhmy6s4d9q99kyt.png' >
+      <div class="header">
+        <img
+          src="https://res.cloudinary.com/highdatamx/image/upload/v1678250963/WEB_ASSETS/wanevdhmy6s4d9q99kyt.png"
+        />
+        <div class="date-container">
+          <h3 id="date" class="date">29 de Marzo de 2024</h3>
+          <h3 class="cotizacion">Cotización: {{numCotización}}</h3>
         </div>
-        <div class="content">
-            <h2>!Tu pedido se realizó con Éxito!</h2>
-            <p>Gracias por tu compra, el folio es <span style="font-weight: 600; color: white">{{syscomOrderId}}</span>. Guarda este correo para futuras aclaraciones.</p>
-            <p>Datos de tu compra:</p>
+      </div>
+      <div class="content">
+        <h2>Sistema Fotovoltáico</h2>
+        <p><span style=" color: white">{{nombre}}</span></p>
+        <p>Datos del proyecto:</p>
+        <ul>
+          <li><strong>Consumo bimestral :</strong> {{consumo}}</li>
+          <li><strong>Potencia Requerida :</strong> {{potenciaRequerida}}</li>
+          <li><strong>Cantidad de paneles :</strong> {{panelAmmount}} MXN</li>
+          <li>
+            <strong
+              >{{nombreInversor}} de {{potenciaInversor}} watts :</strong
+            >
+            {{cantidadInversor}}
+          </li>
+        </ul>
+        <p>Ahorro con el sistema:</p>
+        <ul>
+          <li><strong>Producción diaria (kwh) :</strong> {{produccionDiaria}}</li>
+          <li><strong>Producción bimestral (kwh) :</strong> {{produccionBimestral}}</li>
+          <li><strong>Ahorro estimado anual :</strong> {{ahorroAnual}} MXN</li>
+          <li><strong>Retorno de inversión aproximado :</strong> {{ROI}} MXN</li>
+          <li>
+            <strong
+              >{{nombreInversor}} de {{potenciaInversor}} watts :</strong
+            >
+            {{cantidadInversor}}
+          </li>
+        </ul>
+        <div class="container-precio">
+
+            <p style="font-size: 28px;color: white; font-weight: 600; margin-top: 80px;">Costo del proyecto:</p>
             <ul>
-                <li><strong>Producto:</strong> {{product}}</li>
-                <li><strong>Cantidad:</strong> {{quantity}}</li>
-                <li><strong>Pagado:</strong> {{ammount}} MXN</li>
-                <li><strong>Fecha de Compra:</strong> {{date}}</li>
-            </ul>
-            <p>Pronto recibirás un whatsapp en el número <span style="font-weight: 600; color: white">{{phone}}</span> y a este correo con tu código de rastreo para que puedas monitorear tu pedido en cualquier momento.</p>
-            <p>Si tienes alguna pregunta o necesita asistencia adicional, no dudes en ponerte en contacto con nuestro servicio de atención al cliente. Estaremos encantados de ayudarte.</p>
-            <p class="marked-text">¡Gracias nuevamente por tu compra!</p>
-            <p>Atentamente,</p>
-            <p>HighData</p>
+                <li><strong>Paneles e inversores: </strong> {{precioEquipos}}</li>
+                <li><strong>Soportería, ductos y material de instalación: </strong> {{precioMateriales}}</li>
+                <li><strong>Instalación: </strong> {{precioInstalacion}} MXN</li>
+                <div class="line"></div>
+                <li><strong>TOTAL: </strong> {{totalPrice}} MXN</li>
         </div>
-        <div class="footer">
-            <p style="margin-top: 3rem; color: grey; font-weight: 800;  font-size: 20px;">Este es un mensaje automático. Por favor, no responda a este correo electrónico.</p>
-            <p style="margin-top: 1rem; color: grey; font-weight: 800;  font-size: 20px;">Consulta nuestros <span><a target="_blank" href="https://highdatamx.com/#terminos-y-condiciones" style="color: #FF4163; text-decoration: none;">términos y condiciones</a></span> así como la <span><a target="_blank" href="https://highdatamx.com/#terminos-y-condiciones" style="color: #FF4163; text-decoration: none;">declaración de privacidad</a></span></p>
-        </div>
+        <p class="marked-text">¡Gracias por ponerte en contacto con HighData!</p>
+        <p class="anuncio">
+          Esta es una cotización preeliminar. Lo que significa que los costos de instalación y de materiales están calculados bajo condiciones estandar. 
+          En la mayoría de los casos no cambia, pero podría pasar. Por eso te recomendamos ponerte en contacto con nosotros por whatsapp o correo electrónico para confirmar algunos detalles del sitio de instalación.
+          <br><br>Los precios están actualizados a la fecha de esta cotización y será válida por 15 días.
+        </p>
+        
+      </div>
+      
     </div>
-</body>
+  </body>
 </html>
