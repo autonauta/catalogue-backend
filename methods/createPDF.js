@@ -16,7 +16,7 @@ const createPDF = async (datos) => {
   const precioMateriales = await calculateMateriales(datos);
   const precioManoDeObra = datos.manoDeObra.precio;
   const fillData = {
-    numCotizacion,
+    numCotizacion: 9999,
     nombre: datos.cliente.nombre,
     consumoBimestral: datos.consumoMaximo,
     potenciaRequerida: datos.potencia,
