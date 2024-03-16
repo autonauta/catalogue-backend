@@ -114,8 +114,8 @@ const createPDF = async (datos) => {
 
   console.log("PDF generado y guardado en:", outputPath);
 
-  // Retorna el buffer del PDF si prefieres enviarlo directamente sin guardar en disco
-  return pdf;
+  // Retorna el nombre del archivo
+  return "cotizacion_" + datos.cliente.nombre + ".pdf";
 };
 
 module.exports.createPDF = createPDF;

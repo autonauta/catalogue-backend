@@ -4,6 +4,7 @@ const { createProject } = require("../methods/createProject");
 const { upload } = require("../middleware/fileReception");
 const { Customer } = require("../models/Customer");
 const { createPDF } = require("../methods/createPDF");
+const { sendPDFEmail } = require("../config/nodemailer.config");
 
 router.post("/contacto", async (req, res) => {
   const { nombre, telefono, email, mensaje, consumo } = req.body;
@@ -29,9 +30,9 @@ router.post("/contacto", async (req, res) => {
     const project = await createProject((data = { ...req.body }));
     console.log("Proyecto: ", project);
     //Crear PDF
-    await createPDF(project);
+    const fileName = await createPDF(project);
     //Enviar por correo electrónico
-
+    sendPDFEmail(fileName, email);
     res.send(project);
     //const processedText = getConsumption("/files/pdf", "pdfFile.pdf");
   }

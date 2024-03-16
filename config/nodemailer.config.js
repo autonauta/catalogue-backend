@@ -30,6 +30,27 @@ const hbOptions = {
 
 transporter.use("compile", hbs(hbOptions));
 
+function sendPDFEmail(fileName, email) {
+  transporter.sendMail(
+    {
+      from: user,
+      to: email,
+      subject: "Cotización HighData",
+      template: "confirmationEmail",
+      attachments: [
+        {
+          filename: fileName,
+          path: "/home/autonauta/highdata/catalogue-backend/files/cotizaciones", // Asegúrate de reemplazar esto con la ruta real al PDF
+        },
+      ],
+    },
+    (err, inf) => {
+      if (err) console.log(err);
+      else
+        console.log(`Correo enviado correctamente a ${email}: `, inf.response);
+    }
+  );
+}
 function sendConfirmationEmail(
   email,
   phone,
@@ -101,4 +122,9 @@ function sendTrackingEmail(
   );
 }
 
-module.exports = { nodemailer, sendConfirmationEmail, sendTrackingEmail };
+module.exports = {
+  nodemailer,
+  sendConfirmationEmail,
+  sendTrackingEmail,
+  sendPDFEmail,
+};
