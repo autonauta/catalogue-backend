@@ -19,28 +19,64 @@ const createPDF = async (datos) => {
     fecha: new Date().toLocaleDateString(),
     numCotizacion: 9999,
     nombre: datos.cliente.nombre,
-    consumoBimestral: datos.consumoMaximo / 1000,
-    potenciaRequerida: datos.potencia / 1000,
+    consumoBimestral: (datos.consumoMaximo / 1000).toLocaleString("en-US", {
+      minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
+      maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
+    }),
+    potenciaRequerida: (datos.potencia / 1000).toLocaleString("en-US", {
+      minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
+      maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
+    }),
     numPaneles: datos.paneles.numPaneles,
     nombreInversor: datos.inversores[0].modelo,
     potenciaInversor: datos.inversores[0].potencia,
     cantidadInversor: datos.inversores[0].cantidad,
-    produccionDiaria: (datos.potencia * 5) / 1000,
-    produccionBimestral: ((datos.potencia * 5) / 1000) * 60,
-    ahorroAnual: ((datos.potencia * 5) / 1000) * 4 * 365,
+    produccionDiaria: ((datos.potencia * 5) / 1000).toLocaleString("en-US", {
+      minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
+      maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
+    }),
+    produccionBimestral: (((datos.potencia * 5) / 1000) * 60).toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
+        maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
+      }
+    ),
+    ahorroAnual: (((datos.potencia * 5) / 1000) * 4 * 365).toLocaleString(
+      "es-MX",
+      { style: "currency", currency: "MXN" }
+    ),
     ROI: Number(
       (
-        (((datos.precioProyecto.total / datos.potencia) * 5) / 1000) *
-        4 *
-        365
+        datos.precioProyecto.total /
+        ((4 * (datos.potencia * 5) * 30) / 1000) /
+        12
       ).toFixed(2)
     ),
-    precioEquipos: precioInversores + precioPaneles,
-    precioMateriales,
-    precioInstalacion: precioManoDeObra,
-    precioSubTotal: datos.precioProyecto.subtotal,
-    IVA: datos.precioProyecto.iva,
-    precioTotal: datos.precioProyecto.total,
+    precioEquipos: (precioInversores + precioPaneles).toLocaleString("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }),
+    precioMateriales: precioMateriales.toLocaleString("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }),
+    precioInstalacion: precioManoDeObra.toLocaleString("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }),
+    precioSubTotal: datos.precioProyecto.subtotal.toLocaleString("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }),
+    IVA: datos.precioProyecto.iva.toLocaleString("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }),
+    precioTotal: datos.precioProyecto.total.toLocaleString("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }),
   };
   // Compilar la plantilla con Handlebars
   const plantilla = handlebars.compile(contenidoPlantilla);

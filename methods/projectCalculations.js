@@ -16,6 +16,7 @@ const frameMarkup = 25;
 const markupMO = 60;
 const panelPower = 550;
 const defaultDistance = 40;
+const precioTramite = 3000;
 
 const defaultInverters = [
   { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
@@ -265,7 +266,10 @@ const getManoObra = async (paneles) => {
   const materiales = {
     porPanel: precioPorPanel,
     inversor: precioInversor,
-    precio: (precioPorPanel * paneles + precioInversor) * (1 + markupMO / 100),
+    tramite: precioTramite,
+    precio:
+      (precioPorPanel * paneles + precioInversor + precioTramite) *
+      (1 + markupMO / 100),
   };
   return materiales;
 };
@@ -325,7 +329,7 @@ const calculateMateriales = async (proyecto) => {
     }
   });
 
-  return total;
+  return Number(total.toFixed(2));
 };
 
 module.exports = {
