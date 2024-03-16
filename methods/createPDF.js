@@ -2,32 +2,48 @@ const puppeteer = require("puppeteer");
 const handlebars = require("handlebars");
 const fs = require("fs");
 const path = require("path");
+const {
+  calculateInversores,
+  calculateMateriales,
+} = require("../methods/projectCalculations");
 
 const createPDF = async (datos) => {
   // Leer la plantilla Handlebars del sistema de archivos
   const plantillaPath = path.resolve("./html", "cotizacionEmail.handlebars");
   const contenidoPlantilla = fs.readFileSync(plantillaPath, "utf8");
+  const precioInversores = await calculateInversores(datos);
+  const precioPaneles = datos.paneles.precio;
+  const precioMateriales = await calculateMateriales(datos);
+  const precioManoDeObra = datos.manoDeObra.precio;
   const fillData = {
     numCotizacion,
     nombre: datos.cliente.nombre,
     consumoBimestral: datos.consumoMaximo,
-    potenciaRequerida,
-    numPaneles,
-    nombreInversor,
-    potenciaInversor,
-    cantidadInversor,
-    produccionDiaria,
-    produccionBimestral,
-    ahorroAnual,
-    ROI,
-    precioEquipos,
+    potenciaRequerida: datos.potencia,
+    numPaneles: datos.paneles,
+    nombreInversor: datos.inversores[0].modelo,
+    potenciaInversor: datos.inversores[0].potencia,
+    cantidadInversor: datos.inversores[0].cantidad,
+    produccionDiaria: (datos.potencia * 5) / 1000,
+    produccionBimestral: ((datos.potencia * 5) / 1000) * 60,
+    ahorroAnual: ((datos.potencia * 5) / 1000) * 4 * 365,
+    ROI: Number(
+      (
+        (((datos.precioProyecto.total / datos.potencia) * 5) / 1000) *
+        4 *
+        365
+      ).toFixed(2)
+    ),
+    precioEquipos: precioInversores + precioPaneles,
     precioMateriales,
-    precioInstalacion,
-    precioTotal,
+    precioInstalacion: precioManoDeObra,
+    precioSubTotal: datos.precioProyecto.subtotal,
+    IVA: datos.precioProyecto.iva,
+    precioTotal: datos.precioProyecto.total,
   };
   // Compilar la plantilla con Handlebars
   const plantilla = handlebars.compile(contenidoPlantilla);
-  const html = plantilla(datos);
+  const html = plantilla(fillData);
 
   // Configurar Puppeteer
   const browser = await puppeteer.launch();

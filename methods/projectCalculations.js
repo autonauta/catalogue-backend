@@ -301,6 +301,33 @@ const calculateProjectPrice = async (objeto) => {
   return total;
 };
 
+const calculateInversores = async (datos) => {
+  let inversores = datos.inversores;
+  return inversores.reduce(
+    (acumulado, inversor) => acumulado + inversor.precio * inversor.cantidad,
+    0
+  );
+};
+const calculateMateriales = async (proyecto) => {
+  let total = 0;
+
+  // Sumar precios de los cables
+  Object.values(proyecto.cables).forEach((cable) => (total += cable.precio));
+
+  // Sumar precio de la soportería
+  total += proyecto.soporteria.precio;
+
+  // Sumar precios de los materiales
+  Object.values(proyecto.materiales).forEach((material) => {
+    // Si el material es un objeto que contiene un precio, súmalo
+    if (typeof material === "object" && material.precio) {
+      total += material.precio;
+    }
+  });
+
+  return total;
+};
+
 module.exports = {
   getPanelesRequeridos,
   getInversores,
@@ -310,6 +337,8 @@ module.exports = {
   getMaterials,
   getManoObra,
   calculateProjectPrice,
+  calculateInversores,
+  calculateMateriales,
 };
 
 //Code to read PDF BUT NOT IN USE
