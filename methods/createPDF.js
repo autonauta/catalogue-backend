@@ -7,7 +7,24 @@ const createPDF = async (datos) => {
   // Leer la plantilla Handlebars del sistema de archivos
   const plantillaPath = path.resolve("./html", "cotizacionEmail.handlebars");
   const contenidoPlantilla = fs.readFileSync(plantillaPath, "utf8");
-
+  const fillData = {
+    numCotizacion,
+    nombre: datos.cliente.nombre,
+    consumoBimestral: datos.consumoMaximo,
+    potenciaRequerida,
+    numPaneles,
+    nombreInversor,
+    potenciaInversor,
+    cantidadInversor,
+    produccionDiaria,
+    produccionBimestral,
+    ahorroAnual,
+    ROI,
+    precioEquipos,
+    precioMateriales,
+    precioInstalacion,
+    precioTotal,
+  };
   // Compilar la plantilla con Handlebars
   const plantilla = handlebars.compile(contenidoPlantilla);
   const html = plantilla(datos);

@@ -41,7 +41,7 @@ const createProject = async (data) => {
       telefono: data.telefono,
       email: data.email,
     },
-    consumoMaximo: data.consumo,
+    consumoMaximo: Number(data.consumo),
     potencia: potenciaRequerida,
     paneles: panelesRequeridos,
     inversores: inversoresRequeridos,
