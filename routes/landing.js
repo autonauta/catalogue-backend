@@ -32,7 +32,7 @@ router.post("/contacto", async (req, res) => {
     await createPDF(project);
     //Enviar por correo electrónico
 
-    //res.send(proyect);
+    res.send(proyect);
     //const processedText = getConsumption("/files/pdf", "pdfFile.pdf");
   }
   /* 
