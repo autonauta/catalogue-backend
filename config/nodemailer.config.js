@@ -40,7 +40,9 @@ function sendPDFEmail(fileName, email) {
       attachments: [
         {
           filename: fileName,
-          path: "/home/autonauta/highdata/catalogue-backend/files/cotizaciones", // Asegúrate de reemplazar esto con la ruta real al PDF
+          path:
+            "/home/autonauta/highdata/catalogue-backend/files/cotizaciones/" +
+            fileName, // Asegúrate de reemplazar esto con la ruta real al PDF
         },
       ],
     },
