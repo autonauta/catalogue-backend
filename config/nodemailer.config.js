@@ -31,6 +31,9 @@ const hbOptions = {
 transporter.use("compile", hbs(hbOptions));
 
 function sendPDFEmail(fileName, email) {
+  console.log("filename: ", fileName);
+  console.log("email: ", email);
+
   transporter.sendMail(
     {
       from: "HighData",
