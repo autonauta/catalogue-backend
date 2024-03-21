@@ -8,6 +8,7 @@ const { sendPDFEmail } = require("../config/nodemailer.config");
 
 router.post("/contacto", async (req, res) => {
   const { nombre, telefono, email, mensaje, consumo } = req.body;
+  console.log("REQ: ", req.body);
   if (!nombre || !telefono || !email || !mensaje) {
     res.status(401).send({
       error: true,

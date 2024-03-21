@@ -33,7 +33,7 @@ transporter.use("compile", hbs(hbOptions));
 function sendPDFEmail(fileName, email) {
   transporter.sendMail(
     {
-      from: user,
+      from: "HighData",
       to: email,
       subject: "Cotización HighData",
       template: "confirmationEmail",
