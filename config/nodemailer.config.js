@@ -36,7 +36,7 @@ function sendPDFEmail(fileName, email) {
 
   transporter.sendMail(
     {
-      from: "HighData",
+      from: "cesar@highdatamx.com",
       to: email,
       subject: "Cotización HighData",
       template: "confirmationEmail",
