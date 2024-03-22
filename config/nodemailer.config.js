@@ -30,37 +30,39 @@ const hbOptions = {
 
 transporter.use("compile", hbs(hbOptions));
 
-async function sendPDFEmail(fileName, email, name) {
-  console.log("filename: ", fileName);
-  console.log("email: ", email);
+function sendPDFEmail(fileName, email, name) {
+  return new Promise((resolve, reject) => {
+    console.log("filename: ", fileName);
+    console.log("email: ", email);
 
-  transporter.sendMail(
-    {
-      from: user,
-      to: email,
-      subject: "Cotización HighData",
-      template: "confirmationEmail",
-      context: { name },
-      attachments: [
-        {
-          filename: fileName,
-          path:
-            "/home/autonauta/highdata/catalogue-backend/files/cotizaciones/" +
-            fileName, // Asegúrate de reemplazar esto con la ruta real al PDF
-        },
-      ],
-    },
-    (err, inf) => {
-      if (err) {
-        return { sent: false, error: err };
-      } else {
-        return {
-          sent: true,
-          response: `Correo enviado correctamente a ${email}: ${inf.resp}`,
-        };
+    transporter.sendMail(
+      {
+        from: user,
+        to: email,
+        subject: "Cotización HighData",
+        template: "confirmationEmail",
+        context: { name },
+        attachments: [
+          {
+            filename: fileName,
+            path:
+              "/home/autonauta/highdata/catalogue-backend/files/cotizaciones/" +
+              fileName, // Asegúrate de reemplazar esto con la ruta real al PDF
+          },
+        ],
+      },
+      (err, info) => {
+        if (err) {
+          reject({ sent: false, error: err });
+        } else {
+          resolve({
+            sent: true,
+            response: `Correo enviado correctamente a ${email}: ${info.response}`,
+          });
+        }
       }
-    }
-  );
+    );
+  });
 }
 function sendConfirmationEmail(
   email,
