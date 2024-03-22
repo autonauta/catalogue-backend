@@ -60,4 +60,27 @@ router.post("/contacto", async (req, res) => {
   }*/
 });
 
+router.post("/defaults", async (req, res) => {
+  const { projectOne, projectTwo, projectThree, projectFour } = req.body;
+  if (!projectOne || !projectTwo || !projectThree || !projectFour) {
+    res.status(401).send({
+      error: true,
+      message: "No están completos los datos.",
+    });
+    return;
+  }
+  const project1 = await createProject((data = { consumo: projectOne }));
+  const project2 = await createProject((data = { consumo: projectTwo }));
+  const project3 = await createProject((data = { consumo: projectThree }));
+  const project4 = await createProject((data = { consumo: projectFour }));
+  const prices = {
+    projectOne: project1.precioProyecto.total,
+    projectTwo: project2.precioProyecto.total,
+    projectThree: project3.precioProyecto.total,
+    projectFour: project4.precioProyecto.total,
+  };
+  res.send(prices);
+  return;
+});
+
 module.exports = router;

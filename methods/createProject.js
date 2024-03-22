@@ -37,9 +37,9 @@ const createProject = async (data) => {
 
   let project = {
     cliente: {
-      nombre: data.nombre,
-      telefono: data.telefono,
-      email: data.email,
+      nombre: data.nombre ? data.nombre : "default",
+      telefono: data.telefono ? data.telefono : "default",
+      email: data.email ? data.email : "default",
     },
     consumoMaximo: Number(data.consumo),
     potencia: potenciaRequerida,
