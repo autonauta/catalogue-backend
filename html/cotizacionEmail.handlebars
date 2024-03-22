@@ -17,23 +17,24 @@
         width: 100vw;
         height: auto;
       }
-
+      ul {
+        list-style: none;
+      }
       /* Container Styles */
       .container {
         max-width: 700px;
         margin: 0 auto;
         background-color: #202143;
-        padding: 50px 60px;
-        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px 40px;
       }
       .container-precio {
-        width: 70%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        align-self: flex-end;
         text-align: right;
       }
+    
       .container-precio ul {
         list-style: none;
       }
@@ -48,15 +49,18 @@
       }
 
       .header img {
-        width: 80px;
-        height: auto;
+        height: 70px;
       }
 
       .date-container {
         height: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-end;
+      }
+      .date-container h3 {
+        line-height: 0;
+        
       }
       .date,
       .cotizacion {
@@ -79,10 +83,17 @@
         align-self: center;
       }
 
-      .content p {
+      .content h1 {
         color: white;
         margin-bottom: 16px;
         font-size: 16px;
+      }
+      .content p {
+        color: #aaaaaa;
+        font-size: 14px;
+      }
+      .content p span {
+        color: #ffffff;
       }
       p.anuncio {
         font-size: 12px;
@@ -104,12 +115,14 @@
 
       .content ul li {
         margin-bottom: 8px;
-        color: #ff4163;
+        color: #dddddd;
         font-size: 16px;
+        line-height: 15px;
       }
       .content ul li strong {
         color: #aaaaaa;
         font-size: 14px;
+        line-height: 15px;
       }
 
       .content a {
@@ -135,47 +148,52 @@
     <div class="container">
       <div class="header">
         <img
-          src="https://res.cloudinary.com/highdatamx/image/upload/v1678250963/WEB_ASSETS/wanevdhmy6s4d9q99kyt.png"
+          src="https://res.cloudinary.com/highdatamx/image/upload/v1711122919/WEB_ASSETS/xr7vclsxvt6mzwm84rtp.png"
         />
         <div class="date-container">
           <h3 id="date" class="date">{{fecha}}</h3>
-          <h3 class="cotizacion">Cotización: {{numCotizacion}}</h3>
+          <h3 class="cotizacion">Cliente: {{nombre}}</h3>
+          <h3 class="cotizacion">Correo: {{correo}}</h3>
+          
         </div>
       </div>
       <div class="content">
         <h2>Sistema Fotovoltáico</h2>
-        <p><span style=" color: white">{{nombre}}</span></p>
-        <p>Datos del proyecto:</p>
+        <p>Cotización generada automáticamente para un consumo bimestral de <span>{{consumoBimestral}} kWh</span>.
+        Los paneles tienen una garantía de <span>10 años</span> contra defecto de fabricación y una garantía de producción lineal de <span>25 años</span>.
+        El precio final incluye el traslado de equipos y los trámites con CFE*.</p>
+        
+        
+        <h1>Datos del proyecto:</h1>
         <ul>
           <li><strong>Consumo bimestral :   </strong> {{consumoBimestral}} kWh</li>
           <li><strong>Potencia Requerida :   </strong> {{potenciaRequerida}} kW</li>
           <li><strong>Paneles requeridos :   </strong> {{numPaneles}}</li>
           {{{inversores}}}
         </ul>
-        <p>Ahorro con el sistema:</p>
+        <h1>Ahorro con el sistema:</h1>
         <ul>
           <li><strong>Producción diaria :   </strong> {{produccionDiaria}} kWh</li>
           <li><strong>Producción bimestral :   </strong> {{produccionBimestral}} kWh</li>
-          <li><strong>Ahorro estimado anual :   </strong> {{ahorroAnual}} MXN</li>
-          <li><strong>Retorno de inversión aproximado :   </strong> {{ROI}} años</li>
+          <li><strong>Ahorro estimado anual** :   </strong> {{ahorroAnual}} MXN</li>
+          <li style="color: #ff4163"><strong >Retorno de inversión aproximado :   </strong> {{ROI}} años</li>
         </ul>
         <div class="container-precio">
 
-            <p style="font-size: 20px;color: white; font-weight: 600; margin-top: 40px;">Costo del proyecto:</p>
+            <p style="font-size: 16px;color: white; font-weight: 600; margin-top: 20px; align-self: flex-start;">Costo del proyecto:</p>
             <ul>
-                <li><strong>Paneles e inversores:    </strong>$ {{precioEquipos}} MXN</li>
-                <li><strong>Soportería, ductos y material de instalación:    </strong>$ {{precioMateriales}} MXN</li>
-                <li><strong>Instalación:    </strong>$ {{precioInstalacion}} MXN</li>
+                <li><strong>Paneles e inversores:    </strong> {{precioEquipos}} MXN</li>
+                <li><strong>Soportería, ductos y material de instalación:    </strong> {{precioMateriales}} MXN</li>
+                <li><strong>Instalación:    </strong> {{precioInstalacion}} MXN</li>
                 <div class="line"></div>
-                <li><strong>SUBTOTAL:    </strong>$ {{precioSubTotal}} MXN</li>
-                <li><strong>IVA:    </strong>$ {{IVA}} MXN</li>
-                <li><strong>TOTAL:    </strong>$ {{precioTotal}} MXN</li>
+                <li><strong>SUBTOTAL:    </strong> {{precioSubTotal}} MXN</li>
+                <li><strong>IVA:    </strong> {{IVA}} MXN</li>
+                <li style="color: #ff4163"><strong>TOTAL:    </strong > {{precioTotal}} MXN</li>
         </div>
-        <p class="marked-text">¡Gracias por ponerte en contacto con HighData!</p>
         <p class="anuncio">
           Esta es una cotización preeliminar. Lo que significa que los costos de instalación y de materiales están calculados bajo condiciones estandar. 
           En la mayoría de los casos no cambia, pero podría pasar. Por eso te recomendamos ponerte en contacto con nosotros por whatsapp o correo electrónico para confirmar algunos detalles del sitio de instalación.
-          <br><br>Los precios están actualizados a la fecha de esta cotización y será válida por 15 días.
+          Los precios están actualizados a la fecha de esta cotización y será válida por 15 días. *Únicamente en la ciudad de Querétaro, Qro. **Considerando una tarifa DAC donde le costo por kWh fijo. 
         </p>
         
       </div>

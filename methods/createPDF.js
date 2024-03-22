@@ -21,6 +21,7 @@ const createPDF = async (datos) => {
     fecha: new Date().toLocaleDateString(),
     numCotizacion: 9999,
     nombre: datos.cliente.nombre,
+    correo: datos.cliente.email,
     consumoBimestral: datos.consumoMaximo.toLocaleString("en-US", {
       minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
       maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
