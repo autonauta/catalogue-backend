@@ -32,9 +32,6 @@ transporter.use("compile", hbs(hbOptions));
 
 function sendPDFEmail(fileName, email, name) {
   return new Promise((resolve, reject) => {
-    console.log("filename: ", fileName);
-    console.log("email: ", email);
-
     transporter.sendMail(
       {
         from: user,
