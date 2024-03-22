@@ -108,7 +108,7 @@ const createPDF = async (datos) => {
   // Opcional: Guardar el PDF en el sistema de archivos, o puedes devolver `pdf` directamente
   const outputPath = path.resolve(
     "./files/cotizaciones",
-    "cotizacion_" + datos.cliente.nombre + ".pdf"
+    "cotizacion_" + datos.cliente.nombre.replace(/ /g, "_") + ".pdf"
   );
   fs.writeFileSync(outputPath, pdf);
 
