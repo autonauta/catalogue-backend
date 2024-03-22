@@ -7,7 +7,7 @@ const {
   calculateMateriales,
   generateInvertersHTML,
 } = require("../methods/projectCalculations");
-
+const precioKWH = 5.3;
 const createPDF = async (datos) => {
   // Leer la plantilla Handlebars del sistema de archivos
   const plantillaPath = path.resolve("./html", "cotizacionEmail.handlebars");
@@ -51,7 +51,7 @@ const createPDF = async (datos) => {
     ROI: Number(
       (
         datos.precioProyecto.total /
-        ((4 * (datos.potencia * 5) * 30) / 1000) /
+        ((precioKWH * (datos.potencia * 5) * 30) / 1000) /
         12
       ).toFixed(2)
     ),
