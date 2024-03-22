@@ -7,7 +7,7 @@ const { createPDF } = require("../methods/createPDF");
 const { sendPDFEmail } = require("../config/nodemailer.config");
 
 const getEmailName = (nombre) => {
-  return texto.split(" ")[0];
+  return nombre.split(" ")[0];
 };
 
 router.post("/contacto", async (req, res) => {
