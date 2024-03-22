@@ -35,18 +35,13 @@ const getPanelesRequeridos = async (max) => {
   };
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
-  console.log("Dollar: ", dollarUpdate);
   if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
   else dollarPrice = 17.1;
   const consumoDiario = (max * 1000) / 60;
   const potenciaRequerida = consumoDiario / 5;
   const numPaneles = Math.ceil(potenciaRequerida / panelPower);
   let panel = await Panel.find({});
-  console.log("panel: ", panel);
   if (!panel) panel = defaultPanel;
-  console.log("panel.precio: ", panel[0].precio);
-  console.log("dollarPrice: ", dollarPrice);
-  console.log("panelMArkup: ", panelMarkup);
   return {
     numPaneles,
     precio: Number(
@@ -59,6 +54,9 @@ const getPanelesRequeridos = async (max) => {
     ),
   };
 };
+////////////////////////////////////////////////////7777
+//////////////////////////////////////////////////////
+
 const getInversores = async (max) => {
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
@@ -344,22 +342,3 @@ module.exports = {
   calculateInversores,
   calculateMateriales,
 };
-
-//Code to read PDF BUT NOT IN USE
-/* const getMaxConsumption = async (text) => {
-  const consumosLine = await text.match(regex);
-  const modConsumos = await consumosLine.map((entrada) => {
-    return entrada.replace(regex2, "del $1 al $2$3 $4 $$$5");
-  });
-  console.log("Consumos line: ", modConsumos);
-  const numerosAntesDelPrecio = await modConsumos
-    .map((entrada) => {
-      const match = entrada.match(regex3);
-      return match ? match[2] : null; // match[2] contiene el número que buscamos
-    })
-    .filter((numero) => numero !== null); // Filtramos para quitar posibles nulls
-  const numeros = await numerosAntesDelPrecio.map(Number);
-  // Encontrar y retornar el valor máximo en el array
-  const max = Math.max(...numeros);
-  return max;
-}; */
