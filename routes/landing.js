@@ -25,12 +25,13 @@ router.post("/contacto", async (req, res) => {
   }
   //Checa si ya existe un usuario con el correo presentado
   const customer = await Customer.findOne({ email });
+  const customer2 = await Customer.findOne({ telefono });
   //Si ya existe manda el error al usuario
-  if (customer) {
+  if (customer || customer2) {
     res.status(402).send({
       error: true,
       message:
-        "Ya existe un usuario con ese correo, comunícate con nosotros por whatsapp y resolveremos tu petición.",
+        "Ya existe un usuario con esos datos, comunícate con nosotros por whatsapp y resolveremos tu petición.",
     });
     return;
     //Si no existe procede a crearlo
