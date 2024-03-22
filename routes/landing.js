@@ -32,6 +32,7 @@ router.post("/contacto", async (req, res) => {
       message:
         "Ya existe un usuario con ese correo, comunícate con nosotros por whatsapp y resolveremos tu petición.",
     });
+    return;
     //Si no existe procede a crearlo
   }
   if (consumo) {
