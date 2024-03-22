@@ -30,7 +30,7 @@ const hbOptions = {
 
 transporter.use("compile", hbs(hbOptions));
 
-function sendPDFEmail(fileName, email) {
+async function sendPDFEmail(fileName, email, name) {
   console.log("filename: ", fileName);
   console.log("email: ", email);
 
@@ -40,6 +40,7 @@ function sendPDFEmail(fileName, email) {
       to: email,
       subject: "Cotización HighData",
       template: "confirmationEmail",
+      context: { name },
       attachments: [
         {
           filename: fileName,
@@ -50,9 +51,14 @@ function sendPDFEmail(fileName, email) {
       ],
     },
     (err, inf) => {
-      if (err) console.log(err);
-      else
-        console.log(`Correo enviado correctamente a ${email}: `, inf.response);
+      if (err) {
+        return { sent: false, error: err };
+      } else {
+        return {
+          sent: true,
+          response: `Correo enviado correctamente a ${email}: ${inf.resp}`,
+        };
+      }
     }
   );
 }

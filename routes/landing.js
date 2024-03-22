@@ -6,8 +6,13 @@ const { Customer } = require("../models/Customer");
 const { createPDF } = require("../methods/createPDF");
 const { sendPDFEmail } = require("../config/nodemailer.config");
 
+const getEmailName = (nombre) => {
+  return texto.split(" ")[0];
+};
+
 router.post("/contacto", async (req, res) => {
   const { nombre, telefono, email, mensaje, consumo } = req.body;
+  const emailName = getEmailName(nombre);
   console.log("REQ: ", req.body);
   if (!nombre || !telefono || !email || !mensaje) {
     res.status(401).send({
@@ -33,8 +38,18 @@ router.post("/contacto", async (req, res) => {
     //Crear PDF
     const fileName = await createPDF(project);
     //Enviar por correo electrónico
-    sendPDFEmail(fileName, email);
-    res.send(project);
+    try {
+      const email = await sendPDFEmail(fileName, email, emailName);
+      if (email.sent) {
+        console.log(email.response);
+        res.send(project);
+        return;
+      } else throw new Error(email.error);
+    } catch (error) {
+      console.log("Error al enviar correo: ", error);
+      return;
+    }
+
     //const processedText = getConsumption("/files/pdf", "pdfFile.pdf");
   }
   /* 
