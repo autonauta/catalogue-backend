@@ -13,6 +13,8 @@ const getEmailName = (nombre) => {
 router.post("/contacto", async (req, res) => {
   const { nombre, telefono, email, mensaje, consumo } = req.body;
   const emailName = getEmailName(nombre);
+  var fileName;
+  var project;
   console.log("REQ: ", req.body);
   if (!nombre || !telefono || !email || !mensaje) {
     res.status(401).send({
@@ -31,47 +33,59 @@ router.post("/contacto", async (req, res) => {
         "Ya existe un usuario con ese correo, comunícate con nosotros por whatsapp y resolveremos tu petición.",
     });
     //Si no existe procede a crearlo
-  } else if (consumo) {
+  }
+  if (consumo) {
+    console.log("con consumo");
     //Calcula el proyecto
-    const project = await createProject((data = { ...req.body }));
+    project = await createProject((data = { ...req.body }));
     console.log("Proyecto: ", project);
     //Crear PDF
-    const fileName = await createPDF(project);
-    //Enviar por correo electrónico
-    try {
-      const emailResponse = await sendPDFEmail(fileName, email, emailName);
-      if (emailResponse.sent) {
-        res.send(project);
-        return;
-      } else throw new Error(email.error);
-    } catch (error) {
-      console.log("Error al enviar correo: ", error);
-      return;
-    }
-
-    //const processedText = getConsumption("/files/pdf", "pdfFile.pdf");
-  }
-  /* 
-  
-   if (true) {
-    console.log("not customer");
-    
-    /* const newCustomer = new Customer({
+    fileName = await createPDF(project);
+    const newCustomer = new Customer({
       nombre,
       telefono,
       email,
       mensaje,
-      consumo: consumo ? consumo : null,
+      consumo,
     });
-    const customer = await newCustomer.save();
-    if (!customer) {
+    const response = await newCustomer.save();
+    if (!response) {
       console.log("No se guardó el cliente");
       res.send({ error: true, message: "No se guardó el cliente" });
     } else {
       console.log("Cliente guardado");
-      res.send(customer);
-    } 
-  }*/
+      //Enviar por correo electrónico
+      try {
+        const emailResponse = await sendPDFEmail(fileName, email, emailName);
+        if (emailResponse.sent) {
+          res.send(project);
+          return;
+        } else throw new Error(email.error);
+      } catch (error) {
+        console.log("Error al enviar correo: ", error);
+        return;
+      }
+    }
+  } else {
+    console.log("sin consumo");
+    const newCustomer = new Customer({
+      nombre,
+      telefono,
+      email,
+      mensaje,
+      consumo: null,
+    });
+    const response = await newCustomer.save();
+    if (!response) {
+      console.log("No se guardó el cliente");
+      res.send({ error: true, message: "No se guardó el cliente" });
+      return;
+    } else {
+      console.log("Cliente guardado");
+      res.send(response);
+      return;
+    }
+  }
 });
 
 router.post("/defaults", async (req, res) => {
