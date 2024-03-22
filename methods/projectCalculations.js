@@ -330,6 +330,15 @@ const calculateMateriales = async (proyecto) => {
   return Number(total.toFixed(2));
 };
 
+const generateInvertersHTML = async (datos) => {
+  const inversores = datos.inversores;
+  let html = "";
+  for (let i = 0; i < inversores.length; i++) {
+    html += `<li><strong>Inversor ${inversores[i].modelo} : </strong> ${inversores[i].cantidad}</li>`;
+  }
+  return html;
+};
+
 module.exports = {
   getPanelesRequeridos,
   getInversores,
@@ -341,4 +350,5 @@ module.exports = {
   calculateProjectPrice,
   calculateInversores,
   calculateMateriales,
+  generateInvertersHTML,
 };

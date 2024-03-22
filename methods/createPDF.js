@@ -5,6 +5,7 @@ const path = require("path");
 const {
   calculateInversores,
   calculateMateriales,
+  generateInvertersHTML,
 } = require("../methods/projectCalculations");
 
 const createPDF = async (datos) => {
@@ -15,6 +16,7 @@ const createPDF = async (datos) => {
   const precioPaneles = datos.paneles.precio;
   const precioMateriales = await calculateMateriales(datos);
   const precioManoDeObra = datos.manoDeObra.precio;
+  const inversores = generateInvertersHTML(datos);
   const fillData = {
     fecha: new Date().toLocaleDateString(),
     numCotizacion: 9999,
@@ -28,8 +30,7 @@ const createPDF = async (datos) => {
       maximumFractionDigits: 2, // Máximo de dígitos fraccionarios
     }),
     numPaneles: datos.paneles.numPaneles,
-    nombreInversor: datos.inversores[0].modelo,
-    potenciaInversor: datos.inversores[0].potencia,
+    inversores,
     cantidadInversor: datos.inversores[0].cantidad,
     produccionDiaria: ((datos.potencia * 5) / 1000).toLocaleString("en-US", {
       minimumFractionDigits: 2, // Mínimo de dígitos fraccionarios
