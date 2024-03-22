@@ -40,8 +40,9 @@ router.post("/contacto", async (req, res) => {
     //Enviar por correo electrónico
     try {
       const emailResponse = await sendPDFEmail(fileName, email, emailName);
+      console.log("Email response: ", emailResponse);
       if (emailResponse.sent) {
-        console.log(email.response);
+        console.log(emailResponse.response);
         res.send(project);
         return;
       } else throw new Error(email.error);
