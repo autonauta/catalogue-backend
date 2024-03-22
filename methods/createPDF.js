@@ -16,7 +16,7 @@ const createPDF = async (datos) => {
   const precioPaneles = datos.paneles.precio;
   const precioMateriales = await calculateMateriales(datos);
   const precioManoDeObra = datos.manoDeObra.precio;
-  const inversores = generateInvertersHTML(datos);
+  const inversores = await generateInvertersHTML(datos);
   const fillData = {
     fecha: new Date().toLocaleDateString(),
     numCotizacion: 9999,
