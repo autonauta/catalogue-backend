@@ -115,7 +115,7 @@ const createPDF = async (datos) => {
   console.log("PDF generado y guardado en:", outputPath);
 
   // Retorna el nombre del archivo
-  return "cotizacion_" + datos.cliente.nombre + ".pdf";
+  return "cotizacion_" + datos.cliente.nombre.replace(/ /g, "_") + ".pdf";
 };
 
 module.exports.createPDF = createPDF;
