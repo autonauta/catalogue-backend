@@ -245,28 +245,37 @@ const getMaterials = async (strings) => {
 const getManoObra = async (paneles) => {
   var precioPorPanel = 0;
   var precioInversor = 0;
+  var precioEnvio = 0;
   if (paneles > 0 && paneles <= 8) {
     precioPorPanel = 1000;
     precioInversor = 0;
+    precioEnvio = 1200;
   } else if (paneles > 8 && paneles <= 16) {
     precioPorPanel = 800;
     precioInversor = 1000;
+    precioEnvio = 1800;
   } else if (paneles > 16 && paneles <= 24) {
     precioPorPanel = 700;
     precioInversor = 1000;
+    precioEnvio = 2500;
   } else if (paneles > 24 && paneles <= 32) {
     precioPorPanel = 600;
     precioInversor = 2000;
+    precioEnvio = 3000;
   } else if (paneles > 32 && paneles <= 100) {
     precioPorPanel = 500;
     precioInversor = 3000;
+    precioEnvio = 4500;
   }
   const materiales = {
     porPanel: precioPorPanel,
     inversor: precioInversor,
     tramite: precioTramite,
     precio:
-      (precioPorPanel * paneles + precioInversor + precioTramite) *
+      (precioPorPanel * paneles +
+        precioInversor +
+        precioTramite +
+        precioEnvio) *
       (1 + markupMO / 100),
   };
   return materiales;
