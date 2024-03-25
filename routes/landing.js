@@ -90,23 +90,27 @@ router.post("/contacto", async (req, res) => {
       //Enviar por correo electrónico
       try {
         const emailResponse = await sendPDFEmail(fileName, email, emailName);
-        if (emailResponse.sent) {
-          await sendNotifyEmail(
-            emailName,
-            project.potencia,
-            project.paneles.numPaneles,
-            project.precioProyecto.total
-          );
+        const notifyResponse = await sendNotifyEmail(
+          emailName,
+          project.potencia,
+          project.paneles.numPaneles,
+          project.precioProyecto.total
+        );
+        if (emailResponse.sent && notifyResponse.sent) {
           res.send(project);
           return;
-        } else throw new Error(email.error);
+        } else {
+          if (!emailResponse) throw new Error(emailResponse.error);
+          else throw new Error(notifyResponse.error);
+        }
       } catch (error) {
         console.log("Error al enviar correo: ", error);
-        res.status(403).send({
-          error: true,
-          message:
-            "Recibimos tu información pero por alguna razón no pudimos enviarte la cotización a tu correo, ponte en contacto con nosotros para hacertela llegar por whatsapp.",
-        });
+        if (!emailResponse.sent)
+          res.status(403).send({
+            error: true,
+            message:
+              "Recibimos tu información pero por alguna razón no pudimos enviarte la cotización a tu correo, ponte en contacto con nosotros para hacertela llegar por whatsapp.",
+          });
         return;
       }
     }
