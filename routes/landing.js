@@ -16,10 +16,24 @@ router.post("/contacto", async (req, res) => {
   var fileName;
   var project;
   console.log("REQ: ", req.body);
-  if (!nombre || !telefono || !email || !mensaje) {
+  if (!nombre) {
     res.status(401).send({
       error: true,
-      message: "No están completos los datos.",
+      message: "Es indispensable que pongas tu nombre.",
+    });
+    return;
+  }
+  if (!telefono) {
+    res.status(401).send({
+      error: true,
+      message: "Es indispensable que pongas tu teléfono.",
+    });
+    return;
+  }
+  if (!email) {
+    res.status(401).send({
+      error: true,
+      message: "Es indispensable que pongas tu correo",
     });
     return;
   }
