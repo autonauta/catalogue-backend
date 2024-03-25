@@ -5,6 +5,7 @@ const { upload } = require("../middleware/fileReception");
 const { Customer } = require("../models/Customer");
 const { createPDF } = require("../methods/createPDF");
 const { sendPDFEmail } = require("../config/nodemailer.config");
+const { sendNotifyEmail } = require("../config/nodemailer.config");
 
 const getEmailName = (nombre) => {
   return nombre.split(" ")[0];
