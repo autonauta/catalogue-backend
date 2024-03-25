@@ -90,6 +90,7 @@ router.post("/contacto", async (req, res) => {
       //Enviar por correo electrónico
       try {
         sendNotifyEmail(
+          email,
           emailName,
           project.potencia,
           project.paneles.numPaneles,
