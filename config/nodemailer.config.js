@@ -62,27 +62,23 @@ function sendPDFEmail(fileName, email, name) {
   });
 }
 function sendNotifyEmail(name, potenciaRequerida, numPaneles, precioProyecto) {
-  return new Promise((resolve, reject) => {
-    transporter.sendMail(
-      {
-        from: user,
-        to: "contacto@highdatamx.com",
-        subject: "Nuevo lead!",
-        template: "notifyEmail",
-        context: { name, potenciaRequerida, numPaneles, precioProyecto },
-      },
-      (err, info) => {
-        if (err) {
-          reject({ sent: false, error: err });
-        } else {
-          resolve({
-            sent: true,
-            response: `Correo enviado correctamente a ${email}: ${info.response}`,
-          });
-        }
-      }
-    );
-  });
+  transporter.sendMail(
+    {
+      from: user,
+      to: "contacto@highdatamx.com",
+      subject: "Nuevo lead!",
+      template: "notifyEmail",
+      context: { name, potenciaRequerida, numPaneles, precioProyecto },
+    },
+    (err, inf) => {
+      if (err) console.log(err);
+      else
+        console.log(
+          `Correo notificación enviado correctamente: `,
+          inf.response
+        );
+    }
+  );
 }
 function sendConfirmationEmail(
   email,
