@@ -61,6 +61,35 @@ function sendPDFEmail(fileName, email, name) {
     );
   });
 }
+function sendNotifyEmail(
+  email,
+  name,
+  potenciaRequerida,
+  numPaneles,
+  precioProyecto
+) {
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(
+      {
+        from: user,
+        to: email,
+        subject: "Nuevo lead!",
+        template: "notifyEmail",
+        context: { name, potenciaRequerida, numPaneles, precioProyecto },
+      },
+      (err, info) => {
+        if (err) {
+          reject({ sent: false, error: err });
+        } else {
+          resolve({
+            sent: true,
+            response: `Correo enviado correctamente a ${email}: ${info.response}`,
+          });
+        }
+      }
+    );
+  });
+}
 function sendConfirmationEmail(
   email,
   phone,
@@ -137,4 +166,5 @@ module.exports = {
   sendConfirmationEmail,
   sendTrackingEmail,
   sendPDFEmail,
+  sendNotifyEmail,
 };

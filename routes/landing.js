@@ -11,8 +11,8 @@ const getEmailName = (nombre) => {
 };
 
 router.post("/contacto", async (req, res) => {
-  const { nombre, telefono, email, mensaje, consumo } = req.body;
-  const emailName = getEmailName(nombre);
+  let { nombre, telefono, email, mensaje, consumo } = req.body;
+  const emailName = getEmailName(nombre); // Para
   var fileName;
   var project;
   console.log("REQ: ", req.body);
@@ -30,6 +30,13 @@ router.post("/contacto", async (req, res) => {
     });
     return;
   }
+  if (telefono.length < 10 || telefono.length > 10) {
+    res.status(401).send({
+      error: true,
+      message: "El teléfono debe ser a 10 dígitos.",
+    });
+    return;
+  }
   if (!email) {
     res.status(401).send({
       error: true,
@@ -37,11 +44,21 @@ router.post("/contacto", async (req, res) => {
     });
     return;
   }
+  if (!email.includes("@")) {
+    res.status(401).send({
+      error: true,
+      message: "el correo recibido no tiene el formato adecuado",
+    });
+    return;
+  }
+  if (email.includes(" ")) {
+    email = email.replace(/\s/g, "");
+  }
   //Checa si ya existe un usuario con el correo presentado
   const customer = await Customer.findOne({ email });
-  const customer2 = await Customer.findOne({ telefono });
+  const customerPhone = await Customer.findOne({ telefono });
   //Si ya existe manda el error al usuario
-  if (customer || customer2) {
+  if (customer || customerPhone) {
     res.status(402).send({
       error: true,
       message:
@@ -51,7 +68,6 @@ router.post("/contacto", async (req, res) => {
     //Si no existe procede a crearlo
   }
   if (consumo) {
-    console.log("con consumo");
     //Calcula el proyecto
     project = await createProject((data = { ...req.body }));
     console.log("Proyecto: ", project);
@@ -67,18 +83,30 @@ router.post("/contacto", async (req, res) => {
     const response = await newCustomer.save();
     if (!response) {
       console.log("No se guardó el cliente");
-      res.send({ error: true, message: "No se guardó el cliente" });
+      return;
     } else {
       console.log("Cliente guardado");
       //Enviar por correo electrónico
       try {
         const emailResponse = await sendPDFEmail(fileName, email, emailName);
         if (emailResponse.sent) {
+          await sendNotifyEmail(
+            email,
+            emailName,
+            project.potencia,
+            project.paneles.numPaneles,
+            project.precioProyecto.total
+          );
           res.send(project);
           return;
         } else throw new Error(email.error);
       } catch (error) {
         console.log("Error al enviar correo: ", error);
+        res.status(403).send({
+          error: true,
+          message:
+            "Recibimos tu información pero por alguna razón no pudimos enviarte la cotización a tu correo, ponte en contacto con nosotros para hacertela llegar por whatsapp.",
+        });
         return;
       }
     }
@@ -94,10 +122,21 @@ router.post("/contacto", async (req, res) => {
     const response = await newCustomer.save();
     if (!response) {
       console.log("No se guardó el cliente");
-      res.send({ error: true, message: "No se guardó el cliente" });
+      res.send({
+        error: true,
+        message:
+          "Error al guardar el cliente. Comunicate con nostros por whatsapp",
+      });
       return;
     } else {
       console.log("Cliente guardado");
+      await sendNotifyEmail(
+        email,
+        emailName,
+        project.potencia,
+        project.paneles.numPaneles,
+        project.precioProyecto.total
+      );
       res.send(response);
       return;
     }

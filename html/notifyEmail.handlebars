@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Notify email</title>
+    <style>
+      body {
+        font-family: "Nunito Sans", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #202143;
+      }
+    </style>
+  </head>
+  <body>
+    <center style="background-color: #202143">
+      <table
+        role="presentation"
+        cellspacing="0"
+        cellpadding="0"
+        border="0"
+        align="center"
+        style="margin: 0 auto; max-width: 600px; width: 100%"
+      >
+        <tr>
+          <td style="padding: 20px; background-color: #202143">
+            <div style="text-align: center; margin-bottom: 40px">
+              <img
+                src="https://res.cloudinary.com/highdatamx/image/upload/v1711122919/WEB_ASSETS/xr7vclsxvt6mzwm84rtp.png"
+                style="width: 100px; height: auto"
+              />
+            </div>
+            <div style="color: #eeeeee; font-size: 18px; margin-bottom: 20px">
+              <h2
+                style="
+                  color: #eeeeee;
+                  margin: 0;
+                  font-size: 30px;
+                  margin-bottom: 20px;
+                "
+              >
+                ¡Nuevo lead registrado!
+              </h2>
+              <p>
+                <span style="font-weight: 600; color: white">{{nombre}}</span>
+                se registró como nuevo cliente potencial para un proyecto.
+              </p>
+              <p>
+                Potencia: {{potenciaRequerida}}<br />
+                Numero de paneles: {{numPaneles}}<br />
+                Precio proyecto: {{precioProyecto}}<br />
+              </p>
+              <a
+                href="https://crm.highdatamx.com"
+                style="color: #ff4163; text-decoration: none"
+                >Ir al CRM</a
+              >
+            </div>
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>
