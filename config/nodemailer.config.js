@@ -61,18 +61,12 @@ function sendPDFEmail(fileName, email, name) {
     );
   });
 }
-function sendNotifyEmail(
-  email,
-  name,
-  potenciaRequerida,
-  numPaneles,
-  precioProyecto
-) {
+function sendNotifyEmail(name, potenciaRequerida, numPaneles, precioProyecto) {
   return new Promise((resolve, reject) => {
     transporter.sendMail(
       {
         from: user,
-        to: email,
+        to: "contacto@highdatamx.com",
         subject: "Nuevo lead!",
         template: "notifyEmail",
         context: { name, potenciaRequerida, numPaneles, precioProyecto },

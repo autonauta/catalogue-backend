@@ -92,7 +92,6 @@ router.post("/contacto", async (req, res) => {
         const emailResponse = await sendPDFEmail(fileName, email, emailName);
         if (emailResponse.sent) {
           await sendNotifyEmail(
-            email,
             emailName,
             project.potencia,
             project.paneles.numPaneles,
