@@ -130,13 +130,7 @@ router.post("/contacto", async (req, res) => {
       return;
     } else {
       console.log("Cliente guardado");
-      await sendNotifyEmail(
-        email,
-        emailName,
-        project.potencia,
-        project.paneles.numPaneles,
-        project.precioProyecto.total
-      );
+      sendNotifyEmail(email, emailName, 0, 0, 0);
       res.send(response);
       return;
     }
