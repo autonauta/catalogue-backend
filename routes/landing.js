@@ -63,7 +63,7 @@ router.post("/contacto", async (req, res) => {
     res.status(402).send({
       error: true,
       message:
-        "Ya existe un usuario con esos datos, comunícate con nosotros por whatsapp y resolveremos tu petición.",
+        "Ya existe un usuario con esos datos 🧔, comunícate con nosotros por whatsapp 📱 y resolveremos tu petición.",
     });
     return;
     //Si no existe procede a crearlo
@@ -84,6 +84,11 @@ router.post("/contacto", async (req, res) => {
     const response = await newCustomer.save();
     if (!response) {
       console.log("No se guardó el cliente");
+      res.status(404).send({
+        error: true,
+        message:
+          "Hubo un error con la base de datos 📄, comunicate con nosotros por whatsapp 📱 y te atenderemos cuanto antes.",
+      });
       return;
     } else {
       console.log("Cliente guardado");
@@ -98,15 +103,21 @@ router.post("/contacto", async (req, res) => {
         );
         const emailResponse = await sendPDFEmail(fileName, email, emailName);
         if (emailResponse.sent) {
-          res.send(project);
+          res.send({
+            error: false,
+            message:
+              consumo > 9000
+                ? "Ya enviamos tu cotización ✉️ pero tu proyecto es de más de 9,000 kWh ⚡. Ponte en contacto con nosotros por whatsapp 📱 para atender a detalle tu proyecto!"
+                : "Ya enviamos tu cotización ✉️, ponte en contacto con nosotros por whatsapp 📱 para confirmar tu proyecto",
+          });
           return;
         } else throw new Error(email.error);
       } catch (error) {
         console.log("Error al enviar correo: ", error);
-        res.status(403).send({
+        res.status(404).send({
           error: true,
           message:
-            "Recibimos tu información pero por alguna razón no pudimos enviarte la cotización a tu correo, ponte en contacto con nosotros para hacertela llegar por whatsapp.",
+            "Recibimos tu información 📄 pero por alguna razón no pudimos enviarte la cotización a tu correo ✉️, ponte en contacto con nosotros para hacertela llegar por whatsapp 📱.",
         });
         return;
       }
@@ -126,7 +137,7 @@ router.post("/contacto", async (req, res) => {
       res.send({
         error: true,
         message:
-          "Error al guardar el cliente. Comunicate con nostros por whatsapp",
+          "Hubo un error al guardar tus datos 📄, comunícate con nosotros por whatsapp 📱 para dar seguimiento a tu proyecto.",
       });
       return;
     } else {
