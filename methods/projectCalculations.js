@@ -181,40 +181,40 @@ const getMaterials = async (strings) => {
 
   if (strings > 3 && strings <= 5) diametroTubo = 1;
 
-  if (strings > 5 && strings <= 7) diametroTubo = 1.15;
+  if (strings > 5 && strings <= 7) diametroTubo = 1.25;
   if (strings > 7) diametroTubo = 1.5;
   let precioTubo =
     diametroTubo == 0.75
-      ? 127
+      ? 170
       : diametroTubo == 1
-      ? 160
-      : diametroTubo == 1.15
-      ? 190
-      : 220;
+      ? 300
+      : diametroTubo == 1.25
+      ? 380
+      : 550;
   let precioCondulet =
     diametroTubo == 0.75
-      ? 30
+      ? 46
       : diametroTubo == 1
-      ? 45
-      : diametroTubo == 1.15
-      ? 60
-      : 70;
+      ? 73
+      : diametroTubo == 1.25
+      ? 140
+      : 180;
   let precioConector =
     diametroTubo == 0.75
-      ? 7
-      : diametroTubo == 1
-      ? 12
-      : diametroTubo == 1.15
       ? 18
-      : 24;
+      : diametroTubo == 1
+      ? 22
+      : diametroTubo == 1.25
+      ? 28
+      : 31;
   let precioCople =
     diametroTubo == 0.75
-      ? 7
-      : diametroTubo == 1
-      ? 12
-      : diametroTubo == 1.15
       ? 18
-      : 24;
+      : diametroTubo == 1
+      ? 22
+      : diametroTubo == 1.25
+      ? 28
+      : 31;
   let tubos = {
     cantidad: Math.ceil(defaultDistance / 3),
     precio: Number((Math.ceil(defaultDistance / 3) * precioTubo).toFixed(2)),
@@ -267,7 +267,7 @@ const getManoObra = async (paneles) => {
     precioInversor = 3000;
     precioEnvio = 4500;
   }
-  const materiales = {
+  const mo = {
     porPanel: precioPorPanel,
     inversor: precioInversor,
     tramite: precioTramite,
@@ -278,7 +278,7 @@ const getManoObra = async (paneles) => {
         precioEnvio) *
       (1 + markupMO / 100),
   };
-  return materiales;
+  return mo;
 };
 const calculateProjectPrice = async (objeto) => {
   let total = 0;
