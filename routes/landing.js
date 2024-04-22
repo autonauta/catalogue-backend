@@ -16,7 +16,6 @@ router.post("/contacto", async (req, res) => {
   const emailName = getEmailName(nombre); // Para
   var fileName;
   var project;
-  console.log("REQ: ", req.body);
   if (!nombre) {
     res.status(401).send({
       error: true,
@@ -87,7 +86,7 @@ router.post("/contacto", async (req, res) => {
       res.status(404).send({
         error: true,
         message:
-          "Hubo un error con la base de datos 📄, comunicate con nosotros por whatsapp 📱 y te atenderemos cuanto antes.",
+          "Hubo un error con la base de datos 📄, comunícate con nosotros por whatsapp 📱 y te atenderemos cuanto antes.",
       });
       return;
     } else {
@@ -97,9 +96,11 @@ router.post("/contacto", async (req, res) => {
         sendNotifyEmail(
           email,
           emailName,
+          project.cliente,
           project.potencia,
           project.paneles.numPaneles,
-          project.precioProyecto.total
+          project.precioProyecto.total,
+          fileName
         );
         const emailResponse = await sendPDFEmail(fileName, email, emailName);
         if (emailResponse.sent) {
