@@ -96,7 +96,7 @@ router.post("/contacto", async (req, res) => {
         sendNotifyEmail(
           email,
           emailName,
-          project.cliente,
+          newCustomer,
           project.potencia,
           project.paneles.numPaneles,
           project.precioProyecto.total,
@@ -143,8 +143,12 @@ router.post("/contacto", async (req, res) => {
       return;
     } else {
       console.log("Cliente guardado");
-      sendNotifyEmail(email, emailName, 0, 0, 0);
-      res.send(response);
+      sendNotifyEmail(email, emailName, newCustomer, 0, 0, 0, null);
+      res.send({
+        error: false,
+        message:
+          "¡Recibimos tu información 📄, nos pondremos en contacto contigo por whatsapp cuanto antes!",
+      });
       return;
     }
   }

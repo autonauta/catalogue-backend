@@ -71,38 +71,65 @@ function sendNotifyEmail(
   fileName
 ) {
   const customerPhone = customer.telefono;
-  transporter.sendMail(
-    {
-      from: user,
-      to: "contacto@highdatamx.com",
-      subject: "Nuevo lead!",
-      template: "notifyEmail",
-      context: {
-        email,
-        name,
-        customerPhone,
-        potenciaRequerida,
-        numPaneles,
-        precioProyecto,
-      },
-      attachments: [
-        {
-          filename: fileName,
-          path:
-            "/home/autonauta/highdata/catalogue-backend/files/cotizaciones/" +
-            fileName, // Asegúrate de reemplazar esto con la ruta real al PDF
+  if (fileName) {
+    transporter.sendMail(
+      {
+        from: user,
+        to: "contacto@highdatamx.com",
+        subject: "Nuevo lead!",
+        template: "notifyEmail",
+        context: {
+          email,
+          name,
+          customerPhone,
+          potenciaRequerida,
+          numPaneles,
+          precioProyecto,
         },
-      ],
-    },
-    (err, inf) => {
-      if (err) console.log(err);
-      else
-        console.log(
-          `Correo notificación enviado correctamente: `,
-          inf.response
-        );
-    }
-  );
+        attachments: [
+          {
+            filename: fileName,
+            path:
+              "/home/autonauta/highdata/catalogue-backend/files/cotizaciones/" +
+              fileName, // Asegúrate de reemplazar esto con la ruta real al PDF
+          },
+        ],
+      },
+      (err, inf) => {
+        if (err) console.log(err);
+        else
+          console.log(
+            `Correo notificación enviado correctamente: `,
+            inf.response
+          );
+      }
+    );
+  } else {
+    transporter.sendMail(
+      {
+        from: user,
+        to: "contacto@highdatamx.com",
+        subject: "Nuevo lead!",
+        template: "notifyEmail",
+        context: {
+          email,
+          name,
+          customerPhone,
+          potenciaRequerida,
+          numPaneles,
+          precioProyecto,
+        },
+      },
+      (err, inf) => {
+        if (err) console.log(err);
+        else
+          console.log(
+            `Correo notificación enviado correctamente: `,
+            inf.response
+          );
+      }
+    );
+  }
 }
 function sendConfirmationEmail(
   email,
