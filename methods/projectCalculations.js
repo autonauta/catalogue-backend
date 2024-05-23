@@ -244,6 +244,9 @@ const getMaterials = async (strings) => {
 };
 const getManoObra = async (paneles) => {
   const promoMinisplit = paneles >= 10 ? 2000 : 0;
+  if (paneles >= 10) {
+    console.log("PROMO PANELES APLICADA", paneles);
+  }
   var precioPorPanel = 0;
   var precioInversor = 0;
   var precioEnvio = 0;
