@@ -10,5 +10,12 @@
   "mailUser": "highdata@highdatamx.com",
   "mailPassword": "FqxsH1pUQRt7",
   "mailServer": "smtppro.zoho.com",
-  "mailPort": "465"
+  "mailPort": "465",
+  "openai": {
+    "apiKey": "sk-proj-rCGXiFCtfPClsObAnaqrT3BlbkFJYC5Lncvo9KOLJEWDjtf0y"
+  },
+  "instagram": {
+    "username": "highdatamx",
+    "password": "Hightonauta01#"
+  }
 }
