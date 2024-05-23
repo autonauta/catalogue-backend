@@ -243,6 +243,7 @@ const getMaterials = async (strings) => {
   return materiales;
 };
 const getManoObra = async (paneles) => {
+  const promoMinisplit = paneles >= 10 ? 2000 : 0;
   var precioPorPanel = 0;
   var precioInversor = 0;
   var precioEnvio = 0;
@@ -275,7 +276,8 @@ const getManoObra = async (paneles) => {
       (precioPorPanel * paneles +
         precioInversor +
         precioTramite +
-        precioEnvio) *
+        precioEnvio +
+        promoMinisplit) *
       (1 + markupMO / 100),
   };
   return mo;
