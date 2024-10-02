@@ -279,8 +279,7 @@ const getManoObra = async (paneles) => {
       (precioPorPanel * paneles +
         precioInversor +
         precioTramite +
-        precioEnvio +
-        promoMinisplit) *
+        precioEnvio) *
       (1 + markupMO / 100),
   };
   return mo;
