@@ -75,7 +75,7 @@ function sendNotifyEmail(
   if (fileName) {
     transporter.sendMail(
       {
-        from: user,
+        from: sender,
         to: "contacto@highdatamx.com",
         subject: "Nuevo lead!",
         template: "notifyEmail",
@@ -108,7 +108,7 @@ function sendNotifyEmail(
   } else {
     transporter.sendMail(
       {
-        from: user,
+        from: sender,
         to: "contacto@highdatamx.com",
         subject: "Nuevo lead!",
         template: "notifyEmail",
@@ -143,7 +143,7 @@ function sendConfirmationEmail(
 ) {
   transporter.sendMail(
     {
-      from: user,
+      from: sender,
       to: email,
       subject: "Pedido confirmado",
       template: "confirmationEmail",
