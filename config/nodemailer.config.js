@@ -12,7 +12,7 @@ const sender = config.get("mailSender");
 var transporter = nodemailer.createTransport({
   host: server,
   port: port,
-  secure: false,
+  secure: true,
   auth: {
     user: user,
     pass: psw,
