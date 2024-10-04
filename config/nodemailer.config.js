@@ -7,11 +7,12 @@ const user = config.get("mailUser");
 const psw = config.get("mailPassword");
 const server = config.get("mailServer");
 const port = config.get("mailPort");
+const sender = config.get("mailSender");
 
 var transporter = nodemailer.createTransport({
   host: server,
   port: port,
-  secure: true,
+  secure: false,
   auth: {
     user: user,
     pass: psw,
@@ -34,7 +35,7 @@ function sendPDFEmail(fileName, email, name) {
   return new Promise((resolve, reject) => {
     transporter.sendMail(
       {
-        from: user,
+        from: sender,
         to: email,
         subject: "Cotización HighData",
         template: "confirmationEmail",
