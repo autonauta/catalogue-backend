@@ -74,67 +74,56 @@ const getPanelesRequeridos = async (max) => {
 //////////////////////////////////////////////////////
 
 const getInversores = async (max) => {
-  let dollarPrice;
-  const dollarUpdate = await Dollar.find({});
-  if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
-  else dollarPrice = 17.1;
-  const consumoDiario = (max * 1000) / 60;
-  const potenciaRequeridaEnWatts = consumoDiario / 5;
-  const inversores = await Inverter.find({});
-  if (!inversores) inversores = defaultInverters;
-  inversores.sort((a, b) => a.potencia - b.potencia); // Ordena los inversores por potencia de forma ascendente
+  try {
+    const dollarUpdate = (await Dollar.findOne({})) || { price: 17.1 };
+    const dollarPrice = dollarUpdate.price;
 
-  let potenciaRestante = potenciaRequeridaEnWatts;
-  let seleccionados = [];
-  const umbral = potenciaRequeridaEnWatts * UMBRAL_POTENCIA; // 3% de la potencia requerida
+    const consumoDiario = max * CONSUMO_DIARIO_FACTOR;
+    const potenciaRequeridaEnWatts = consumoDiario / HORAS_SOL_PICO;
 
-  while (potenciaRestante > umbral) {
-    let inversorSeleccionado;
+    const inversores = (await Inverter.find({})) || defaultInverters;
+    inversores.sort((a, b) => a.potencia - b.potencia);
 
-    // Para el primer inversor y los secundarios, seleccionar el inmediatamente más grande que el restante
-    if (potenciaRestante === potenciaRequeridaEnWatts) {
-      // Si es el primer inversor
-      inversorSeleccionado = inversores.find(
-        (inversor) => inversor.potencia >= potenciaRestante
-      );
-      if (!inversorSeleccionado) {
-        // Si no se encuentra un inversor que cumpla exactamente, toma el de mayor potencia
-        inversorSeleccionado = inversores[inversores.length - 1];
+    let potenciaRestante = potenciaRequeridaEnWatts;
+    const umbral = potenciaRequeridaEnWatts * UMBRAL_POTENCIA;
+    const seleccionados = [];
+
+    while (potenciaRestante > umbral) {
+      const esPrimerInversor = potenciaRestante === potenciaRequeridaEnWatts;
+      const inversorSeleccionado =
+        inversores.find((inversor) =>
+          esPrimerInversor
+            ? inversor.potencia >= potenciaRestante
+            : inversor.potencia > potenciaRestante
+        ) || inversores[inversores.length - 1];
+
+      seleccionados.push(inversorSeleccionado);
+      potenciaRestante -= inversorSeleccionado.potencia;
+    }
+
+    const resultado = seleccionados.reduce((acc, curr) => {
+      const existente = acc.find((item) => item.modelo === curr.nombre);
+      if (existente) {
+        existente.cantidad++;
+      } else {
+        acc.push({
+          modelo: curr.nombre,
+          potencia: curr.potencia,
+          cantidad: 1,
+          strings: curr.cadenas,
+          precio: roundToTwo(
+            curr.precio * dollarPrice * (1 + inverterMarkup / 100)
+          ),
+        });
       }
-    } else {
-      // Para los inversores secundarios
-      inversorSeleccionado = inversores.find(
-        (inversor) => inversor.potencia > potenciaRestante
-      );
-      // Si no se encuentra uno más grande que el restante, toma el de mayor potencia disponible
-      if (!inversorSeleccionado)
-        inversorSeleccionado = inversores[inversores.length - 1];
-    }
+      return acc;
+    }, []);
 
-    seleccionados.push(inversorSeleccionado); // Agrega el inversor seleccionado a la lista
-    potenciaRestante -= inversorSeleccionado.potencia; // Actualiza la potencia restante
+    return resultado;
+  } catch (error) {
+    console.error("Error en getInversores:", error);
+    throw error;
   }
-
-  // Agrupa y cuenta los inversores seleccionados
-  const resultado = seleccionados.reduce((acc, curr) => {
-    const existente = acc.find((item) => item.modelo === curr.nombre);
-    if (existente) {
-      existente.cantidad++;
-    } else {
-      acc.push({
-        modelo: curr.nombre,
-        potencia: curr.potencia,
-        cantidad: 1,
-        strings: curr.cadenas,
-        precio: roundToTwo(
-          curr.precio * dollarPrice * (1 + inverterMarkup / 100)
-        ),
-      });
-    }
-    return acc;
-  }, []);
-
-  return resultado;
 };
 const getStrings = async (paneles) => {
   const panelVoltage = 50;
@@ -232,46 +221,27 @@ const getMaterials = async (strings) => {
   return materiales;
 };
 const getManoObra = async (paneles) => {
-  const promoMinisplit = paneles >= 10 ? 2000 : 0;
-  if (paneles >= 10) {
-    console.log("PROMO PANELES APLICADA", paneles);
-  }
-  var precioPorPanel = 0;
-  var precioInversor = 0;
-  var precioEnvio = 0;
-  if (paneles > 0 && paneles <= 8) {
-    precioPorPanel = 1000;
-    precioInversor = 0;
-    precioEnvio = 1200;
-  } else if (paneles > 8 && paneles <= 16) {
-    precioPorPanel = 800;
-    precioInversor = 1000;
-    precioEnvio = 1800;
-  } else if (paneles > 16 && paneles <= 24) {
-    precioPorPanel = 700;
-    precioInversor = 1000;
-    precioEnvio = 2500;
-  } else if (paneles > 24 && paneles <= 32) {
-    precioPorPanel = 600;
-    precioInversor = 2000;
-    precioEnvio = 3000;
-  } else if (paneles > 32 && paneles <= 100) {
-    precioPorPanel = 500;
-    precioInversor = 3000;
-    precioEnvio = 4500;
-  }
-  const mo = {
+  const rangos = [
+    { max: 8, precioPorPanel: 1000, precioInversor: 0, precioEnvio: 1200 },
+    { max: 16, precioPorPanel: 800, precioInversor: 1000, precioEnvio: 1800 },
+    { max: 24, precioPorPanel: 700, precioInversor: 1000, precioEnvio: 2500 },
+    { max: 32, precioPorPanel: 600, precioInversor: 2000, precioEnvio: 3000 },
+    { max: 100, precioPorPanel: 500, precioInversor: 3000, precioEnvio: 4500 },
+  ];
+
+  const rango =
+    rangos.find((r) => paneles <= r.max) || rangos[rangos.length - 1];
+  const { precioPorPanel, precioInversor, precioEnvio } = rango;
+
+  const precioTotal =
+    precioPorPanel * paneles + precioInversor + precioTramite + precioEnvio;
+
+  return {
     porPanel: precioPorPanel,
     inversor: precioInversor,
     tramite: precioTramite,
-    precio:
-      (precioPorPanel * paneles +
-        precioInversor +
-        precioTramite +
-        precioEnvio) *
-      (1 + markupMO / 100),
+    precio: precioTotal * (1 + markupMO / 100),
   };
-  return mo;
 };
 const calculateProjectPrice = async (objeto) => {
   const sumarPrecios = (obj) => {
