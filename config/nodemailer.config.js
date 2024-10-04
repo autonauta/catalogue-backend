@@ -35,7 +35,7 @@ function sendPDFEmail(fileName, email, name) {
   return new Promise((resolve, reject) => {
     transporter.sendMail(
       {
-        from: sender,
+        from: '"HighData Team" <' + sender + ">",
         to: email,
         subject: "Cotización HighData",
         template: "confirmationEmail",
