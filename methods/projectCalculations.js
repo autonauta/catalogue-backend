@@ -16,7 +16,7 @@ const frameMarkup = 25;
 const markupMO = 50;
 const panelPower = 550;
 const defaultDistance = 40;
-const precioTramite = 3000;
+const precioTramite = 3500;
 const HORAS_SOL_PICO = 5;
 const UMBRAL_POTENCIA = 0.03;
 
