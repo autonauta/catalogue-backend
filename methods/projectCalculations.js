@@ -13,10 +13,12 @@ const regex3 =
 const panelMarkup = 50;
 const inverterMarkup = 35;
 const frameMarkup = 25;
-const markupMO = 60;
+const markupMO = 50;
 const panelPower = 550;
 const defaultDistance = 40;
 const precioTramite = 3000;
+const HORAS_SOL_PICO = 5;
+const UMBRAL_POTENCIA = 0.03;
 
 const defaultInverters = [
   { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
@@ -25,34 +27,48 @@ const defaultInverters = [
   { modelo: "Inversor 36000W", potencia: 36000, strings: 12 },
 ];
 
+const roundToTwo = (num) => Number(num.toFixed(2));
+
+// Usar esta función en lugar de .toFixed(2) en todo el código
+
+const CONSUMO_DIARIO_FACTOR = 1000 / 60;
+const PANEL_MINIMO_PROMO = 10;
+const PROMO_MINISPLIT = 2000;
+
+// Usar estas constantes en lugar de los valores numéricos directos
+
 const getPanelesRequeridos = async (max) => {
-  const defaultPanel = {
-    nombre: "ETSOLAR 550W",
-    marca: "ETSOLAR",
-    potencia: 550,
-    voltaje: 50,
-    precio: 85,
-  };
-  let dollarPrice;
-  const dollarUpdate = await Dollar.find({});
-  if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
-  else dollarPrice = 17.1;
-  const consumoDiario = (max * 1000) / 60;
-  const potenciaRequerida = consumoDiario / 5;
-  const numPaneles = Math.ceil(potenciaRequerida / panelPower);
-  let panel = await Panel.find({});
-  if (!panel) panel = defaultPanel;
-  return {
-    numPaneles,
-    precio: Number(
-      (
-        numPaneles *
-        panel[0].precio *
-        dollarPrice *
-        (1 + panelMarkup / 100)
-      ).toFixed(2)
-    ),
-  };
+  try {
+    const defaultPanel = {
+      nombre: "ETSOLAR 550W",
+      marca: "ETSOLAR",
+      potencia: 550,
+      voltaje: 50,
+      precio: 85,
+    };
+
+    const [dollarUpdate] = await Dollar.find({});
+    const dollarPrice = dollarUpdate ? dollarUpdate.price : 17.1;
+
+    const consumoDiario = (max * 1000) / 60;
+    const potenciaRequerida = consumoDiario / HORAS_SOL_PICO;
+
+    const [panel] = (await Panel.find({})) || [defaultPanel];
+
+    const numPaneles =
+      Math.ceil(potenciaRequerida / panel.potencia) ||
+      Math.ceil(potenciaRequerida / panelPower);
+
+    return {
+      numPaneles,
+      precio: roundToTwo(
+        numPaneles * panel.precio * dollarPrice * (1 + panelMarkup / 100)
+      ),
+    };
+  } catch (error) {
+    console.error("Error en getPanelesRequeridos:", error);
+    throw error;
+  }
 };
 ////////////////////////////////////////////////////7777
 //////////////////////////////////////////////////////
@@ -70,7 +86,7 @@ const getInversores = async (max) => {
 
   let potenciaRestante = potenciaRequeridaEnWatts;
   let seleccionados = [];
-  const umbral = potenciaRequeridaEnWatts * 0.03; // 3% de la potencia requerida
+  const umbral = potenciaRequeridaEnWatts * UMBRAL_POTENCIA; // 3% de la potencia requerida
 
   while (potenciaRestante > umbral) {
     let inversorSeleccionado;
@@ -110,8 +126,8 @@ const getInversores = async (max) => {
         potencia: curr.potencia,
         cantidad: 1,
         strings: curr.cadenas,
-        precio: Number(
-          (curr.precio * dollarPrice * (1 + inverterMarkup / 100)).toFixed(2)
+        precio: roundToTwo(
+          curr.precio * dollarPrice * (1 + inverterMarkup / 100)
         ),
       });
     }
@@ -160,78 +176,51 @@ const getSoporteria = async (paneles) => {
   if (!frame)
     return {
       cantidad: Math.ceil(paneles / 4),
-      precio: Number((150 * dollarPrice * (1 + frameMarkup / 100)).toFixed(2)),
+      precio: roundToTwo(150 * dollarPrice * (1 + frameMarkup / 100)),
     };
   else
     return {
       cantidad: Math.ceil(paneles / 4),
-      precio: Number(
-        (
-          Math.ceil(paneles / 4) *
+      precio: roundToTwo(
+        Math.ceil(paneles / 4) *
           frame[0].precio *
           dollarPrice *
           (1 + frameMarkup / 100)
-        ).toFixed(2)
       ),
     };
 };
+const diametroTuboPrecio = new Map([
+  [0.75, { tubo: 170, condulet: 46, conector: 18 }],
+  [1, { tubo: 300, condulet: 73, conector: 22 }],
+  [1.25, { tubo: 380, condulet: 140, conector: 28 }],
+  [1.5, { tubo: 550, condulet: 180, conector: 31 }],
+]);
+
 const getMaterials = async (strings) => {
-  var diametroTubo;
-  if (strings > 0 && strings <= 3) diametroTubo = 0.75;
+  const diametroTubo =
+    strings <= 3 ? 0.75 : strings <= 5 ? 1 : strings <= 7 ? 1.25 : 1.5;
+  const {
+    tubo: precioTubo,
+    condulet: precioCondulet,
+    conector: precioConector,
+  } = diametroTuboPrecio.get(diametroTubo);
+  const precioCople = precioConector;
 
-  if (strings > 3 && strings <= 5) diametroTubo = 1;
-
-  if (strings > 5 && strings <= 7) diametroTubo = 1.25;
-  if (strings > 7) diametroTubo = 1.5;
-  let precioTubo =
-    diametroTubo == 0.75
-      ? 170
-      : diametroTubo == 1
-      ? 300
-      : diametroTubo == 1.25
-      ? 380
-      : 550;
-  let precioCondulet =
-    diametroTubo == 0.75
-      ? 46
-      : diametroTubo == 1
-      ? 73
-      : diametroTubo == 1.25
-      ? 140
-      : 180;
-  let precioConector =
-    diametroTubo == 0.75
-      ? 18
-      : diametroTubo == 1
-      ? 22
-      : diametroTubo == 1.25
-      ? 28
-      : 31;
-  let precioCople =
-    diametroTubo == 0.75
-      ? 18
-      : diametroTubo == 1
-      ? 22
-      : diametroTubo == 1.25
-      ? 28
-      : 31;
   let tubos = {
     cantidad: Math.ceil(defaultDistance / 3),
-    precio: Number((Math.ceil(defaultDistance / 3) * precioTubo).toFixed(2)),
+    precio: roundToTwo(Math.ceil(defaultDistance / 3) * precioTubo),
   };
   let condulets = {
     cantidad: Math.ceil(tubos.cantidad / 3),
-    precio: Number((Math.ceil(tubos.cantidad / 3) * precioCondulet).toFixed(2)),
+    precio: roundToTwo(Math.ceil(tubos.cantidad / 3) * precioCondulet),
   };
   let conectores = {
     cantidad: Math.ceil(condulets.cantidad * 6),
-    precio: Number(
-      (Math.ceil(condulets.cantidad * 6) * precioConector).toFixed(2)
-    ),
+    precio: roundToTwo(Math.ceil(condulets.cantidad * 6) * precioConector),
   };
   let coples = {
     cantidad: Math.ceil(tubos.cantidad * 2),
-    precio: Number((Math.ceil(tubos.cantidad * 2) * precioCople).toFixed(2)),
+    precio: roundToTwo(Math.ceil(tubos.cantidad * 2) * precioCople),
   };
   const materiales = {
     diametroTubo,
@@ -285,44 +274,37 @@ const getManoObra = async (paneles) => {
   return mo;
 };
 const calculateProjectPrice = async (objeto) => {
-  let total = 0;
-
-  function sumar(obj, esInversor = false) {
-    for (const key of Object.keys(obj)) {
-      const valor = obj[key];
-
-      // Si el valor es un objeto y no es null, se revisa si estamos en el array 'inversores'
-      if (typeof valor === "object" && valor !== null) {
-        // Si es un array, revisamos si estamos en 'inversores' por el nombre de la clave
-        if (Array.isArray(valor) && key === "inversores") {
-          // Pasamos true para indicar que estamos procesando 'inversores'
-          valor.forEach((item) => sumar(item, true));
-        } else {
-          // Continuamos la recursión normalmente para otros objetos o arrays
-          sumar(valor);
-        }
-      } else if (esInversor && key === "precio") {
-        // Si estamos en un inversor, multiplicamos el precio por la cantidad
-        const cantidad = obj.cantidad || 1; // Aseguramos que haya una cantidad mínima de 1
-        total += valor * cantidad;
-      } else if (!esInversor && key.includes("precio")) {
-        // Sumamos si la clave es un precio y no estamos en un inversor
-        total += valor;
-      }
+  const sumarPrecios = (obj) => {
+    if (Array.isArray(obj)) {
+      return obj.reduce((sum, item) => sum + sumarPrecios(item), 0);
     }
-  }
+    if (typeof obj !== "object" || obj === null) {
+      return 0;
+    }
+    return Object.entries(obj).reduce((sum, [key, value]) => {
+      if (key === "inversores") {
+        return (
+          sum +
+          value.reduce((invSum, inv) => invSum + inv.precio * inv.cantidad, 0)
+        );
+      }
+      if (key.includes("precio")) {
+        return sum + value;
+      }
+      return sum + sumarPrecios(value);
+    }, 0);
+  };
 
-  sumar(objeto); // Inicia la función recursiva
-  return total;
+  return sumarPrecios(objeto);
 };
 
-const calculateInversores = async (datos) => {
-  let inversores = datos.inversores;
-  return inversores.reduce(
+const calculateInversores = (datos) => {
+  return datos.inversores.reduce(
     (acumulado, inversor) => acumulado + inversor.precio * inversor.cantidad,
     0
   );
 };
+
 const calculateMateriales = async (proyecto) => {
   let total = 0;
 
@@ -340,16 +322,54 @@ const calculateMateriales = async (proyecto) => {
     }
   });
 
-  return Number(total.toFixed(2));
+  return roundToTwo(total);
 };
 
-const generateInvertersHTML = async (datos) => {
-  const inversores = datos.inversores;
-  let html = "";
-  for (let i = 0; i < inversores.length; i++) {
-    html += `<li><strong>Inversor ${inversores[i].modelo} : </strong> ${inversores[i].cantidad}</li>`;
+const generateInvertersHTML = (datos) => {
+  return datos.inversores
+    .map(
+      ({ modelo, cantidad }) =>
+        `<li><strong>Inversor ${modelo} : </strong> ${cantidad}</li>`
+    )
+    .join("");
+};
+
+const calculateProject = async (max) => {
+  try {
+    const [
+      paneles,
+      inversores,
+      strings,
+      cables,
+      soporteria,
+      materiales,
+      manoObra,
+    ] = await Promise.all([
+      getPanelesRequeridos(max),
+      getInversores(max),
+      getStrings(paneles.numPaneles),
+      getCables(strings.totalStrings),
+      getSoporteria(paneles.numPaneles),
+      getMaterials(strings.totalStrings),
+      getManoObra(paneles.numPaneles),
+    ]);
+
+    const proyecto = {
+      paneles,
+      inversores,
+      strings,
+      cables,
+      soporteria,
+      materiales,
+      manoObra,
+    };
+    const precioTotal = await calculateProjectPrice(proyecto);
+
+    return { proyecto, precioTotal };
+  } catch (error) {
+    console.error("Error en calculateProject:", error);
+    throw error;
   }
-  return html;
 };
 
 module.exports = {
@@ -364,4 +384,5 @@ module.exports = {
   calculateInversores,
   calculateMateriales,
   generateInvertersHTML,
+  calculateProject,
 };
