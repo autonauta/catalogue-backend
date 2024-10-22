@@ -19,6 +19,7 @@ const defaultDistance = 40;
 const precioTramite = 3500;
 const HORAS_SOL_PICO = 5;
 const UMBRAL_POTENCIA = 0.03;
+const PRECIO_DOLAR_DEFAULT = 19.89;
 
 const defaultInverters = [
   { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
@@ -26,6 +27,13 @@ const defaultInverters = [
   { modelo: "Inversor 10000W", potencia: 10000, strings: 6 },
   { modelo: "Inversor 36000W", potencia: 36000, strings: 12 },
 ];
+const defaultPanel = {
+  nombre: "ETSOLAR 550W",
+  marca: "ETSOLAR",
+  potencia: 550,
+  voltaje: 50,
+  precio: 89.49,
+};
 
 const roundToTwo = (num) => Number(num.toFixed(2));
 
@@ -39,25 +47,12 @@ const PROMO_MINISPLIT = 2000;
 
 const getPanelesRequeridos = async (max) => {
   try {
-    const defaultPanel = {
-      nombre: "ETSOLAR 550W",
-      marca: "ETSOLAR",
-      potencia: 550,
-      voltaje: 50,
-      precio: 85,
-    };
+    const dollarPrice =
+      (await Dollar.findOne({}))?.price || PRECIO_DOLAR_DEFAULT;
+    const potenciaRequerida = (max * CONSUMO_DIARIO_FACTOR) / HORAS_SOL_PICO; // Optimización de cálculo
 
-    const [dollarUpdate] = await Dollar.find({});
-    const dollarPrice = dollarUpdate ? dollarUpdate.price : 17.1;
-
-    const consumoDiario = (max * 1000) / 60;
-    const potenciaRequerida = consumoDiario / HORAS_SOL_PICO;
-
-    const [panel] = (await Panel.find({})) || [defaultPanel];
-
-    const numPaneles =
-      Math.ceil(potenciaRequerida / panel.potencia) ||
-      Math.ceil(potenciaRequerida / panelPower);
+    const panel = (await Panel.findOne({})) || defaultPanel;
+    const numPaneles = Math.ceil(potenciaRequerida / panel.potencia);
 
     return {
       numPaneles,
@@ -75,56 +70,63 @@ const getPanelesRequeridos = async (max) => {
 
 const getInversores = async (max) => {
   try {
-    const dollarUpdate = (await Dollar.findOne({})) || { price: 17.1 };
-    const dollarPrice = dollarUpdate.price;
-
-    const consumoDiario = max * CONSUMO_DIARIO_FACTOR;
-    const potenciaRequeridaEnWatts = consumoDiario / HORAS_SOL_PICO;
+    const dollarPrice = (await Dollar.findOne({}))?.price || 17.1;
+    const potenciaRequeridaEnWatts =
+      (max * CONSUMO_DIARIO_FACTOR) / HORAS_SOL_PICO;
 
     const inversores = (await Inverter.find({})) || defaultInverters;
     inversores.sort((a, b) => a.potencia - b.potencia);
 
-    let potenciaRestante = potenciaRequeridaEnWatts;
-    const umbral = potenciaRequeridaEnWatts * UMBRAL_POTENCIA;
-    const seleccionados = [];
+    const seleccionados = seleccionarInversores(
+      inversores,
+      potenciaRequeridaEnWatts
+    );
 
-    while (potenciaRestante > umbral) {
-      const esPrimerInversor = potenciaRestante === potenciaRequeridaEnWatts;
-      const inversorSeleccionado =
-        inversores.find((inversor) =>
-          esPrimerInversor
-            ? inversor.potencia >= potenciaRestante
-            : inversor.potencia > potenciaRestante
-        ) || inversores[inversores.length - 1];
-
-      seleccionados.push(inversorSeleccionado);
-      potenciaRestante -= inversorSeleccionado.potencia;
-    }
-
-    const resultado = seleccionados.reduce((acc, curr) => {
-      const existente = acc.find((item) => item.modelo === curr.nombre);
-      if (existente) {
-        existente.cantidad++;
-      } else {
-        acc.push({
-          modelo: curr.nombre,
-          potencia: curr.potencia,
-          cantidad: 1,
-          strings: curr.cadenas,
-          precio: roundToTwo(
-            curr.precio * dollarPrice * (1 + inverterMarkup / 100)
-          ),
-        });
-      }
-      return acc;
-    }, []);
-
-    return resultado;
+    return procesarSeleccionados(seleccionados, dollarPrice);
   } catch (error) {
     console.error("Error en getInversores:", error);
     throw error;
   }
 };
+
+// Función para seleccionar inversores
+const seleccionarInversores = (inversores, potenciaRestante) => {
+  const umbral = potenciaRestante * UMBRAL_POTENCIA;
+  const seleccionados = [];
+
+  while (potenciaRestante > umbral) {
+    const inversorSeleccionado =
+      inversores.find((inversor) => inversor.potencia >= potenciaRestante) ||
+      inversores[inversores.length - 1];
+
+    seleccionados.push(inversorSeleccionado);
+    potenciaRestante -= inversorSeleccionado.potencia;
+  }
+
+  return seleccionados;
+};
+
+// Función para procesar los inversores seleccionados
+const procesarSeleccionados = (seleccionados, dollarPrice) => {
+  return seleccionados.reduce((acc, curr) => {
+    const existente = acc.find((item) => item.modelo === curr.nombre);
+    if (existente) {
+      existente.cantidad++;
+    } else {
+      acc.push({
+        modelo: curr.nombre,
+        potencia: curr.potencia,
+        cantidad: 1,
+        strings: curr.cadenas,
+        precio: roundToTwo(
+          curr.precio * dollarPrice * (1 + inverterMarkup / 100)
+        ),
+      });
+    }
+    return acc;
+  }, []);
+};
+
 const getStrings = async (paneles) => {
   const panelVoltage = 50;
   const maxVoltage = 500;
@@ -138,24 +140,22 @@ const getStrings = async (paneles) => {
   };
   return strings;
 };
+
 const getCables = async (strings) => {
   const defaultCablePrice = 17;
-  let blackCable = {
-    cantidad: strings * defaultDistance,
-    precio: strings * defaultDistance * defaultCablePrice,
+  const cantidad = strings * defaultDistance;
+  const precio = cantidad * defaultCablePrice;
+
+  return {
+    blackCable: { cantidad, precio },
+    redCable: { cantidad, precio },
+    greenCable: {
+      cantidad: defaultDistance,
+      precio: defaultDistance * defaultCablePrice,
+    },
   };
-  let redCable = blackCable;
-  let greenCable = {
-    cantidad: defaultDistance,
-    precio: defaultDistance * defaultCablePrice,
-  };
-  const cables = {
-    blackCable,
-    redCable,
-    greenCable,
-  };
-  return cables;
 };
+
 const getSoporteria = async (paneles) => {
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
@@ -178,6 +178,7 @@ const getSoporteria = async (paneles) => {
       ),
     };
 };
+
 const diametroTuboPrecio = new Map([
   [0.75, { tubo: 170, condulet: 46, conector: 18 }],
   [1, { tubo: 300, condulet: 73, conector: 22 }],
@@ -220,6 +221,7 @@ const getMaterials = async (strings) => {
   };
   return materiales;
 };
+
 const getManoObra = async (paneles) => {
   const rangos = [
     { max: 8, precioPorPanel: 1000, precioInversor: 0, precioEnvio: 1200 },
@@ -243,6 +245,7 @@ const getManoObra = async (paneles) => {
     precio: precioTotal * (1 + markupMO / 100),
   };
 };
+
 const calculateProjectPrice = async (objeto) => {
   const sumarPrecios = (obj) => {
     if (Array.isArray(obj)) {
@@ -258,14 +261,11 @@ const calculateProjectPrice = async (objeto) => {
           value.reduce((invSum, inv) => invSum + inv.precio * inv.cantidad, 0)
         );
       }
-      if (key.includes("precio")) {
-        return sum + value;
-      }
-      return sum + sumarPrecios(value);
+      return sum + (key.includes("precio") ? value : sumarPrecios(value));
     }, 0);
   };
 
-  return sumarPrecios(objeto);
+  return roundToTwo(sumarPrecios(objeto));
 };
 
 const calculateInversores = (datos) => {

@@ -5,6 +5,7 @@ const customerSchema = new mongoose.Schema(
     nombre: {
       type: String,
       required: [true, "Es necesario proporcionar su nombre completo."],
+      trim: true, // Eliminar espacios en blanco
     },
     email: {
       type: String,
@@ -14,20 +15,26 @@ const customerSchema = new mongoose.Schema(
       ],
       unique: true,
       lowercase: true,
+      trim: true, // Eliminar espacios en blanco
+      match: [/.+@.+\..+/, "Por favor ingrese un correo electrónico válido."], // Validación de formato
     },
     empresa: {
       type: String,
+      trim: true, // Eliminar espacios en blanco
     },
     telefono: {
       type: String,
       unique: true,
       required: true,
+      trim: true, // Eliminar espacios en blanco
     },
     consumo: {
       type: Number,
+      min: 0, // Asegurarse de que el consumo no sea negativo
     },
     mensaje: {
       type: String,
+      trim: true, // Eliminar espacios en blanco
     },
   },
   { timestamps: true }

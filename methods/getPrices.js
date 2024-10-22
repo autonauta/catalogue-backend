@@ -34,29 +34,28 @@ const getPrices = async () => {
 };
 
 const getPanelPrices = async () => {
-  var panelString = "";
   const panels = await Panel.find({});
   if (!panels) {
     console.log("No panels");
-  } else {
-    panelString = await createProductString(panels);
-    const url = config.get("SYSCOM_URL") + "productos/" + panelString;
-    const resSyscomPanels = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: config.get("SYSCOM_AUTH"),
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-    const syscomPanels = await resSyscomPanels.json();
-    if (syscomPanels.status || !syscomPanels) {
-      console.log("Error de comunicación con syscom: " + syscomPanels.detail);
-    } else {
-      if (typeof syscomPanels === "object" && !Array.isArray(syscomPanels))
-        updatePanels([syscomPanels]);
-      else updatePanels(syscomPanels);
-    }
+    return;
   }
+  const panelString = await createProductString(panels);
+  const url = config.get("SYSCOM_URL") + "productos/" + panelString;
+  const resSyscomPanels = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: config.get("SYSCOM_AUTH"),
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  });
+  const syscomPanels = await resSyscomPanels.json();
+  if (syscomPanels.status || !syscomPanels) {
+    console.log("Error de comunicación con syscom: " + syscomPanels.detail);
+    return;
+  }
+  if (typeof syscomPanels === "object" && !Array.isArray(syscomPanels))
+    updatePanels([syscomPanels]);
+  else updatePanels(syscomPanels);
 };
 
 const getInverterPrices = async () => {

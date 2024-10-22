@@ -108,7 +108,7 @@ router.post("/contacto", async (req, res) => {
             error: false,
             message:
               consumo > 9000
-                ? "Ya enviamos tu cotización ✉️ pero tu proyecto es de más de 9,000 kWh ⚡. Ponte en contacto con nosotros por whatsapp 📱 para atender a detalle tu proyecto!"
+                ? "Ya enviamos tu cotización ✉️ pero tu proyecto es de más de 9 kWh ⚡. Ponte en contacto con nosotros por whatsapp 📱 para atender a detalle tu proyecto!"
                 : "Ya enviamos tu cotización ✉️, ponte en contacto con nosotros por whatsapp 📱 para confirmar tu proyecto",
           });
           return;
@@ -156,25 +156,27 @@ router.post("/contacto", async (req, res) => {
 
 router.post("/defaults", async (req, res) => {
   const { projectOne, projectTwo, projectThree, projectFour } = req.body;
+
   if (!projectOne || !projectTwo || !projectThree || !projectFour) {
-    res.status(401).send({
+    return res.status(401).send({
       error: true,
       message: "No están completos los datos.",
     });
-    return;
   }
-  const project1 = await createProject((data = { consumo: projectOne }));
-  const project2 = await createProject((data = { consumo: projectTwo }));
-  const project3 = await createProject((data = { consumo: projectThree }));
-  const project4 = await createProject((data = { consumo: projectFour }));
+
+  const proyectos = [projectOne, projectTwo, projectThree, projectFour];
+  const resultados = await Promise.all(
+    proyectos.map((consumo) => createProject({ consumo }))
+  );
+
   const prices = {
-    projectOne: project1.precioProyecto.total,
-    projectTwo: project2.precioProyecto.total,
-    projectThree: project3.precioProyecto.total,
-    projectFour: project4.precioProyecto.total,
+    projectOne: resultados[0].precioProyecto.total,
+    projectTwo: resultados[1].precioProyecto.total,
+    projectThree: resultados[2].precioProyecto.total,
+    projectFour: resultados[3].precioProyecto.total,
   };
+
   res.send(prices);
-  return;
 });
 
 module.exports = router;
