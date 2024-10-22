@@ -46,10 +46,11 @@ const createProject = async (data) => {
 
   // Calcular precio del proyecto
   const projectPrice = await calculateProjectPrice(project);
+  const iva = projectPrice * 0.16;
   project.precioProyecto = {
     subtotal: projectPrice,
-    iva: Number((projectPrice * 0.16).toFixed(2)),
-    total: Number((projectPrice + project.precioProyecto.iva).toFixed(2)),
+    iva: Number(iva.toFixed(2)),
+    total: Number((projectPrice + iva).toFixed(2)),
   };
 
   return project;
