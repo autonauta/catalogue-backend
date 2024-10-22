@@ -108,7 +108,7 @@ router.post("/contacto", async (req, res) => {
             error: false,
             message:
               consumo > 9000
-                ? "Ya enviamos tu cotización ✉️ pero tu proyecto es de más de 9 kWh ⚡. Ponte en contacto con nosotros por whatsapp 📱 para atender a detalle tu proyecto!"
+                ? "Ya enviamos tu cotización ✉️ pero tu proyecto es de más de 9000 kWh ⚡. Ponte en contacto con nosotros por whatsapp 📱 para atender a detalle tu proyecto!"
                 : "Ya enviamos tu cotización ✉️, ponte en contacto con nosotros por whatsapp 📱 para confirmar tu proyecto",
           });
           return;
