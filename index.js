@@ -25,6 +25,7 @@ app.set("socketio", io);
 const products = require("./routes/products");
 const diy = require("./routes/diy");
 const stripe = require("./routes/stripe");
+const ptar = require("./routes/ptar");
 const syscom = require("./routes/syscom");
 //const whatsapp = require("./routes/whatsapp");
 const landing = require("./routes/landing");
@@ -40,6 +41,7 @@ app.use(morgan("tiny"));
 //----Routes
 app.use("/api/v1/products", products);
 app.use("/api/v1/diy", diy);
+app.use("/api/v1/ptar", ptar);
 app.use("/api/v1/syscom", syscom);
 app.use("/api/v1/stripe", stripe);
 //app.use("/api/v1/whatsapp", whatsapp);
