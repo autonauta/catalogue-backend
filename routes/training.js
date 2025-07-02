@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Training } = require("../models/training.model");
+const { Training } = require("../models/Training");
 const auth = require("../middleware/auth");
 
 // GET /api/v1/trainings?category=upper
