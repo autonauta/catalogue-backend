@@ -4,16 +4,20 @@ const path = require("path");
 const fs = require("fs");
 const router = express.Router();
 
+const BASE_IMG_PATH =
+  "/var/www/camino-al-sol.highdatamx.com/public_html/src/img/";
+
 // Función para decidir la carpeta según el campo
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let folder = "";
-    if (file.fieldname === "img") folder = "src/img/montañas/image/";
+    if (file.fieldname === "img")
+      folder = path.join(BASE_IMG_PATH, "montañas/image/");
     else if (file.fieldname === "img_real")
-      folder = "src/img/montañas/image_real/";
+      folder = path.join(BASE_IMG_PATH, "montañas/image_real/");
     else if (file.fieldname === "img_route")
-      folder = "src/img/montañas/image_route/";
-    else folder = "src/img/montañas/otros/";
+      folder = path.join(BASE_IMG_PATH, "montañas/image_route/");
+    else folder = path.join(BASE_IMG_PATH, "montañas/otros/");
 
     // Crear la carpeta si no existe
     fs.mkdirSync(folder, { recursive: true });
