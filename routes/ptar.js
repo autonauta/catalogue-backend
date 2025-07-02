@@ -1,10 +1,10 @@
-import express, { Request, Response } from "express";
-import { calcularPlanta } from "../methods/calculosPtar"; // Importando la función de cálculos
+const express = require("express");
+const { calcularPlanta } = require("../methods/calculosPtar"); // Importando la función de cálculos
 
 const router = express.Router();
 
 // Ruta para calcular el diseño de la planta
-router.post("/diseno", (req: Request, res: Response) => {
+router.post("/diseno", (req, res) => {
   const { caudal, dqoEntrada, sstEntrada, nivelAgua, norma } = req.body;
 
   try {
@@ -26,4 +26,4 @@ router.post("/diseno", (req: Request, res: Response) => {
   }
 });
 
-export default router;
+module.exports = router;
