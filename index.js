@@ -43,16 +43,6 @@ const upload = require("./routes/upload");
 app.use(cors({ exposedHeaders: ["X-Total-Count"] }));
 app.use(morgan("tiny"));
 
-// Session config (antes de las rutas que usarán sesiones)
-app.use(
-  session({
-    secret: config.get("MOUNTAIN_SECRET"),
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 3600000 },
-  })
-);
-
 // Body parsing
 app.use(express.json());
 app.use(bodyParser.json());
