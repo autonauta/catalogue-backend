@@ -11,11 +11,13 @@
   "mailServer": "smtp.zeptomail.com",
   "mailPort": "465",
   "mailSender": "no_reply@highdatamx.com",
-  "openai": {
-    "apiKey": "sk-proj-rCGXiFCtfPClsObAnaqrT3BlbkFJYC5Lncvo9KOLJEWDjtf0y"
-  },
   "instagram": {
     "username": "highdatamx",
     "password": "Hightonauta01#"
-  }
+  },
+  "RECAPTCHA_SECRET_KEY": "6Le5DzMrAAAAALUAi7DMGbyLCt35BXrjdRV5czF2",
+  "GROWATT_TOKEN": "3q051l1hh0jvmx3f2y8cc9k2d6v85p6t",
+  "STORMGLASS_API_KEY": "6a480218-4731-11f0-b16b-0242ac130006-6a480272-4731-11f0-b16b-0242ac130006",
+  "MOUNTAIN_SECRET": "EN LA MONTAÑA EL EGO SE QUEDA CONGELADO",
+  "jwtPrivateKey": "Supercalifragilisticoespiralidoso666Notenemosmiedodenada!!!"
 }

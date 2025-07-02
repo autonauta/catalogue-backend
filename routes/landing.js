@@ -1,156 +1,161 @@
 const express = require("express");
 const router = express.Router();
 const { createProject } = require("../methods/createProject");
-const { upload } = require("../middleware/fileReception");
 const { Customer } = require("../models/Customer");
 const { createPDF } = require("../methods/createPDF");
-const { sendPDFEmail } = require("../config/nodemailer.config");
-const { sendNotifyEmail } = require("../config/nodemailer.config");
+const {
+  sendPDFEmail,
+  sendNotifyEmail,
+} = require("../config/nodemailer.config");
+const config = require("config");
 
-const getEmailName = (nombre) => {
-  return nombre.split(" ")[0];
-};
+const getEmailName = (nombre) => nombre.split(" ")[0];
 
 router.post("/contacto", async (req, res) => {
-  let { nombre, telefono, email, mensaje, consumo } = req.body;
-  const emailName = getEmailName(nombre); // Para
-  var fileName;
-  var project;
-  if (!nombre) {
-    res.status(401).send({
-      error: true,
-      message: "Es indispensable que pongas tu nombre.",
-    });
-    return;
+  const {
+    nombre,
+    telefono,
+    email,
+    mensaje,
+    consumo,
+    recaptcha_token,
+    recaptcha_action,
+  } = req.body;
+  console.log("RECAPTCHA_ACTION: ", recaptcha_action);
+  console.log("RECAPTCHA_TOKEN: ", recaptcha_token);
+  // Validaciones básicas
+  if (!nombre || !telefono || !email || !consumo) {
+    return res
+      .status(401)
+      .send({ error: true, message: "Todos los campos son obligatorios." });
   }
-  if (!telefono) {
-    res.status(401).send({
-      error: true,
-      message: "Es indispensable que pongas tu teléfono.",
-    });
-    return;
+
+  if (telefono.length !== 10) {
+    return res
+      .status(401)
+      .send({ error: true, message: "El teléfono debe tener 10 dígitos." });
   }
-  if (telefono.length < 10 || telefono.length > 10) {
-    res.status(401).send({
-      error: true,
-      message: "El teléfono debe ser a 10 dígitos.",
-    });
-    return;
-  }
-  if (!email) {
-    res.status(401).send({
-      error: true,
-      message: "Es indispensable que pongas tu correo",
-    });
-    return;
-  }
+
   if (!email.includes("@")) {
-    res.status(401).send({
-      error: true,
-      message: "el correo recibido no tiene el formato adecuado",
-    });
-    return;
+    return res.status(401).send({ error: true, message: "Correo inválido." });
   }
-  if (email.includes(" ")) {
-    email = email.replace(/\s/g, "");
-  }
-  //Checa si ya existe un usuario con el correo presentado
-  const customer = await Customer.findOne({ email });
-  const customerPhone = await Customer.findOne({ telefono });
-  //Si ya existe manda el error al usuario
-  if (customer || customerPhone) {
-    res.status(402).send({
-      error: true,
-      message:
-        "Ya existe un usuario con esos datos 🧔, comunícate con nosotros por whatsapp 📱 y resolveremos tu petición.",
-    });
-    return;
-    //Si no existe procede a crearlo
-  }
-  if (consumo) {
-    //Calcula el proyecto
-    project = await createProject((data = { ...req.body }));
-    console.log("Proyecto: ", project);
-    //Crear PDF
-    fileName = await createPDF(project);
+
+  // Validar reCAPTCHA v3
+  const secretKey = config.get("RECAPTCHA_SECRET_KEY");
+  try {
+    const response = await fetch(
+      "https://www.google.com/recaptcha/api/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          secret: secretKey,
+          response: recaptcha_token,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    console.log(data);
+    if (!data.success) {
+      return res
+        .status(401)
+        .send({ error: true, message: "La verificación reCAPTCHA falló." });
+    }
+
+    if (data.action !== recaptcha_action) {
+      return res
+        .status(401)
+        .send({ error: true, message: "Acción inválida en reCAPTCHA." });
+    }
+
+    if (data.score < 0.7) {
+      return res.status(401).send({
+        error: true,
+        message: `Actividad sospechosa detectada (score: ${data.score}).`,
+      });
+    }
+
+    // Validar existencia previa
+    const customer = await Customer.findOne({ email });
+    const customerPhone = await Customer.findOne({ telefono });
+
+    if (customer || customerPhone) {
+      return res.status(402).send({
+        error: true,
+        message:
+          "Ya existe un usuario con esos datos 🧔, comunícate con nosotros por whatsapp 📱 y resolveremos tu petición.",
+      });
+    }
+
+    const emailName = getEmailName(nombre);
+    let fileName;
+    let project;
+
+    if (consumo) {
+      project = await createProject({
+        nombre,
+        telefono,
+        email,
+        mensaje,
+        consumo,
+      });
+      fileName = await createPDF(project);
+    }
+
     const newCustomer = new Customer({
       nombre,
       telefono,
       email,
       mensaje,
-      consumo,
+      consumo: consumo || null,
     });
-    const response = await newCustomer.save();
-    if (!response) {
-      console.log("No se guardó el cliente");
-      res.status(404).send({
+    const saved = await newCustomer.save();
+
+    if (!saved) {
+      return res.status(404).send({
         error: true,
         message:
           "Hubo un error con la base de datos 📄, comunícate con nosotros por whatsapp 📱 y te atenderemos cuanto antes.",
       });
-      return;
-    } else {
-      console.log("Cliente guardado");
-      //Enviar por correo electrónico
-      try {
-        sendNotifyEmail(
-          email,
-          emailName,
-          newCustomer,
-          project.potencia,
-          project.paneles.numPaneles,
-          project.precioProyecto.total,
-          fileName
-        );
-        const emailResponse = await sendPDFEmail(fileName, email, emailName);
-        if (emailResponse.sent) {
-          res.send({
-            error: false,
-            message:
-              consumo > 9000
-                ? "Ya enviamos tu cotización ✉️ pero tu proyecto es de más de 9000 kWh ⚡. Ponte en contacto con nosotros por whatsapp 📱 para atender a detalle tu proyecto!"
-                : "Ya enviamos tu cotización ✉️, ponte en contacto con nosotros por whatsapp 📱 para confirmar tu proyecto",
-          });
-          return;
-        } else throw new Error(email.error);
-      } catch (error) {
-        console.log("Error al enviar correo: ", error);
-        res.status(404).send({
-          error: true,
-          message:
-            "Recibimos tu información 📄 pero por alguna razón no pudimos enviarte la cotización a tu correo ✉️, ponte en contacto con nosotros para hacertela llegar por whatsapp 📱.",
-        });
-        return;
-      }
     }
-  } else {
-    console.log("sin consumo");
-    const newCustomer = new Customer({
-      nombre,
-      telefono,
-      email,
-      mensaje,
-      consumo: null,
-    });
-    const response = await newCustomer.save();
-    if (!response) {
-      console.log("No se guardó el cliente");
-      res.send({
-        error: true,
-        message:
-          "Hubo un error al guardar tus datos 📄, comunícate con nosotros por whatsapp 📱 para dar seguimiento a tu proyecto.",
-      });
-      return;
-    } else {
-      console.log("Cliente guardado");
-      sendNotifyEmail(email, emailName, newCustomer, 0, 0, 0, null);
-      res.send({
+
+    try {
+      sendNotifyEmail(
+        email,
+        emailName,
+        newCustomer,
+        project?.potencia || 0,
+        project?.paneles?.numPaneles || 0,
+        project?.precioProyecto?.total || 0,
+        fileName || null
+      );
+
+      if (project && fileName) {
+        const emailResponse = await sendPDFEmail(fileName, email, emailName);
+        if (!emailResponse.sent) throw new Error("Fallo en envío de correo");
+      }
+
+      return res.send({
         error: false,
         message:
-          "¡Recibimos tu información 📄, nos pondremos en contacto contigo por whatsapp cuanto antes!",
+          consumo > 9000
+            ? "Ya enviamos tu cotización ✉️ pero tu proyecto es de más de 9000 kWh ⚡. Ponte en contacto con nosotros por whatsapp 📱 para atender a detalle tu proyecto!"
+            : "Ya enviamos tu cotización ✉️, ponte en contacto con nosotros por whatsapp 📱 para confirmar tu proyecto",
       });
-      return;
+    } catch (error) {
+      console.log("Error al enviar correo:", error);
+      return res.status(404).send({
+        error: true,
+        message:
+          "Recibimos tu información 📄 pero no pudimos enviarte la cotización a tu correo ✉️, comunícate por whatsapp 📱.",
+      });
     }
+  } catch (err) {
+    console.error("Error con reCAPTCHA:", err);
+    return res
+      .status(500)
+      .send({ error: true, message: "Error al verificar reCAPTCHA." });
   }
 });
 

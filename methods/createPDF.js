@@ -85,7 +85,10 @@ const createPDF = async (datos) => {
   const html = plantilla(fillData);
 
   // Configurar Puppeteer
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
   // Definir las dimensiones del viewport antes de generar el contenido
   await page.setViewport({

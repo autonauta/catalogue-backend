@@ -3,26 +3,21 @@ const { Inverter } = require("../models/Inverters");
 const { Frame } = require("../models/Frame");
 const { Dollar } = require("../models/Dollar");
 
-/* const regex =
-  /del \d{2} [A-Z]{3} \d{2} al \d{2} [A-Z]{3} \d{2}.*?\$\d+,\d+\.\d+/g; //Filtro para encontrar unicamente las lineas de los consumos
-const regex2 =
-  /del (\d{2} [A-Z]{3} \d{2}) al (\d{2} [A-Z]{3} )(\d{2})(\d{3})\$(\d+,\d+\.\d+)/; //Filtro para re acomodar las lineas correctamente
-const regex3 =
-  /(\d{2} [A-Z]{3} \d{2} al \d{2} [A-Z]{3} \d{2} )(\d+) \$\d+,\d+\.\d+/; //Filtro para obtener únicamente los consumos */
-
+// Usar estas constantes en lugar de los valores numéricos directos
 const panelMarkup = 50;
 const inverterMarkup = 30;
 const frameMarkup = 25;
-const markupMO = 50;
-const panelPower = 550;
-const defaultDistance = 30;
-const defaultCablePrice = 17;
+const defaultDistance = 25;
+const defaultCablePrice = 18;
 const defaultCableAcPrice = 22;
-const precioTramite = 400;
+const precioTramite = 4000;
 const HORAS_SOL_PICO = 5;
 const UMBRAL_POTENCIA = 0.03;
 const PRECIO_DOLAR_DEFAULT = 20.28;
+const CONSUMO_DIARIO_FACTOR = 1000 / 60;
+//-----------------------------------------------------------
 
+//Default equipment in case troubles with DB
 const defaultInverters = [
   { modelo: "Inversor 3000W", potencia: 3000, strings: 1 },
   { modelo: "Inversor 6000W", potencia: 6000, strings: 2 },
@@ -34,19 +29,15 @@ const defaultPanel = {
   marca: "ETSOLAR",
   potencia: 550,
   voltaje: 50,
-  precio: 89.49,
+  precio: 91,
 };
-
-const roundToTwo = (num) => Number(num.toFixed(2));
+//----------------------------------------------
 
 // Usar esta función en lugar de .toFixed(2) en todo el código
+const roundToTwo = (num) => Number(num.toFixed(2));
+//--------------------------------------------------------
 
-const CONSUMO_DIARIO_FACTOR = 1000 / 60;
-const PANEL_MINIMO_PROMO = 10;
-const PROMO_MINISPLIT = 2000;
-
-// Usar estas constantes en lugar de los valores numéricos directos
-
+//Function to calculate required pv modules
 const getPanelesRequeridos = async (max) => {
   try {
     const dollarPrice =
@@ -68,9 +59,8 @@ const getPanelesRequeridos = async (max) => {
     throw error;
   }
 };
-////////////////////////////////////////////////////7777
-//////////////////////////////////////////////////////
-
+//---------------------------------------------------------------------------
+//Function to get inverters from DB and select the inverters
 const getInversores = async (max) => {
   try {
     const dollarPrice = (await Dollar.findOne({}))?.price || 17.1;
@@ -91,8 +81,8 @@ const getInversores = async (max) => {
     throw error;
   }
 };
-
-// Función para seleccionar inversores
+//-------------------------------------------------------------------------
+// Function to select the required inverters based on the required power
 const seleccionarInversores = (inversores, potenciaRestante) => {
   const umbral = potenciaRestante * UMBRAL_POTENCIA;
   const seleccionados = [];
@@ -108,7 +98,7 @@ const seleccionarInversores = (inversores, potenciaRestante) => {
 
   return seleccionados;
 };
-
+//----------------------------------------------------------------------
 // Función para procesar los inversores seleccionados
 const procesarSeleccionados = (seleccionados, dollarPrice) => {
   return seleccionados.reduce((acc, curr) => {
@@ -129,7 +119,7 @@ const procesarSeleccionados = (seleccionados, dollarPrice) => {
     return acc;
   }, []);
 };
-
+//Function to get the number of pv strings required depending on the amount of panels and the limits of the inverters
 const getStrings = async (paneles) => {
   const panelVoltage = 50;
   const maxVoltage = 500;
@@ -149,18 +139,18 @@ const getCables = async (strings) => {
   const cantidadAc = 5;
   const precioDc = cantidadDc * defaultCablePrice;
   const cantidadAcB = cantidadAc * 2;
-  const precioAc = cantidadAc + defaultCableAcPrice;
-  const precioAcB = cantidadAcB + defaultCableAcPrice;
+  const precioAc = cantidadAc * defaultCableAcPrice;
+  const precioAcB = cantidadAcB * defaultCableAcPrice;
 
   return {
-    blackCable: { cantidadDc, precioDc },
-    redCable: { cantidadDc, precioDc },
+    blackCable: { cantidadDc, precio: precioDc },
+    redCable: { cantidadDc, precio: precioDc },
     greenCable: {
       cantidad: defaultDistance,
       precio: defaultDistance * defaultCablePrice,
     },
-    blackCableAc: { cantidadAcB, precioAcB },
-    whiteCableAc: { cantidadAc, precioAc },
+    blackCableAc: { cantidadAcB, precio: precioAcB },
+    whiteCableAc: { cantidadAc, precio: precioAc },
   };
 };
 
@@ -168,12 +158,12 @@ const getSoporteria = async (paneles) => {
   let dollarPrice;
   const dollarUpdate = await Dollar.find({});
   if (dollarUpdate) dollarPrice = dollarUpdate[0].price;
-  else dollarPrice = 17.1;
+  else dollarPrice = PRECIO_DOLAR_DEFAULT;
   const frame = await Frame.find({});
   if (!frame)
     return {
       cantidad: Math.ceil(paneles / 4),
-      precio: roundToTwo(150 * dollarPrice * (1 + frameMarkup / 100)),
+      precio: roundToTwo(130 * dollarPrice * (1 + frameMarkup / 100)),
     };
   else
     return {
@@ -189,7 +179,7 @@ const getSoporteria = async (paneles) => {
 
 const diametroTuboPrecio = new Map([
   [0.75, { tubo: 170, condulet: 46, conector: 18, codo: 45 }],
-  [1, { tubo: 315, condulet: 73, conector: 22, codo: 70 }],
+  [1, { tubo: 239, condulet: 54, conector: 22, codo: 70 }],
   [1.25, { tubo: 380, condulet: 140, conector: 28, codo: 110 }],
   [1.5, { tubo: 550, condulet: 180, conector: 31, codo: 140 }],
 ]);
@@ -237,67 +227,76 @@ const getMaterials = async (strings) => {
 };
 
 const getManoObra = async (paneles) => {
-  const rangos = [
-    {
-      max: 8,
-      precioPorPanel: 1000,
-      precioInversor: 0,
-      precioEnvio: 1200,
-      precioIngenieria: 4000,
-    },
-    {
-      max: 16,
-      precioPorPanel: 800,
-      precioInversor: 1000,
-      precioEnvio: 1800,
-      precioIngenieria: 5000,
-    },
-    {
-      max: 24,
-      precioPorPanel: 700,
-      precioInversor: 1000,
-      precioEnvio: 2500,
-      precioIngenieria: 6000,
-    },
-    {
-      max: 32,
-      precioPorPanel: 600,
-      precioInversor: 2000,
-      precioEnvio: 3000,
-      precioIngenieria: 7000,
-    },
-    {
-      max: 100,
-      precioPorPanel: 500,
-      precioInversor: 3000,
-      precioEnvio: 4500,
-      precioIngenieria: 7000,
-    },
-  ];
+  const rangos = new Map([
+    [
+      8,
+      {
+        precioPorPanel: 1000,
+        precioInversor: 0,
+        precioEnvio: 1200,
+        precioIngenieria: 4000,
+      },
+    ],
+    [
+      16,
+      {
+        precioPorPanel: 800,
+        precioInversor: 1000,
+        precioEnvio: 1800,
+        precioIngenieria: 5000,
+      },
+    ],
+    [
+      24,
+      {
+        precioPorPanel: 700,
+        precioInversor: 1000,
+        precioEnvio: 2500,
+        precioIngenieria: 6000,
+      },
+    ],
+    [
+      32,
+      {
+        precioPorPanel: 600,
+        precioInversor: 2000,
+        precioEnvio: 3000,
+        precioIngenieria: 7000,
+      },
+    ],
+    [
+      100,
+      {
+        precioPorPanel: 500,
+        precioInversor: 3000,
+        precioEnvio: 4500,
+        precioIngenieria: 7000,
+      },
+    ],
+  ]);
 
-  const rango =
-    rangos.find((r) => paneles <= r.max) || rangos[rangos.length - 1];
+  // Buscar el primer rango mayor o igual al número de paneles
+  const rangoKey = [...rangos.keys()].find((key) => paneles <= key) || 100;
   const { precioPorPanel, precioInversor, precioEnvio, precioIngenieria } =
-    rango;
-
-  const precioTotal =
-    precioPorPanel * paneles +
-    precioInversor +
-    precioTramite +
-    precioEnvio +
-    precioIngenieria;
+    rangos.get(rangoKey);
 
   return {
-    porPanel: precioPorPanel,
-    inversor: precioInversor,
-    tramite: precioTramite,
-    ingenieria: precioIngenieria,
-    precio: precioTotal,
+    precioPaneles: paneles * precioPorPanel,
+    precioInversor,
+    precioEnvio,
+    precioIngenieria,
+    precioTramite,
+    precio:
+      paneles * precioPorPanel +
+      precioInversor +
+      precioEnvio +
+      precioIngenieria +
+      precioTramite,
   };
 };
 
 const calculateProjectPrice = async (objeto) => {
-  const sumarPrecios = (obj) => {
+  /*  const sumarPrecios = (obj) => {
     if (Array.isArray(obj)) {
       return obj.reduce((sum, item) => sum + sumarPrecios(item), 0);
     }
@@ -314,8 +313,25 @@ const calculateProjectPrice = async (objeto) => {
       return sum + (key.includes("precio") ? value : sumarPrecios(value));
     }, 0);
   };
+ */
+  let total = 0;
 
-  return roundToTwo(sumarPrecios(objeto));
+  const recorrer = (valor) => {
+    if (Array.isArray(valor)) {
+      valor.forEach(recorrer);
+    } else if (typeof valor === "object" && valor !== null) {
+      for (const key in valor) {
+        if (key.toLowerCase() === "precio" && typeof valor[key] === "number") {
+          total += valor[key];
+        } else {
+          recorrer(valor[key]);
+        }
+      }
+    }
+  };
+
+  recorrer(objeto);
+  return roundToTwo(total);
 };
 
 const calculateInversores = (datos) => {

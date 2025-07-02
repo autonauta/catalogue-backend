@@ -7,7 +7,11 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const { updatePrices } = require("./config/scheduledJobs");
+const {
+  updatePrices,
+  updateGrowattPlants,
+  updateMountainsWeather,
+} = require("./config/scheduledJobs");
 //const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const { Payment } = require("./models/Payment");
@@ -27,16 +31,32 @@ const diy = require("./routes/diy");
 const stripe = require("./routes/stripe");
 const ptar = require("./routes/ptar");
 const syscom = require("./routes/syscom");
+const growatt = require("./routes/growatt");
 //const whatsapp = require("./routes/whatsapp");
 const landing = require("./routes/landing");
+const landing = require("./routes/landing");
+const weather = require("./routes/weather");
+const auth = require("./routes/auth");
+const training = require("./routes/training");
+const upload = require("./routes/upload");
 
-//Middleware
+// Middleware base
+app.use(cors({ exposedHeaders: ["X-Total-Count"] }));
+app.use(morgan("tiny"));
+
+// Session config (antes de las rutas que usarán sesiones)
+app.use(
+  session({
+    secret: config.get("MOUNTAIN_SECRET"),
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 3600000 },
+  })
+);
+
+// Body parsing
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors({ exposedHeaders: ["X-Total-Count"] }));
-
-//morgan Logging
-app.use(morgan("tiny"));
 
 //----Routes
 app.use("/api/v1/products", products);
@@ -46,6 +66,11 @@ app.use("/api/v1/syscom", syscom);
 app.use("/api/v1/stripe", stripe);
 //app.use("/api/v1/whatsapp", whatsapp);
 app.use("/api/v1/landing", landing);
+app.use("/api/v1/growatt", growatt);
+app.use("/api/v1/weather", weather);
+app.use("/api/v1/auth", auth);
+app.use("/api/v1/training", training);
+app.use("/api/v1/upload", upload);
 //
 //Config - connect to catlogueDB.
 const db = config.get("ATLASDB");
@@ -65,48 +90,9 @@ mongoose.connect(
 );
 //Update prices every day
 updatePrices.start();
+updateGrowattPlants.start();
+updateMountainsWeather.start();
 
-/* //Whatsapp web JS implementation
-const whatsappClient = new Client({
-  authStrategy: new LocalAuth({ dataPath: "./whatsapp-auth-sessions" }),
-  puppeteer: {
-    args: ["--no-sandbox"],
-  },
-});
-app.set("whatsappClient", whatsappClient);
-whatsappClient.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
-});
-
-whatsappClient.on("ready", () => {
-  console.log("Whatsapp-web connected properly");
-  whatsappClient.sendMessage(
-    "5214421818265@c.us",
-    "Message from HighData`s ARIES server: ¡Whatsap-web server just started!"
-  );
-});
-whatsappClient.on("message", async (msg) => {
-  const phone = msg.from.split("@")[0];
-  if (phone === "5219156132561") {
-    const message = msg.body;
-    const firstWord = message.split(" ")[0];
-    if (firstWord === "¡GRACIAS!") {
-      const guia = message.split(" ")[4];
-      whatsappClient.sendMessage(
-        "5214421818265@c.us",
-        "La clave de rastreo de tu pedido es: " +
-          guia +
-          "\n" +
-          "Visita https://estafeta.com/Herramientas/Rastreo para conocer el estatus del envío\n"
-      );
-    }
-  }
-});
-try {
-  whatsappClient.initialize();
-} catch (error) {
-  console.log(error);
-} */
 let onlineFunnelUsers = 15;
 //IO socket server functions
 io.on("connection", (socket) => {

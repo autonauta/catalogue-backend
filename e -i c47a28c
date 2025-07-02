@@ -1,0 +1,492 @@
+[33mad34cdd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Guardando cambios antes de limpiar el historial
+[33mfb0bdc5[m Delete default.json
+[33me811e59[m updated
+[33mc47a28c[m Update default.json
+[33md49123c[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update landing.js
+[33m02c2175[m Update createProject.js
+[33m511c3bb[m Optimizado
+[33m6419b40[m Update scheduledJobs.js
+[33m3086850[m Update scheduledJobs.js
+[33m5d90abf[m Update projectCalculations.js
+[33m0c05735[m Update nodemailer.config.js
+[33m6560fae[m Update nodemailer.config.js
+[33m19c409f[m Update nodemailer.config.js
+[33m2872108[m Update nodemailer.config.js
+[33ma9808d7[m Update .gitignore
+[33mca3d6e4[m updated
+[33m443626a[m AI CORRECTED
+[33m213136e[m Update projectCalculations.js
+[33m323f06c[m Update projectCalculations.js
+[33ma6dd3e4[m Update projectCalculations.js
+[33m7e68253[m added chatgpt credentials to config
+[33md38f6dd[m u
+[33m05bfb9d[m sand pdf to me
+[33mfcb0f26[m Update projectCalculations.js
+[33ma71a199[m Update landing.js
+[33m5953644[m Update notifyEmail.handlebars
+[33mf55d134[m u
+[33m56c9693[m Update landing.js
+[33m2194b52[m Update notifyEmail.handlebars
+[33m5007950[m Update landing.js
+[33m38767e6[m Update nodemailer.config.js
+[33m9d86026[m Update landing.js
+[33m707b5fd[m u
+[33mfc5ec6a[m Update landing.js
+[33mec068f4[m added notify email
+[33mbf6c151[m Update landing.js
+[33m5db85d6[m Update landing.js
+[33ma94caf9[m Update cotizacionEmail.handlebars
+[33mc4fdcee[m Update createPDF.js
+[33mce9f41c[m Update projectCalculations.js
+[33m84837a0[m Update cotizacionEmail.handlebars
+[33mb309576[m u
+[33mf09e39a[m Update cotizacionEmail.handlebars
+[33m5be1a16[m Update createPDF.js
+[33m7dd0b41[m u
+[33m75a6949[m Update landing.js
+[33mcedcad5[m Update landing.js
+[33m722b081[m u
+[33m6cbe943[m u
+[33m1a88592[m Update confirmationEmail.handlebars
+[33m3998313[m Update landing.js
+[33mfc41da5[m Update landing.js
+[33m21cc381[m Update landing.js
+[33m1497605[m u
+[33m73bc945[m Update projectCalculations.js
+[33m69a3973[m added defaults route
+[33m3f8ab0e[m Update createPDF.js
+[33m70e1e8e[m Update createPDF.js
+[33mc7efee6[m Update default.json
+[33mdde7312[m Update default.json
+[33mce4c1f3[m Update default.json
+[33m07ffe6d[m Update confirmationEmail.handlebars
+[33m618d297[m Update default.json
+[33mb256867[m u
+[33m4d540d8[m Update nodemailer.config.js
+[33m61bbffa[m Update nodemailer.config.js
+[33m7a7a15d[m u
+[33mfd8d3d7[m u
+[33m459b203[m Update nodemailer.config.js
+[33m1d5e723[m Update default.json
+[33mc60ce8f[m Update default.json
+[33m74288f6[m u
+[33meb069bf[m Update createPDF.js
+[33m07baa4b[m u
+[33m852364b[m u
+[33mf72cc6f[m u
+[33m518cb31[m u
+[33m9c2443d[m Update createPDF.js
+[33m3d46269[m u
+[33m2e17453[m u
+[33m17f6b14[m Update landing.js
+[33m73e053c[m Update landing.js
+[33m0afb604[m Update cotizacionEmail.handlebars
+[33m00ac103[m Update cotizacionEmail.handlebars
+[33mb676da0[m u
+[33mec46237[m Update createPDF.js
+[33m0f64398[m Update createPDF.js
+[33m4225fc8[m Update createPDF.js
+[33m1e7f455[m Update createPDF.js
+[33m43c7487[m u
+[33mc98ed1b[m u
+[33m5bd55b3[m Update createProyect.js
+[33md2bc3fe[m Update createProyect.js
+[33m5130a93[m Update proyectCalculations.js
+[33m77dd9db[m Update proyectCalculations.js
+[33m5d9c6ad[m Update createProyect.js
+[33ma2b04a9[m Update createProyect.js
+[33m98f4ee1[m Update createProyect.js
+[33mb7adf2d[m Update proyectCalculations.js
+[33m446ff2f[m Update createProyect.js
+[33m53ae257[m Update createProyect.js
+[33m07728fe[m u
+[33m00036e8[m Update proyectCalculations.js
+[33mb8067b6[m Update proyectCalculations.js
+[33mb94721a[m Update proyectCalculations.js
+[33ma9e39b1[m Update proyectCalculations.js
+[33m73d1845[m u
+[33m203fcdd[m u
+[33m0930c9a[m u
+[33m07c69f2[m Update proyectCalculations.js
+[33mc574c81[m Update createProyect.js
+[33me796d6c[m Update createProyect.js
+[33m5fecfca[m Update createProyect.js
+[33m848e9ee[m Update createProyect.js
+[33m5cc6355[m Update proyectCalculations.js
+[33m4c5b32d[m Update createProyect.js
+[33mac9f0f9[m Update proyectCalculations.js
+[33m44a0683[m Update proyectCalculations.js
+[33m216bd0b[m Update proyectCalculations.js
+[33mb537966[m Update Dollar.js
+[33m6ea30c7[m Update Dollar.js
+[33mce303d1[m Update proyectCalculations.js
+[33mc09005d[m Update Dollar.js
+[33m92c4e58[m Update proyectCalculations.js
+[33mb10884e[m Update proyectCalculations.js
+[33m1f27a1a[m Update proyectCalculations.js
+[33m6fffe98[m Update createProyect.js
+[33m945d722[m Update proyectCalculations.js
+[33md2bb8c0[m Update proyectCalculations.js
+[33m8a9ea42[m Update proyectCalculations.js
+[33m972f247[m u
+[33m4b12b99[m Update scheduledJobs.js
+[33me8c1a4f[m u
+[33macda5a3[m u
+[33m272d0cb[m u
+[33m812170c[m Update getPrices.js
+[33ma9cceab[m Update getPrices.js
+[33mf73be68[m Update getPrices.js
+[33m780b03f[m Update getPrices.js
+[33m6ab13d2[m Update getPrices.js
+[33m556224d[m Update getPrices.js
+[33m77d3458[m Update getPrices.js
+[33me1df630[m Update getPrices.js
+[33m2c6eefc[m Update getPrices.js
+[33m2ca96df[m Update getPrices.js
+[33me67d5e9[m Update getPrices.js
+[33me2ef8f1[m u
+[33m7bdd78f[m Update getPrices.js
+[33m2564313[m Update getPrices.js
+[33mcd781c2[m Update scheduledJobs.js
+[33mcc4fdf5[m add frames
+[33m474db16[m u
+[33m59786bd[m Update getPrices.js
+[33m74a27b1[m Update getPrices.js
+[33m15ec2e4[m u
+[33m3534a89[m Update getPrices.js
+[33mce2219e[m Update scheduledJobs.js
+[33mfe80f4c[m Update getPrices.js
+[33m5b7a618[m Update scheduledJobs.js
+[33mf64f81f[m u
+[33m05480d9[m Update Inverters.js
+[33mbf3a37d[m u
+[33mc8b2eec[m Update Inversors.js
+[33m18ead11[m added inverters
+[33mda232c1[m Update scheduledJobs.js
+[33mef2c8ec[m u
+[33m5504ed3[m Update getPrices.js
+[33m05f0ceb[m Update getPrices.js
+[33mb8efe27[m Update getPrices.js
+[33ma1b9c5b[m Update getPrices.js
+[33meadbb73[m Update getPrices.js
+[33mc92bacf[m Update getPrices.js
+[33me864d32[m Update getPrices.js
+[33m970c082[m Update getPrices.js
+[33mc1a76fa[m Update getPrices.js
+[33m8ded29c[m y
+[33m240f1c5[m u
+[33me59a60d[m Update getPrices.js
+[33maa79fc0[m Update getPrices.js
+[33mf466196[m Update getPrices.js
+[33m85aaaa6[m Update getPrices.js
+[33m1354c42[m Update Panels.js
+[33me75a799[m Update getPrices.js
+[33m43fc5f9[m Update scheduledJobs.js
+[33mc11b274[m Update getPrices.js
+[33m5f448cc[m Update scheduledJobs.js
+[33m674c9b5[m testing update panels
+[33m39900ed[m Update createProyect.js
+[33maf2fe05[m add calculations file
+[33m2189139[m Update createProyect.js
+[33mcb02e6f[m Update createProyect.js
+[33mc4bac97[m u
+[33mad862c5[m Update default.json
+[33mc30577f[m Update createProyect.js
+[33md37dd03[m Update createProyect.js
+[33me52b1f1[m Update createProyect.js
+[33mc733804[m Update createProyect.js
+[33m63af5d7[m Update createProyect.js
+[33m6f8370d[m Update createProyect.js
+[33m4759c4c[m Update createProyect.js
+[33m3d70487[m Update createProyect.js
+[33m0df7551[m Update createProyect.js
+[33m00720a7[m Update createProyect.js
+[33m358e775[m Update createProyect.js
+[33m2c1077c[m Update createProyect.js
+[33m7b7098a[m Update createProyect.js
+[33m79f421e[m Update landing.js
+[33m3027292[m Update createProyect.js
+[33m146e0df[m Update landing.js
+[33mee105b9[m Update createProyect.js
+[33m9665a96[m Update landing.js
+[33m967f6bc[m pause pdf reading
+[33mff323e2[m u
+[33md25edac[m Update fileReception.js
+[33m9e8a4e6[m u
+[33mbe52f9a[m Update landing.js
+[33m4a358c5[m test file upload
+[33m82a91f8[m Update getConsumption.js
+[33m1e9526e[m u
+[33mc65d94d[m Update getConsumption.js
+[33md7b1592[m u
+[33m5deb0c0[m Update landing.js
+[33m3f16e56[m Update landing.js
+[33mcd60d3c[m Update landing.js
+[33m953728c[m Update landing.js
+[33me63c187[m Update landing.js
+[33m91eeb97[m Update landing.js
+[33m109df70[m Update landing.js
+[33m9f49708[m Update landing.js
+[33mb7e1947[m Update landing.js
+[33mf2a5299[m test consumption function
+[33m6e41cde[m u
+[33m28c8046[m u
+[33ma2dcc07[m u
+[33me774236[m u
+[33m8d63a53[m u
+[33m3b7a21b[m u
+[33m9376e92[m u
+[33me66d7e6[m u
+[33m86d1853[m u
+[33m754d1d7[m u
+[33md0a09b4[m u
+[33mceb091f[m u
+[33m8ddd330[m u
+[33m1290f43[m u
+[33mbf71ec7[m u
+[33mc407d62[m try once
+[33mcf01ff5[m try if on model creation
+[33m5b2d47d[m change export
+[33m0e0d7b2[m corrected export
+[33m2c397a5[m corrected import
+[33m7873059[m added contacto route
+[33m1f4e34c[m Update landing.js
+[33mb48b108[m added crm DB connection
+[33m64f8d66[m removed whatsapp implementation
+[33m8814e49[m added landing route to main
+[33me299523[m Update diy.js
+[33m9edd1ab[m LIVE MODE
+[33m00fbd61[m Update diy.js
+[33m4975241[m Update trackingEmail.handlebars
+[33md253296[m added email to tracking
+[33m8c014dd[m Update diy.js
+[33m1035708[m Update diy.js
+[33m6c7deca[m Update diy.js
+[33ma2d448a[m Update confirmationEmail.handlebars
+[33m6d94a95[m Update diy.js
+[33m188305c[m handlebars correction extension
+[33mb6bad03[m Update diy.js
+[33mb31fb48[m updated email
+[33ma905709[m Update confirmationEmail.handlebars
+[33m4a9542f[m Update WhiteList.js
+[33m033cc9b[m Update diy.js
+[33m7924f4f[m Update diy.js
+[33mdc2270f[m Update WhiteList.js
+[33me152ea3[m addes promotion schema
+[33mc3e8b34[m Update confirmationEmail.handlebars
+[33m2065ffe[m Update diy.js
+[33m0fcd654[m updated email
+[33me171227[m Update index.js
+[33m98ca62e[m u
+[33m4599e82[m Update diy.js
+[33m78ffecc[m Update diy.js
+[33mfed8ad6[m Update diy.js
+[33ma991366[m u
+[33mfe3216f[m Update confirmationEmail.handlebars
+[33m54ccb1b[m Update confirmationEmail.handlebars
+[33m2899c6d[m Update confirmationEmail.handlebars
+[33m7d17e17[m Update confirmationEmail.handlebars
+[33m7add12a[m Update diy.js
+[33mcf2da5c[m Update nodemailer.config.js
+[33mbaeeeef[m Update nodemailer.config.js
+[33m6d3fafc[m Update nodemailer.config.js
+[33ma2729ac[m Update nodemailer.config.js
+[33m407b94d[m Update nodemailer.config.js
+[33m7a4d8d3[m u
+[33mbaeb882[m Update nodemailer.config.js
+[33m85bdf88[m Update nodemailer.config.js
+[33m5f7bfad[m Update nodemailer.config.js
+[33m044ee7d[m Update nodemailer.config.js
+[33ma39bc7b[m u
+[33m431a705[m Update diy.js
+[33m8aa3505[m Update index.js
+[33m373692e[m Update index.js
+[33m1f45040[m Update index.js
+[33mc55ffea[m Update index.js
+[33mafbdbd3[m Update index.js
+[33m7e8d7a9[m u
+[33mfea4731[m u
+[33mc1c80c2[m socket io implemented
+[33mf83c385[m changed stripe comission
+[33m449d7c3[m Update diy.js
+[33m1ec0aaa[m Update diy.js
+[33m0717e28[m Update index.js
+[33m0a3482a[m Update index.js
+[33md32178c[m Update diy.js
+[33m6421359[m Update diy.js
+[33m260927a[m u
+[33m62a0794[m added edit route
+[33m566f2a8[m update
+[33mc7b96ef[m updated
+[33m1c87bb9[m Update index.js
+[33m0c8e910[m Update index.js
+[33mfb493e5[m Update index.js
+[33m662d141[m updated
+[33mb21015c[m Update index.js
+[33ma143dcb[m Update index.js
+[33m521c7a0[m Update index.js
+[33md44f19e[m Update diy.js
+[33m777ef1e[m Update index.js
+[33m2dc468e[m Update index.js
+[33me26edc2[m Update index.js
+[33me3a31b0[m Update index.js
+[33m919263c[m Update index.js
+[33md49aad1[m Update index.js
+[33m1a2f962[m u
+[33med19729[m Update diy.js
+[33m2551fcd[m Update index.js
+[33mf85ebd8[m Update index.js
+[33m2e8945c[m Update index.js
+[33mda77895[m Update diy.js
+[33m425529b[m Update index.js
+[33m0858a24[m Update diy.js
+[33m3c4c9d8[m Update diy.js
+[33mef162d5[m Update diy.js
+[33m4347c06[m Update diy.js
+[33me544c1f[m Update whatsapp.js
+[33md835a5f[m Update index.js
+[33m4337ec9[m added whatsapp route
+[33m51c6f63[m Update index.js
+[33m5e4a739[m Update index.js
+[33mb442dc7[m Update index.js
+[33m2c36692[m Update index.js
+[33mab53443[m Update index.js
+[33m361f4d7[m Update index.js
+[33m62c047f[m Update index.js
+[33m0283007[m Update index.js
+[33m8a05f4d[m Update index.js
+[33m0df3102[m Update index.js
+[33m34c51d4[m Update index.js
+[33m2e98cdf[m Update index.js
+[33m8d16f63[m added whatsapp web js
+[33m688f525[m u
+[33m4dafbb3[m Update diy.js
+[33mf446ee5[m Update diy.js
+[33ma89ccf3[m Update syscom.js
+[33m45eb144[m u
+[33mb70f011[m Update diy.js
+[33m39767bb[m Update diy.js
+[33mbbc1aee[m Update diy.js
+[33mac27e94[m corrected
+[33m4cc31ba[m Update diy.js
+[33m36d6b88[m Update diy.js
+[33mc8ecc90[m Update diy.js
+[33m07b1c18[m Update syscom.js
+[33m7f6a265[m Update syscom.js
+[33mbd428d7[m Update syscom.js
+[33m3ff8fbd[m u
+[33m127d3e9[m added syscom route
+[33mfa1ca5b[m Update diy.js
+[33mb91fd1c[m Update diy.js
+[33m803f932[m Update diy.js
+[33mcfbea45[m Update diy.js
+[33mf1a874c[m Update diy.js
+[33me2e74bd[m Update diy.js
+[33mf8bfe8e[m added syscom order
+[33m61b17fa[m Update diy.js
+[33mf690d40[m Update diy.js
+[33m4ab79ab[m U
+[33mf7244d5[m Update facturacion.js
+[33m16cfea5[m u
+[33mde8fe7e[m Update diy.js
+[33m4a3387d[m Update facturacion.js
+[33m4743447[m Update facturacion.js
+[33mff7f6aa[m Update diy.js
+[33mc586e8b[m Update facturacion.js
+[33m6c9efd3[m updated facturacion
+[33ma124aec[m Update facturacion.js
+[33m1179107[m test for creating bill
+[33m78b5625[m Update facturacion.js
+[33maa81038[m Update index.js
+[33m991626f[m Delete yarn.lock
+[33m38acc6f[m added config
+[33mcbe3cab[m u
+[33m5560b80[m Update stripe.js
+[33me9b7fbe[m Update stripe.js
+[33m608f890[m Update stripe.js
+[33m54e2352[m Update stripe.js
+[33ma2f02b4[m Update stripe.js
+[33maeb552a[m Update stripe.js
+[33me31a00a[m Update stripe.js
+[33mcc29e36[m Update stripe.js
+[33m131b21f[m Update stripe.js
+[33m71ee872[m Update stripe.js
+[33m2882e24[m Update stripe.js
+[33m33d993a[m Update stripe.js
+[33m31d6532[m u
+[33m23d2998[m Update diy.js
+[33m2934d9f[m u
+[33maadbb12[m Update stripe.js
+[33me6f7793[m Update stripe.js
+[33mee2c90b[m Update index.js
+[33m8cc0a89[m added stripe route
+[33md822fff[m Update diy.js
+[33m8f56acb[m Update diy.js
+[33m61d7118[m Update diy.js
+[33m9c59edc[m Update diy.js
+[33maea449b[m u
+[33m6976dd1[m Update diy.js
+[33mc28363d[m Update diy.js
+[33m9aeb8e2[m Update diy.js
+[33m4e0d4f4[m Update diy.js
+[33mf8c804f[m Update diy.js
+[33m1a4dd3e[m Update diy.js
+[33mac22aa5[m Update diy.js
+[33m920d743[m Update diy.js
+[33m6a9d666[m Update diy.js
+[33m2da7dfb[m Update diy.js
+[33m5b5862d[m Update diy.js
+[33m10b8792[m Update diy.js
+[33mf48c63a[m Update diy.js
+[33m6d98868[m Update diy.js
+[33mfac2c07[m Update diy.js
+[33m32bb453[m Update diy.js
+[33m2d54d2d[m Update diy.js
+[33me19da66[m Update diy.js
+[33m6aedd70[m Update diy.js
+[33m1effba8[m Update diy.js
+[33m53a1393[m Update diy.js
+[33m4e15207[m Update diy.js
+[33m625551f[m Update diy.js
+[33mb279042[m Update diy.js
+[33mceeb5b0[m Update diy.js
+[33mb41eea1[m Update Funnel.js
+[33mf14c52b[m Update diy.js
+[33mba8c035[m Update Funnel.js
+[33mc4f8986[m Update scheduledJobs.js
+[33mc0043c9[m Update getPrices.js
+[33mb914943[m Update getPrices.js
+[33mf9c3ad6[m Update scheduledJobs.js
+[33m17786f0[m added extra discount on prices
+[33m5013882[m Update diy.js
+[33m15bf73a[m Update diy.js
+[33m5b64eb8[m Update diy.js
+[33mb7d4db3[m Update diy.js
+[33m4e79d6b[m Update diy.js
+[33m0b4e71e[m Update diy.js
+[33m55772df[m Update diy.js
+[33m3b10ba3[m Update diy.js
+[33m721c1d6[m Update diy.js
+[33mdaca9d6[m Update diy.js
+[33m6339267[m Update diy.js
+[33mcd58d41[m Update diy.js
+[33m0528ac1[m Update diy.js
+[33mf456fbe[m Update diy.js
+[33m026e7c9[m Update diy.js
+[33m4ec640f[m Update diy.js
+[33mc09e6e0[m Update diy.js
+[33m7718a69[m Update diy.js
+[33m202e996[m added diy payment route
+[33m41367a2[m Update index.js
+[33m5b95be7[m u
+[33m89f7e7a[m changed to post
+[33m3e5b75d[m Update diy.js
+[33m41b91e2[m Update diy.js
+[33m3be50b8[m Update diy.js
+[33mbd53ed7[m Update index.js
+[33m18bc6be[m Update index.js
+[33m720a7df[m Update index.js
+[33m5ce05a1[m Update index.js
+[33mfa99469[m Update index.js
+[33mfa18c12[m Update index.js
+[33m83b459e[m Update diy.js
