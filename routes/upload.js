@@ -43,13 +43,13 @@ router.post(
   (req, res) => {
     const result = {};
     if (req.files.img) {
-      result.img = `/src/img/montañas/image/${req.files.img[0].filename}`;
+      result.img = `./src/img/montañas/image/${req.files.img[0].filename}`;
     }
     if (req.files.img_real) {
-      result.img_real = `/src/img/montañas/image_real/${req.files.img_real[0].filename}`;
+      result.img_real = `./src/img/montañas/image_real/${req.files.img_real[0].filename}`;
     }
     if (req.files.img_route) {
-      result.img_route = `/src/img/montañas/image_route/${req.files.img_route[0].filename}`;
+      result.img_route = `./src/img/montañas/image_route/${req.files.img_route[0].filename}`;
     }
     res.json(result);
   }
