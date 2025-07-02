@@ -1,22 +1,4 @@
-interface InputsPlanta {
-  caudal: number; // m³/día
-  dqoEntrada: number; // mg/L
-  sstEntrada: number; // mg/L
-  nivelAgua: number; // m respecto al suelo
-  norma: string; // Norma a cumplir (ej. "NOM-003-SEMARNAT-1997")
-}
-
-interface ModulosPlanta {
-  trampaGrasas: object;
-  carcamoRegulacion: object;
-  biodigestor: object;
-  reactorBiologico: object;
-  clarificador: object;
-  clorador: object;
-  cisternaBombeo: object;
-}
-
-export const calcularPlanta = (inputs: InputsPlanta): ModulosPlanta => {
+const calcularPlanta = (inputs) => {
   const { caudal, dqoEntrada, sstEntrada, nivelAgua, norma } = inputs;
 
   // Trampa de grasas
@@ -95,3 +77,5 @@ export const calcularPlanta = (inputs: InputsPlanta): ModulosPlanta => {
     cisternaBombeo,
   };
 };
+
+module.exports = { calcularPlanta };
