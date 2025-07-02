@@ -19,7 +19,6 @@ const mountainSchema = new mongoose.Schema(
       first_layer_up: {
         type: {
           type: String,
-          enum: ["Ligera", "Impermeable", "Rompevientos", "N/A"],
           default: "N/A",
         },
         img: { type: String },
@@ -27,7 +26,6 @@ const mountainSchema = new mongoose.Schema(
       second_layer_up: {
         type: {
           type: String,
-          enum: ["Polar", "Pluma", "Softshell", "N/A"],
           default: "N/A",
         },
         img: { type: String },
@@ -35,7 +33,6 @@ const mountainSchema = new mongoose.Schema(
       third_layer_up: {
         type: {
           type: String,
-          enum: ["HardShell", "Pluma Gorda", "Poncho", "N/A"],
           default: "N/A",
         },
         img: { type: String },
@@ -43,7 +40,6 @@ const mountainSchema = new mongoose.Schema(
       first_layer_down: {
         type: {
           type: String,
-          enum: ["Licra", "Térmico", "Algodón", "N/A"],
           default: "N/A",
         },
         img: { type: String },
@@ -51,7 +47,6 @@ const mountainSchema = new mongoose.Schema(
       second_layer_down: {
         type: {
           type: String,
-          enum: ["Polar", "Pantalón Montaña", "Softshell", "N/A"],
           default: "N/A",
         },
         img: { type: String },
@@ -59,7 +54,6 @@ const mountainSchema = new mongoose.Schema(
       third_layer_down: {
         type: {
           type: String,
-          enum: ["HardShell", "Impermeable", "N/A"],
           default: "N/A",
         },
         img: { type: String },
