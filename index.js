@@ -34,7 +34,6 @@ const syscom = require("./routes/syscom");
 const growatt = require("./routes/growatt");
 //const whatsapp = require("./routes/whatsapp");
 const landing = require("./routes/landing");
-const landing = require("./routes/landing");
 const weather = require("./routes/weather");
 const auth = require("./routes/auth");
 const training = require("./routes/training");
