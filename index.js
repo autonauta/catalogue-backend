@@ -64,22 +64,48 @@ app.use("/api/v1/training", training);
 app.use("/api/v1/upload", upload);
 app.use("/api/v1/exodus/events", events);
 //
-//Config - connect to catlogueDB.
-const db = config.get("ATLASDB");
+//Config - connect to multiple databases.
+const catalogueDB = config.get("ATLASDB");
+const crmDB = config.get("ATLASDB2");
+
+// Conexión a la base de datos principal (catalogueDB)
 mongoose.connect(
-  db,
+  catalogueDB,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   },
   (err) => {
     if (err) {
-      console.log("error in connection" + err);
+      console.log("Error connecting to catalogueDB: " + err);
     } else {
-      console.log("¡Database connected succesfully!");
+      console.log("¡CatalogueDB connected successfully!");
     }
   }
 );
+
+// Conexión a la segunda base de datos (CRM)
+const crmConnection = mongoose.createConnection(
+  crmDB,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+
+crmConnection.on('connected', () => {
+  console.log("¡CRM Database connected successfully!");
+});
+
+crmConnection.on('error', (err) => {
+  console.log("Error connecting to CRM database: " + err);
+});
+
+// Exportar las conexiones para usar en otros archivos
+module.exports = {
+  catalogueConnection: mongoose.connection,
+  crmConnection: crmConnection
+};
 //Update prices every day
 updatePrices.start();
 updateGrowattPlants.start();
