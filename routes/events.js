@@ -50,7 +50,8 @@ router.post("/create", (req, res, next) => {
   next();
 }, eventUpload.fields([
   { name: 'img', maxCount: 1 },
-  { name: 'img_secondary', maxCount: 1 }
+  { name: 'img_secondary', maxCount: 1 },
+  { name: 'img_terciary', maxCount: 1 }
 ]), (req, res, next) => {
   console.log("=== MIDDLEWARE POST-MULTER ===");
   console.log("Body después de multer:", req.body);
@@ -84,6 +85,7 @@ router.post("/create", (req, res, next) => {
     // Procesar archivos de imagen
     let imgPath = '';
     let imgSecondaryPath = '';
+    let imgTerciaryPath = '';
 
     if (req.files) {
       if (req.files.img && req.files.img[0]) {
@@ -109,6 +111,18 @@ router.post("/create", (req, res, next) => {
         console.log("Imagen secundaria guardada:", imgSecondaryPath);
         console.log("Detalles del archivo:", req.files.img_secondary[0]);
       }
+      
+      if (req.files.img_terciary && req.files.img_terciary[0]) {
+        // Crear la ruta relativa con el nombre del evento
+        const cleanEventName = name
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        imgTerciaryPath = `/files/events/${cleanEventName}/${req.files.img_terciary[0].filename}`;
+        console.log("Imagen terciaria guardada:", imgTerciaryPath);
+        console.log("Detalles del archivo:", req.files.img_terciary[0]);
+      }
     }
 
     // LOG: Mostrar cada campo extraído
@@ -120,6 +134,7 @@ router.post("/create", (req, res, next) => {
     console.log("event_end_date:", event_end_date, "| tipo:", typeof event_end_date);
     console.log("img:", imgPath, "| tipo:", typeof imgPath);
     console.log("img_secondary:", imgSecondaryPath, "| tipo:", typeof imgSecondaryPath);
+    console.log("img_terciary:", imgTerciaryPath, "| tipo:", typeof imgTerciaryPath);
     console.log("description:", description, "| tipo:", typeof description);
     console.log("includes:", includes, "| tipo:", typeof includes);
     console.log("price:", price, "| tipo:", typeof price);
@@ -171,6 +186,7 @@ router.post("/create", (req, res, next) => {
       event_end_date: event_end_date ? new Date(event_end_date) : undefined,
       img: imgPath,
       img_secondary: imgSecondaryPath,
+      img_terciary: imgTerciaryPath,
       description,
       includes: includesArray,
       price: priceObject,

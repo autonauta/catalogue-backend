@@ -64,6 +64,16 @@ const eventSchema = new mongoose.Schema(
         message: "La imagen secundaria debe ser un archivo válido (jpg, jpeg, png, gif, webp)"
       }
     },
+    img_terciary: { 
+      type: String,
+      validate: {
+        validator: function(value) {
+          if (!value) return true; // Permitir vacío
+          return /\.(jpg|jpeg|png|gif|webp)$/i.test(value);
+        },
+        message: "La imagen terciaria debe ser un archivo válido (jpg, jpeg, png, gif, webp)"
+      }
+    },
     description: { 
       type: String,
       trim: true,
