@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const { Event } = require("../models/Event");
 const eventUpload = require("../middleware/eventUpload");
+const multer = require("multer");
 
 router.get("/", async (req, res) => {
   try {
@@ -48,11 +49,28 @@ router.post("/create", (req, res, next) => {
   console.log("Body antes de multer:", req.body);
   console.log("Files antes de multer:", req.files);
   next();
-}, eventUpload.fields([
-  { name: 'img', maxCount: 1 },
-  { name: 'img_secondary', maxCount: 1 },
-  { name: 'img_terciary', maxCount: 1 }
-]), (req, res, next) => {
+}, (err, req, res, next) => {
+  // Middleware de manejo de errores de multer
+  if (err instanceof multer.MulterError) {
+    console.error("=== ERROR DE MULTER ===");
+    console.error("Tipo de error:", err.code);
+    console.error("Mensaje:", err.message);
+    console.error("Field:", err.field);
+    return res.status(400).json({
+      error: true,
+      message: `Error al procesar archivos: ${err.message}`,
+      code: err.code
+    });
+  } else if (err) {
+    console.error("=== ERROR GENERAL ===");
+    console.error("Error:", err.message);
+    return res.status(400).json({
+      error: true,
+      message: `Error al procesar archivos: ${err.message}`
+    });
+  }
+  next();
+}, eventUpload.any(), (req, res, next) => {
   console.log("=== MIDDLEWARE POST-MULTER ===");
   console.log("Body después de multer:", req.body);
   console.log("Files después de multer:", req.files);
@@ -87,42 +105,47 @@ router.post("/create", (req, res, next) => {
     let imgSecondaryPath = '';
     let imgTerciaryPath = '';
 
-    if (req.files) {
-      if (req.files.img && req.files.img[0]) {
-        // Crear la ruta relativa con el nombre del evento
-        const cleanEventName = name
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '');
-        imgPath = `/files/events/${cleanEventName}/${req.files.img[0].filename}`;
-        console.log("Imagen principal guardada:", imgPath);
-        console.log("Detalles del archivo:", req.files.img[0]);
-      }
-      
-      if (req.files.img_secondary && req.files.img_secondary[0]) {
-        // Crear la ruta relativa con el nombre del evento
-        const cleanEventName = name
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '');
-        imgSecondaryPath = `/files/events/${cleanEventName}/${req.files.img_secondary[0].filename}`;
-        console.log("Imagen secundaria guardada:", imgSecondaryPath);
-        console.log("Detalles del archivo:", req.files.img_secondary[0]);
-      }
-      
-      if (req.files.img_terciary && req.files.img_terciary[0]) {
-        // Crear la ruta relativa con el nombre del evento
-        const cleanEventName = name
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '');
-        imgTerciaryPath = `/files/events/${cleanEventName}/${req.files.img_terciary[0].filename}`;
-        console.log("Imagen terciaria guardada:", imgTerciaryPath);
-        console.log("Detalles del archivo:", req.files.img_terciary[0]);
-      }
+    if (req.files && req.files.length > 0) {
+      console.log("=== PROCESANDO ARCHIVOS ===");
+      console.log("Número de archivos recibidos:", req.files.length);
+      req.files.forEach((file, index) => {
+        console.log(`Archivo ${index + 1}:`, {
+          fieldname: file.fieldname,
+          originalname: file.originalname,
+          filename: file.filename,
+          mimetype: file.mimetype,
+          size: file.size
+        });
+      });
+
+      // Crear la ruta relativa con el nombre del evento
+      const cleanEventName = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+
+      // Procesar cada archivo según su fieldname
+      req.files.forEach(file => {
+        const filePath = `/files/events/${cleanEventName}/${file.filename}`;
+        
+        switch (file.fieldname) {
+          case 'img':
+            imgPath = filePath;
+            console.log("Imagen principal guardada:", imgPath);
+            break;
+          case 'img_secondary':
+            imgSecondaryPath = filePath;
+            console.log("Imagen secundaria guardada:", imgSecondaryPath);
+            break;
+          case 'img_terciary':
+            imgTerciaryPath = filePath;
+            console.log("Imagen terciaria guardada:", imgTerciaryPath);
+            break;
+          default:
+            console.log(`Campo de archivo no reconocido: ${file.fieldname}`);
+        }
+      });
     }
 
     // LOG: Mostrar cada campo extraído
