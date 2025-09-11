@@ -4,6 +4,7 @@ const auth = require("../middleware/auth");
 const { Event } = require("../models/Event");
 const eventUpload = require("../middleware/eventUpload");
 const multer = require("multer");
+const { processUploadedFiles } = require("../utils/fileManager");
 
 router.get("/", async (req, res) => {
   try {
@@ -100,53 +101,9 @@ router.post("/create", (req, res, next) => {
       current_participants
     } = req.body;
 
-    // Procesar archivos de imagen
-    let imgPath = '';
-    let imgSecondaryPath = '';
-    let imgTerciaryPath = '';
-
-    if (req.files && req.files.length > 0) {
-      console.log("=== PROCESANDO ARCHIVOS ===");
-      console.log("Número de archivos recibidos:", req.files.length);
-      req.files.forEach((file, index) => {
-        console.log(`Archivo ${index + 1}:`, {
-          fieldname: file.fieldname,
-          originalname: file.originalname,
-          filename: file.filename,
-          mimetype: file.mimetype,
-          size: file.size
-        });
-      });
-
-      // Crear la ruta relativa con el nombre del evento
-      const cleanEventName = name
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-
-      // Procesar cada archivo según su fieldname
-      req.files.forEach(file => {
-        const filePath = `/files/events/${cleanEventName}/${file.filename}`;
-        
-        switch (file.fieldname) {
-          case 'img':
-            imgPath = filePath;
-            console.log("Imagen principal guardada:", imgPath);
-            break;
-          case 'img_secondary':
-            imgSecondaryPath = filePath;
-            console.log("Imagen secundaria guardada:", imgSecondaryPath);
-            break;
-          case 'img_terciary':
-            imgTerciaryPath = filePath;
-            console.log("Imagen terciaria guardada:", imgTerciaryPath);
-            break;
-          default:
-            console.log(`Campo de archivo no reconocido: ${file.fieldname}`);
-        }
-      });
-    }
+    // Procesar archivos de imagen usando las utilidades
+    const imagePaths = await processUploadedFiles(req.files, name);
+    const { img: imgPath, img_secondary: imgSecondaryPath, img_terciary: imgTerciaryPath } = imagePaths;
 
     // LOG: Mostrar cada campo extraído
     console.log("=== CAMPOS EXTRAÍDOS ===");
@@ -280,29 +237,172 @@ router.get("/:id", async (req, res) => {
 });
 
 // TODO: Agregar middleware auth cuando se implemente el login
-router.put("/update/:id", async (req, res) => {
+router.put("/update/:id", (req, res, next) => {
+  console.log("=== MIDDLEWARE PRE-MULTER UPDATE ===");
+  console.log("Content-Type:", req.headers['content-type']);
+  console.log("Content-Length:", req.headers['content-length']);
+  next();
+}, (err, req, res, next) => {
+  // Middleware de manejo de errores de multer
+  if (err instanceof multer.MulterError) {
+    console.error("=== ERROR DE MULTER EN UPDATE ===");
+    console.error("Tipo de error:", err.code);
+    console.error("Mensaje:", err.message);
+    console.error("Field:", err.field);
+    return res.status(400).json({
+      error: true,
+      message: `Error al procesar archivos: ${err.message}`,
+      code: err.code
+    });
+  } else if (err) {
+    console.error("=== ERROR GENERAL EN UPDATE ===");
+    console.error("Error:", err.message);
+    return res.status(400).json({
+      error: true,
+      message: `Error al procesar archivos: ${err.message}`
+    });
+  }
+  next();
+}, eventUpload.any(), (req, res, next) => {
+  console.log("=== MIDDLEWARE POST-MULTER UPDATE ===");
+  console.log("Body después de multer:", req.body);
+  console.log("Files después de multer:", req.files);
+  next();
+}, async (req, res) => {
   try {
-    const updated = await Event.findByIdAndUpdate(req.params.id, req.body, {
+    console.log("=== INICIO ACTUALIZACIÓN DE EVENTO ===");
+    console.log("ID del evento:", req.params.id);
+    console.log("Body completo:", JSON.stringify(req.body, null, 2));
+    console.log("Files:", req.files);
+
+    // Buscar el evento existente
+    const existingEvent = await Event.findById(req.params.id);
+    if (!existingEvent) {
+      return res.status(404).json({ 
+        error: true,
+        message: "Evento no encontrado" 
+      });
+    }
+
+    console.log("Evento existente:", {
+      name: existingEvent.name,
+      img: existingEvent.img,
+      img_secondary: existingEvent.img_secondary,
+      img_terciary: existingEvent.img_terciary
+    });
+
+    // Importar la función de manejo de archivos
+    const { handleEventFileUpdate } = require("../utils/fileManager");
+
+    // Manejar la actualización de archivos
+    const updateData = await handleEventFileUpdate(
+      existingEvent, 
+      req.body, 
+      req.files
+    );
+
+    console.log("=== DATOS DE ACTUALIZACIÓN FINALES ===");
+    console.log(JSON.stringify(updateData, null, 2));
+
+    // Actualizar el evento en la base de datos
+    const updated = await Event.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,
     });
-    if (!updated)
-      return res.status(404).json({ message: "Evento no encontrado" });
-    res.json({ message: "Evento actualizado", data: updated });
+
+    console.log("✅ Evento actualizado exitosamente");
+    console.log("=== FIN ACTUALIZACIÓN DE EVENTO ===");
+
+    res.json({ 
+      message: "Evento actualizado exitosamente", 
+      data: updated 
+    });
   } catch (err) {
-    res.status(500).json({ message: "Error al actualizar evento" });
+    console.error("❌ ERROR AL ACTUALIZAR EVENTO:");
+    console.error("Tipo de error:", err.name);
+    console.error("Mensaje:", err.message);
+    console.error("Stack completo:", err.stack);
+    
+    // Si es error de validación, mostrar detalles
+    if (err.name === 'ValidationError') {
+      console.error("=== ERRORES DE VALIDACIÓN ===");
+      Object.keys(err.errors).forEach(key => {
+        console.error(`Campo ${key}:`, err.errors[key].message);
+      });
+      
+      const errors = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ 
+        error: true,
+        message: "Error de validación",
+        details: errors 
+      });
+    }
+    
+    res.status(500).json({ 
+      error: true,
+      message: "No se pudo actualizar el evento",
+      debug: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 
 // TODO: Agregar middleware auth cuando se implemente el login
 router.delete("/delete/:id", async (req, res) => {
   try {
+    console.log("=== INICIO ELIMINACIÓN DE EVENTO ===");
+    console.log("ID del evento:", req.params.id);
+
+    // Buscar el evento antes de eliminarlo
+    const eventToDelete = await Event.findById(req.params.id);
+    if (!eventToDelete) {
+      return res.status(404).json({ 
+        error: true,
+        message: "Evento no encontrado" 
+      });
+    }
+
+    console.log("Evento a eliminar:", {
+      name: eventToDelete.name,
+      img: eventToDelete.img,
+      img_secondary: eventToDelete.img_secondary,
+      img_terciary: eventToDelete.img_terciary
+    });
+
+    // Eliminar archivos del evento
+    const { deleteEventFolder, getEventFolderPath } = require("../utils/fileManager");
+    const eventFolder = getEventFolderPath(eventToDelete.name);
+    
+    try {
+      await deleteEventFolder(eventFolder);
+      console.log("✅ Archivos del evento eliminados");
+    } catch (fileError) {
+      console.error("⚠️ Error al eliminar archivos:", fileError.message);
+      // Continuar con la eliminación del evento aunque falle la eliminación de archivos
+    }
+
+    // Eliminar el evento de la base de datos
     const deleted = await Event.findByIdAndDelete(req.params.id);
-    if (!deleted)
-      return res.status(404).json({ message: "Evento no encontrado" });
-    res.json({ message: "Evento eliminado" });
+    
+    console.log("✅ Evento eliminado exitosamente");
+    console.log("=== FIN ELIMINACIÓN DE EVENTO ===");
+
+    res.json({ 
+      message: "Evento eliminado exitosamente",
+      deletedEvent: {
+        id: deleted._id,
+        name: deleted.name
+      }
+    });
   } catch (err) {
-    res.status(500).json({ message: "Error al borrar evento" });
+    console.error("❌ ERROR AL ELIMINAR EVENTO:");
+    console.error("Tipo de error:", err.name);
+    console.error("Mensaje:", err.message);
+    
+    res.status(500).json({ 
+      error: true,
+      message: "No se pudo eliminar el evento",
+      debug: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 

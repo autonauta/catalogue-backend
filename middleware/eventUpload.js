@@ -1,25 +1,26 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { getEventFolderPath, createEventFolder } = require("../utils/fileManager");
 
 // Configuración de almacenamiento para eventos
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Crear ruta basada en el nombre del evento
-    const eventName = req.body.name || 'evento-sin-nombre';
-    // Limpiar el nombre del evento para usarlo como nombre de carpeta
-    const cleanEventName = eventName
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-    
-    const eventFolder = path.join(__dirname, '../files/events', cleanEventName);
-    
-    // Crear la carpeta del evento si no existe
-    fs.mkdirSync(eventFolder, { recursive: true });
-    
-    cb(null, eventFolder);
+  destination: async function (req, file, cb) {
+    try {
+      // Crear ruta basada en el nombre del evento
+      const eventName = req.body.name || 'evento-sin-nombre';
+      
+      // Usar la función del fileManager para obtener la ruta correcta
+      const eventFolder = getEventFolderPath(eventName);
+      
+      // Crear la carpeta del evento si no existe
+      await createEventFolder(eventName);
+      
+      cb(null, eventFolder);
+    } catch (error) {
+      console.error("Error al crear carpeta del evento:", error);
+      cb(error);
+    }
   },
   filename: function (req, file, cb) {
     // Generar nombre único para el archivo
