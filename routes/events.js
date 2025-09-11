@@ -87,15 +87,25 @@ router.post("/create", (req, res, next) => {
 
     if (req.files) {
       if (req.files.img && req.files.img[0]) {
-        // Usar la ruta completa donde se guardó el archivo
-        imgPath = req.files.img[0].path.replace(/\\/g, '/'); // Convertir backslashes a forward slashes
+        // Crear la ruta relativa con el nombre del evento
+        const cleanEventName = name
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        imgPath = `/files/events/${cleanEventName}/${req.files.img[0].filename}`;
         console.log("Imagen principal guardada:", imgPath);
         console.log("Detalles del archivo:", req.files.img[0]);
       }
       
       if (req.files.img_secondary && req.files.img_secondary[0]) {
-        // Usar la ruta completa donde se guardó el archivo
-        imgSecondaryPath = req.files.img_secondary[0].path.replace(/\\/g, '/'); // Convertir backslashes a forward slashes
+        // Crear la ruta relativa con el nombre del evento
+        const cleanEventName = name
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        imgSecondaryPath = `/files/events/${cleanEventName}/${req.files.img_secondary[0].filename}`;
         console.log("Imagen secundaria guardada:", imgSecondaryPath);
         console.log("Detalles del archivo:", req.files.img_secondary[0]);
       }

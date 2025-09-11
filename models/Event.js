@@ -1,4 +1,11 @@
 const mongoose = require("mongoose");
+const config = require("config");
+
+// Crear conexión específica para la base de datos de eventos (exodusDB)
+const exodusConnection = mongoose.createConnection(config.get("ATLASDB2"), {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const eventSchema = new mongoose.Schema(
   {
@@ -202,6 +209,16 @@ eventSchema.pre('save', function(next) {
   next();
 });
 
-const Event = mongoose.model("Event", eventSchema);
+// Usar la conexión específica para crear el modelo
+const Event = exodusConnection.model("Event", eventSchema);
+
+// Agregar eventos de conexión para monitoreo
+exodusConnection.on('connected', () => {
+  console.log("✅ Conexión a exodusDB (ATLASDB2) establecida para eventos");
+});
+
+exodusConnection.on('error', (err) => {
+  console.log("❌ Error en conexión a exodusDB (ATLASDB2):", err.message);
+});
 
 module.exports.Event = Event;
