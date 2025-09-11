@@ -66,7 +66,7 @@ app.use("/api/v1/exodus/events", events);
 //
 //Config - connect to multiple databases.
 const catalogueDB = config.get("ATLASDB");
-const crmDB = config.get("ATLASDB2");
+const exodusDB = config.get("ATLASDB2");
 
 // Conexión a la base de datos principal (catalogueDB)
 mongoose.connect(
@@ -84,27 +84,27 @@ mongoose.connect(
   }
 );
 
-// Conexión a la segunda base de datos (CRM)
-const crmConnection = mongoose.createConnection(
-  crmDB,
+// Conexión a la segunda base de datos (Exodus)
+const exodusConnection = mongoose.createConnection(
+  exodusDB,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   }
 );
 
-crmConnection.on('connected', () => {
-  console.log("¡CRM Database connected successfully!");
+exodusConnection.on('connected', () => {
+  console.log("¡Exodus Database connected successfully!");
 });
 
-crmConnection.on('error', (err) => {
-  console.log("Error connecting to CRM database: " + err);
+exodusConnection.on('error', (err) => {
+  console.log("Error connecting to Exodus database: " + err);
 });
 
 // Exportar las conexiones para usar en otros archivos
 module.exports = {
   catalogueConnection: mongoose.connection,
-  crmConnection: crmConnection
+  exodusConnection: exodusConnection
 };
 //Update prices every day
 updatePrices.start();
