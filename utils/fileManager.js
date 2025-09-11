@@ -112,29 +112,27 @@ async function renameEventFolder(oldEventName, newEventName) {
 function updateEventImagePaths(event, newEventName, newFiles = {}) {
   const updatedEvent = { ...event };
   
-  // Actualizar imagen principal si hay archivo nuevo
-  if (newFiles.img && newFiles.img.length > 0) {
-    updatedEvent.img = getEventImageUrl(newEventName, newFiles.img[0].filename);
-  } else if (event.img && (event.img.includes('files/events/') || event.img.includes('/files/events/'))) {
-    // Mantener la imagen existente pero actualizar la ruta si cambió el nombre
+  console.log(`🔄 Actualizando rutas de imágenes para el nuevo nombre: ${newEventName}`);
+  
+  // Actualizar imagen principal
+  if (event.img && (event.img.includes('files/events/') || event.img.includes('/files/events/'))) {
     const filename = path.basename(event.img);
     updatedEvent.img = getEventImageUrl(newEventName, filename);
+    console.log(`📸 Imagen principal: ${event.img} → ${updatedEvent.img}`);
   }
   
-  // Actualizar imagen secundaria si hay archivo nuevo
-  if (newFiles.img_secondary && newFiles.img_secondary.length > 0) {
-    updatedEvent.img_secondary = getEventImageUrl(newEventName, newFiles.img_secondary[0].filename);
-  } else if (event.img_secondary && (event.img_secondary.includes('files/events/') || event.img_secondary.includes('/files/events/'))) {
+  // Actualizar imagen secundaria
+  if (event.img_secondary && (event.img_secondary.includes('files/events/') || event.img_secondary.includes('/files/events/'))) {
     const filename = path.basename(event.img_secondary);
     updatedEvent.img_secondary = getEventImageUrl(newEventName, filename);
+    console.log(`📸 Imagen secundaria: ${event.img_secondary} → ${updatedEvent.img_secondary}`);
   }
   
-  // Actualizar imagen terciaria si hay archivo nuevo
-  if (newFiles.img_terciary && newFiles.img_terciary.length > 0) {
-    updatedEvent.img_terciary = getEventImageUrl(newEventName, newFiles.img_terciary[0].filename);
-  } else if (event.img_terciary && (event.img_terciary.includes('files/events/') || event.img_terciary.includes('/files/events/'))) {
+  // Actualizar imagen terciaria
+  if (event.img_terciary && (event.img_terciary.includes('files/events/') || event.img_terciary.includes('/files/events/'))) {
     const filename = path.basename(event.img_terciary);
     updatedEvent.img_terciary = getEventImageUrl(newEventName, filename);
+    console.log(`📸 Imagen terciaria: ${event.img_terciary} → ${updatedEvent.img_terciary}`);
   }
   
   return updatedEvent;
@@ -207,7 +205,10 @@ async function handleEventFileUpdate(existingEvent, updateData, newFiles = []) {
   // Si cambió el nombre del evento, renombrar la carpeta
   if (oldEventName !== newEventName) {
     console.log(`🔄 Renombrando carpeta del evento...`);
+    console.log(`Carpeta anterior: ${getEventFolderPath(oldEventName)}`);
+    console.log(`Carpeta nueva: ${getEventFolderPath(newEventName)}`);
     await renameEventFolder(oldEventName, newEventName);
+    console.log(`✅ Carpeta renombrada exitosamente`);
   }
   
   // Si hay archivos nuevos, procesar solo los archivos subidos
@@ -235,17 +236,20 @@ async function handleEventFileUpdate(existingEvent, updateData, newFiles = []) {
   // Si cambió el nombre del evento, actualizar las rutas de las imágenes existentes
   if (oldEventName !== newEventName) {
     console.log(`🔄 Actualizando rutas por cambio de nombre...`);
-    const updatedPaths = updateEventImagePaths(existingEvent, newEventName);
+    const updatedPaths = updateEventImagePaths(existingEvent, newEventName, {});
     
-    // Solo actualizar las rutas que no fueron cambiadas por archivos nuevos
-    if (!updateData.img) {
+    // Actualizar las rutas de las imágenes existentes (solo si no se subieron archivos nuevos)
+    if (newFiles.length === 0 || !newFiles.some(f => f.fieldname === 'img')) {
       updateData.img = updatedPaths.img;
+      console.log(`✅ Ruta de imagen principal actualizada por cambio de nombre: ${updatedPaths.img}`);
     }
-    if (!updateData.img_secondary) {
+    if (newFiles.length === 0 || !newFiles.some(f => f.fieldname === 'img_secondary')) {
       updateData.img_secondary = updatedPaths.img_secondary;
+      console.log(`✅ Ruta de imagen secundaria actualizada por cambio de nombre: ${updatedPaths.img_secondary}`);
     }
-    if (!updateData.img_terciary) {
+    if (newFiles.length === 0 || !newFiles.some(f => f.fieldname === 'img_terciary')) {
       updateData.img_terciary = updatedPaths.img_terciary;
+      console.log(`✅ Ruta de imagen terciaria actualizada por cambio de nombre: ${updatedPaths.img_terciary}`);
     }
   }
   
