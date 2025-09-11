@@ -87,13 +87,17 @@ router.post("/create", (req, res, next) => {
 
     if (req.files) {
       if (req.files.img && req.files.img[0]) {
-        imgPath = `/files/events/${req.files.img[0].filename}`;
+        // Usar la ruta completa donde se guardó el archivo
+        imgPath = req.files.img[0].path.replace(/\\/g, '/'); // Convertir backslashes a forward slashes
         console.log("Imagen principal guardada:", imgPath);
+        console.log("Detalles del archivo:", req.files.img[0]);
       }
       
       if (req.files.img_secondary && req.files.img_secondary[0]) {
-        imgSecondaryPath = `/files/events/${req.files.img_secondary[0].filename}`;
+        // Usar la ruta completa donde se guardó el archivo
+        imgSecondaryPath = req.files.img_secondary[0].path.replace(/\\/g, '/'); // Convertir backslashes a forward slashes
         console.log("Imagen secundaria guardada:", imgSecondaryPath);
+        console.log("Detalles del archivo:", req.files.img_secondary[0]);
       }
     }
 
