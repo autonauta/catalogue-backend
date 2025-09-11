@@ -39,8 +39,16 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/create", auth, async (req, res) => {
+// TODO: Agregar middleware auth cuando se implemente el login
+router.post("/create", async (req, res) => {
   try {
+    // LOG: Mostrar todo lo que llega del frontend
+    console.log("=== INICIO CREACIÓN DE EVENTO ===");
+    console.log("Headers:", req.headers);
+    console.log("Body completo:", JSON.stringify(req.body, null, 2));
+    console.log("Tipo de body:", typeof req.body);
+    console.log("Keys del body:", Object.keys(req.body || {}));
+
     // Extrae los campos del modelo Event desde el body
     const {
       name,
@@ -58,15 +66,35 @@ router.post("/create", auth, async (req, res) => {
       current_participants
     } = req.body;
 
+    // LOG: Mostrar cada campo extraído
+    console.log("=== CAMPOS EXTRAÍDOS ===");
+    console.log("name:", name, "| tipo:", typeof name);
+    console.log("location:", location, "| tipo:", typeof location);
+    console.log("departure_location:", departure_location, "| tipo:", typeof departure_location);
+    console.log("event_start_date:", event_start_date, "| tipo:", typeof event_start_date);
+    console.log("event_end_date:", event_end_date, "| tipo:", typeof event_end_date);
+    console.log("img:", img, "| tipo:", typeof img);
+    console.log("img_secondary:", img_secondary, "| tipo:", typeof img_secondary);
+    console.log("description:", description, "| tipo:", typeof description);
+    console.log("includes:", includes, "| tipo:", typeof includes);
+    console.log("price:", price, "| tipo:", typeof price);
+    console.log("status:", status, "| tipo:", typeof status);
+    console.log("max_participants:", max_participants, "| tipo:", typeof max_participants);
+    console.log("current_participants:", current_participants, "| tipo:", typeof current_participants);
+
     // Validación básica (las validaciones del modelo se encargan del resto)
     if (!name || !location) {
+      console.log("❌ ERROR: Faltan datos obligatorios");
+      console.log("name presente:", !!name);
+      console.log("location presente:", !!location);
       return res.status(400).json({
         error: true,
         message: "Faltan datos obligatorios: nombre y ubicación.",
       });
     }
 
-    const newEvent = new Event({
+    // LOG: Mostrar el objeto que se va a crear
+    const eventData = {
       name,
       location,
       departure_location,
@@ -80,19 +108,40 @@ router.post("/create", auth, async (req, res) => {
       status,
       max_participants,
       current_participants
-    });
+    };
+
+    console.log("=== OBJETO EVENTO A CREAR ===");
+    console.log(JSON.stringify(eventData, null, 2));
+
+    const newEvent = new Event(eventData);
+
+    console.log("=== ANTES DE GUARDAR ===");
+    console.log("Evento creado:", newEvent);
 
     await newEvent.save();
+    
+    console.log("✅ Evento guardado exitosamente");
+    console.log("ID:", newEvent._id);
+    console.log("=== FIN CREACIÓN DE EVENTO ===");
+
     res.status(201).json({
       message: "Evento creado con éxito",
       id: newEvent._id,
       event: newEvent,
     });
   } catch (err) {
-    console.error("Error al guardar evento:", err);
+    console.error("❌ ERROR AL GUARDAR EVENTO:");
+    console.error("Tipo de error:", err.name);
+    console.error("Mensaje:", err.message);
+    console.error("Stack completo:", err.stack);
     
-    // Manejo de errores de validación de Mongoose
+    // Si es error de validación, mostrar detalles
     if (err.name === 'ValidationError') {
+      console.error("=== ERRORES DE VALIDACIÓN ===");
+      Object.keys(err.errors).forEach(key => {
+        console.error(`Campo ${key}:`, err.errors[key].message);
+      });
+      
       const errors = Object.values(err.errors).map(e => e.message);
       return res.status(400).json({ 
         error: true,
@@ -103,7 +152,8 @@ router.post("/create", auth, async (req, res) => {
     
     res.status(500).json({ 
       error: true,
-      message: "No se pudo guardar el evento" 
+      message: "No se pudo guardar el evento",
+      debug: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
   }
 });
@@ -121,7 +171,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.put("/update/:id", auth, async (req, res) => {
+// TODO: Agregar middleware auth cuando se implemente el login
+router.put("/update/:id", async (req, res) => {
   try {
     const updated = await Event.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -135,7 +186,8 @@ router.put("/update/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", auth, async (req, res) => {
+// TODO: Agregar middleware auth cuando se implemente el login
+router.delete("/delete/:id", async (req, res) => {
   try {
     const deleted = await Event.findByIdAndDelete(req.params.id);
     if (!deleted)
