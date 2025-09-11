@@ -45,9 +45,20 @@ const events = require("./routes/events");
 app.use(cors({ exposedHeaders: ["X-Total-Count"] }));
 app.use(morgan("tiny"));
 
-// Body parsing
-app.use(express.json());
-app.use(bodyParser.json());
+// Body parsing - excluir rutas de eventos para permitir multipart/form-data
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/v1/exodus/events/create')) {
+    return next(); // Saltar el parsing de JSON para esta ruta
+  }
+  express.json()(req, res, next);
+});
+
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/v1/exodus/events/create')) {
+    return next(); // Saltar el parsing de JSON para esta ruta
+  }
+  bodyParser.json()(req, res, next);
+});
 
 //----Routes
 app.use("/api/v1/products", products);

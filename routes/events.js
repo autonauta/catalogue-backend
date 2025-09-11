@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const { Event } = require("../models/Event");
+const eventUpload = require("../middleware/eventUpload");
 
 router.get("/", async (req, res) => {
   try {
@@ -40,12 +41,28 @@ router.get("/", async (req, res) => {
 });
 
 // TODO: Agregar middleware auth cuando se implemente el login
-router.post("/create", async (req, res) => {
+router.post("/create", (req, res, next) => {
+  console.log("=== MIDDLEWARE PRE-MULTER ===");
+  console.log("Content-Type:", req.headers['content-type']);
+  console.log("Content-Length:", req.headers['content-length']);
+  console.log("Body antes de multer:", req.body);
+  console.log("Files antes de multer:", req.files);
+  next();
+}, eventUpload.fields([
+  { name: 'img', maxCount: 1 },
+  { name: 'img_secondary', maxCount: 1 }
+]), (req, res, next) => {
+  console.log("=== MIDDLEWARE POST-MULTER ===");
+  console.log("Body después de multer:", req.body);
+  console.log("Files después de multer:", req.files);
+  next();
+}, async (req, res) => {
   try {
     // LOG: Mostrar todo lo que llega del frontend
     console.log("=== INICIO CREACIÓN DE EVENTO ===");
     console.log("Headers:", req.headers);
     console.log("Body completo:", JSON.stringify(req.body, null, 2));
+    console.log("Files:", req.files);
     console.log("Tipo de body:", typeof req.body);
     console.log("Keys del body:", Object.keys(req.body || {}));
 
@@ -56,8 +73,6 @@ router.post("/create", async (req, res) => {
       departure_location,
       event_start_date,
       event_end_date,
-      img,
-      img_secondary,
       description,
       includes,
       price,
@@ -66,6 +81,22 @@ router.post("/create", async (req, res) => {
       current_participants
     } = req.body;
 
+    // Procesar archivos de imagen
+    let imgPath = '';
+    let imgSecondaryPath = '';
+
+    if (req.files) {
+      if (req.files.img && req.files.img[0]) {
+        imgPath = `/files/events/${req.files.img[0].filename}`;
+        console.log("Imagen principal guardada:", imgPath);
+      }
+      
+      if (req.files.img_secondary && req.files.img_secondary[0]) {
+        imgSecondaryPath = `/files/events/${req.files.img_secondary[0].filename}`;
+        console.log("Imagen secundaria guardada:", imgSecondaryPath);
+      }
+    }
+
     // LOG: Mostrar cada campo extraído
     console.log("=== CAMPOS EXTRAÍDOS ===");
     console.log("name:", name, "| tipo:", typeof name);
@@ -73,8 +104,8 @@ router.post("/create", async (req, res) => {
     console.log("departure_location:", departure_location, "| tipo:", typeof departure_location);
     console.log("event_start_date:", event_start_date, "| tipo:", typeof event_start_date);
     console.log("event_end_date:", event_end_date, "| tipo:", typeof event_end_date);
-    console.log("img:", img, "| tipo:", typeof img);
-    console.log("img_secondary:", img_secondary, "| tipo:", typeof img_secondary);
+    console.log("img:", imgPath, "| tipo:", typeof imgPath);
+    console.log("img_secondary:", imgSecondaryPath, "| tipo:", typeof imgSecondaryPath);
     console.log("description:", description, "| tipo:", typeof description);
     console.log("includes:", includes, "| tipo:", typeof includes);
     console.log("price:", price, "| tipo:", typeof price);
@@ -93,6 +124,30 @@ router.post("/create", async (req, res) => {
       });
     }
 
+    // Procesar includes si viene como string
+    let includesArray = [];
+    if (includes) {
+      if (typeof includes === 'string') {
+        includesArray = includes.split(',').map(item => item.trim()).filter(item => item);
+      } else if (Array.isArray(includes)) {
+        includesArray = includes;
+      }
+    }
+
+    // Procesar price si viene como string
+    let priceObject = {};
+    if (price) {
+      if (typeof price === 'string') {
+        try {
+          priceObject = JSON.parse(price);
+        } catch (e) {
+          console.log("Error parsing price:", e);
+        }
+      } else if (typeof price === 'object') {
+        priceObject = price;
+      }
+    }
+
     // LOG: Mostrar el objeto que se va a crear
     const eventData = {
       name,
@@ -100,14 +155,14 @@ router.post("/create", async (req, res) => {
       departure_location,
       event_start_date: event_start_date ? new Date(event_start_date) : undefined,
       event_end_date: event_end_date ? new Date(event_end_date) : undefined,
-      img,
-      img_secondary,
+      img: imgPath,
+      img_secondary: imgSecondaryPath,
       description,
-      includes,
-      price,
+      includes: includesArray,
+      price: priceObject,
       status,
-      max_participants,
-      current_participants
+      max_participants: max_participants ? Number(max_participants) : undefined,
+      current_participants: current_participants || []
     };
 
     console.log("=== OBJETO EVENTO A CREAR ===");
