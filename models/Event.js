@@ -82,7 +82,13 @@ const eventSchema = new mongoose.Schema(
     includes: [{
       type: String,
       trim: true,
-      maxlength: [100, "Cada elemento incluido no puede exceder 100 caracteres"]
+      maxlength: [200, "Cada elemento incluido no puede exceder 200 caracteres"],
+      validate: {
+        validator: function(value) {
+          return value && value.length > 0;
+        },
+        message: "Los elementos incluidos no pueden estar vacíos"
+      }
     }],
     price: {
       early_bird: { 
@@ -216,6 +222,34 @@ eventSchema.pre('save', function(next) {
   if (this.event_start_date && !this.event_end_date) {
     this.event_end_date = this.event_start_date;
   }
+  
+  // Truncar elementos de includes que excedan 200 caracteres
+  if (this.includes && Array.isArray(this.includes)) {
+    this.includes = this.includes.map(item => {
+      if (typeof item === 'string' && item.length > 200) {
+        return item.substring(0, 197) + '...';
+      }
+      return item;
+    }).filter(item => item && item.trim().length > 0);
+  }
+  
+  next();
+});
+
+// Middleware pre-update para validaciones adicionales
+eventSchema.pre(['updateOne', 'findOneAndUpdate'], function(next) {
+  const update = this.getUpdate();
+  
+  // Truncar elementos de includes que excedan 200 caracteres
+  if (update && update.includes && Array.isArray(update.includes)) {
+    update.includes = update.includes.map(item => {
+      if (typeof item === 'string' && item.length > 200) {
+        return item.substring(0, 197) + '...';
+      }
+      return item;
+    }).filter(item => item && item.trim().length > 0);
+  }
+  
   next();
 });
 
