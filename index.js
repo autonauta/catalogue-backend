@@ -38,6 +38,8 @@ const weather = require("./routes/weather");
 const auth = require("./routes/auth");
 const training = require("./routes/training");
 const upload = require("./routes/upload");
+const events = require("./routes/events");
+
 
 // Middleware base
 app.use(cors({ exposedHeaders: ["X-Total-Count"] }));
@@ -60,6 +62,7 @@ app.use("/api/v1/weather", weather);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/training", training);
 app.use("/api/v1/upload", upload);
+app.use("/api/v1/exodus/events", events);
 //
 //Config - connect to catlogueDB.
 const db = config.get("ATLASDB");
