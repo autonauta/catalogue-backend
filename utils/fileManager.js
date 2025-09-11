@@ -197,6 +197,12 @@ async function handleEventFileUpdate(existingEvent, updateData, newFiles = []) {
   console.log(`Evento anterior: ${oldEventName}`);
   console.log(`Evento nuevo: ${newEventName}`);
   console.log(`Archivos nuevos: ${newFiles.length}`);
+  console.log(`Datos de actualización recibidos:`, JSON.stringify(updateData, null, 2));
+  console.log(`Evento existente:`, {
+    img: existingEvent.img,
+    img_secondary: existingEvent.img_secondary,
+    img_terciary: existingEvent.img_terciary
+  });
   
   // Si cambió el nombre del evento, renombrar la carpeta
   if (oldEventName !== newEventName) {
@@ -204,36 +210,47 @@ async function handleEventFileUpdate(existingEvent, updateData, newFiles = []) {
     await renameEventFolder(oldEventName, newEventName);
   }
   
-  // Si hay archivos nuevos, eliminar los archivos antiguos y procesar los nuevos
+  // Si hay archivos nuevos, procesar solo los archivos subidos
   if (newFiles.length > 0) {
-    console.log(`🗑️ Eliminando archivos antiguos...`);
-    const eventFolder = getEventFolderPath(newEventName);
-    
-    try {
-      // Eliminar todos los archivos de la carpeta
-      const files = await fs.readdir(eventFolder);
-      for (const file of files) {
-        await fs.unlink(path.join(eventFolder, file));
-        console.log(`🗑️ Archivo eliminado: ${file}`);
-      }
-    } catch (error) {
-      console.log(`⚠️ No se pudieron eliminar archivos antiguos: ${error.message}`);
-    }
+    console.log(`📁 Procesando archivos nuevos...`);
     
     // Procesar archivos nuevos
     const newImagePaths = await processUploadedFiles(newFiles, newEventName);
     
-    // Actualizar las rutas en los datos
-    updateData.img = newImagePaths.img || updateData.img;
-    updateData.img_secondary = newImagePaths.img_secondary || updateData.img_secondary;
-    updateData.img_terciary = newImagePaths.img_terciary || updateData.img_terciary;
-  } else if (oldEventName !== newEventName) {
-    // Si no hay archivos nuevos pero cambió el nombre, actualizar las rutas
-    const updatedPaths = updateEventImagePaths(existingEvent, newEventName);
-    updateData.img = updatedPaths.img;
-    updateData.img_secondary = updatedPaths.img_secondary;
-    updateData.img_terciary = updatedPaths.img_terciary;
+    // Actualizar solo las rutas de las imágenes que se subieron
+    if (newImagePaths.img) {
+      updateData.img = newImagePaths.img;
+      console.log(`✅ Imagen principal actualizada: ${newImagePaths.img}`);
+    }
+    if (newImagePaths.img_secondary) {
+      updateData.img_secondary = newImagePaths.img_secondary;
+      console.log(`✅ Imagen secundaria actualizada: ${newImagePaths.img_secondary}`);
+    }
+    if (newImagePaths.img_terciary) {
+      updateData.img_terciary = newImagePaths.img_terciary;
+      console.log(`✅ Imagen terciaria actualizada: ${newImagePaths.img_terciary}`);
+    }
   }
+  
+  // Si cambió el nombre del evento, actualizar las rutas de las imágenes existentes
+  if (oldEventName !== newEventName) {
+    console.log(`🔄 Actualizando rutas por cambio de nombre...`);
+    const updatedPaths = updateEventImagePaths(existingEvent, newEventName);
+    
+    // Solo actualizar las rutas que no fueron cambiadas por archivos nuevos
+    if (!updateData.img) {
+      updateData.img = updatedPaths.img;
+    }
+    if (!updateData.img_secondary) {
+      updateData.img_secondary = updatedPaths.img_secondary;
+    }
+    if (!updateData.img_terciary) {
+      updateData.img_terciary = updatedPaths.img_terciary;
+    }
+  }
+  
+  console.log(`=== DATOS FINALES DE ACTUALIZACIÓN ===`);
+  console.log(`updateData final:`, JSON.stringify(updateData, null, 2));
   
   return updateData;
 }
