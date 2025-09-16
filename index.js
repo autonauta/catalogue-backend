@@ -39,6 +39,8 @@ const auth = require("./routes/auth");
 const training = require("./routes/training");
 const upload = require("./routes/upload");
 const events = require("./routes/events");
+const exodusAuth = require("./routes/exodus_auth");
+const exodusUsers = require("./routes/exodus_users");
 
 
 // Middleware base
@@ -74,6 +76,8 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/training", training);
 app.use("/api/v1/upload", upload);
 app.use("/api/v1/exodus/events", events);
+app.use("/api/v1/exodus/auth", exodusAuth);
+app.use("/api/v1/exodus/users", exodusUsers);
 //
 //Config - connect to multiple databases.
 const catalogueDB = config.get("ATLASDB");

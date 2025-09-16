@@ -51,6 +51,15 @@ function getEventImageUrl(eventName, filename) {
 async function createEventFolder(eventName) {
   const folderPath = getEventFolderPath(eventName);
   await fs.mkdir(folderPath, { recursive: true });
+  
+  // Configurar permisos correctos para Apache
+  try {
+    await fs.chmod(folderPath, 0o755);
+    console.log(`✅ Permisos configurados para carpeta: ${folderPath}`);
+  } catch (error) {
+    console.error(`⚠️ Error al configurar permisos: ${error.message}`);
+  }
+  
   return folderPath;
 }
 
