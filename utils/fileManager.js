@@ -160,7 +160,12 @@ async function processUploadedFiles(files, eventName) {
     img_terciary: ''
   };
   
+  console.log(`=== PROCESANDO ARCHIVOS SUBIDOS ===`);
+  console.log(`Número de archivos recibidos: ${files ? files.length : 0}`);
+  console.log(`Archivos recibidos:`, files);
+  
   if (!files || files.length === 0) {
+    console.log(`⚠️ No hay archivos para procesar`);
     return imagePaths;
   }
   
@@ -169,22 +174,36 @@ async function processUploadedFiles(files, eventName) {
   
   // Procesar cada archivo
   for (const file of files) {
+    console.log(`📁 Procesando archivo:`, {
+      fieldname: file.fieldname,
+      originalname: file.originalname,
+      filename: file.filename,
+      mimetype: file.mimetype,
+      size: file.size
+    });
+    
     const imageUrl = getEventImageUrl(eventName, file.filename);
     
     switch (file.fieldname) {
       case 'img':
         imagePaths.img = imageUrl;
+        console.log(`✅ Imagen principal asignada: ${imageUrl}`);
         break;
       case 'img_secondary':
         imagePaths.img_secondary = imageUrl;
+        console.log(`✅ Imagen secundaria asignada: ${imageUrl}`);
         break;
       case 'img_terciary':
         imagePaths.img_terciary = imageUrl;
+        console.log(`✅ Imagen terciaria asignada: ${imageUrl}`);
         break;
+      default:
+        console.log(`⚠️ Campo de archivo no reconocido: ${file.fieldname}`);
     }
-    
-    console.log(`✅ Archivo procesado: ${file.fieldname} -> ${imageUrl}`);
   }
+  
+  console.log(`=== RESULTADO FINAL DE PROCESAMIENTO ===`);
+  console.log(`imagePaths:`, imagePaths);
   
   return imagePaths;
 }
@@ -223,23 +242,39 @@ async function handleEventFileUpdate(existingEvent, updateData, newFiles = []) {
   // Si hay archivos nuevos, procesar solo los archivos subidos
   if (newFiles.length > 0) {
     console.log(`📁 Procesando archivos nuevos...`);
+    console.log(`Archivos recibidos para procesar:`, newFiles.map(f => ({
+      fieldname: f.fieldname,
+      originalname: f.originalname,
+      filename: f.filename
+    })));
     
     // Procesar archivos nuevos
     const newImagePaths = await processUploadedFiles(newFiles, newEventName);
+    
+    console.log(`=== ACTUALIZANDO RUTAS EN updateData ===`);
+    console.log(`newImagePaths recibido:`, newImagePaths);
     
     // Actualizar solo las rutas de las imágenes que se subieron
     if (newImagePaths.img) {
       updateData.img = newImagePaths.img;
       console.log(`✅ Imagen principal actualizada: ${newImagePaths.img}`);
+    } else {
+      console.log(`⚠️ No se actualizó imagen principal (vacía)`);
     }
     if (newImagePaths.img_secondary) {
       updateData.img_secondary = newImagePaths.img_secondary;
       console.log(`✅ Imagen secundaria actualizada: ${newImagePaths.img_secondary}`);
+    } else {
+      console.log(`⚠️ No se actualizó imagen secundaria (vacía)`);
     }
     if (newImagePaths.img_terciary) {
       updateData.img_terciary = newImagePaths.img_terciary;
       console.log(`✅ Imagen terciaria actualizada: ${newImagePaths.img_terciary}`);
+    } else {
+      console.log(`⚠️ No se actualizó imagen terciaria (vacía)`);
     }
+  } else {
+    console.log(`⚠️ No hay archivos nuevos para procesar`);
   }
   
   // Si cambió el nombre del evento, actualizar las rutas de las imágenes existentes
