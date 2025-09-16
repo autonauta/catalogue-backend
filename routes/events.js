@@ -75,6 +75,20 @@ router.post("/create", (req, res, next) => {
   console.log("=== MIDDLEWARE POST-MULTER ===");
   console.log("Body después de multer:", req.body);
   console.log("Files después de multer:", req.files);
+  
+  if (req.files && req.files.length > 0) {
+    console.log("=== DETALLES DE ARCHIVOS RECIBIDOS ===");
+    req.files.forEach((file, index) => {
+      console.log(`Archivo ${index + 1}:`, {
+        fieldname: file.fieldname,
+        originalname: file.originalname,
+        filename: file.filename,
+        mimetype: file.mimetype,
+        size: file.size
+      });
+    });
+  }
+  
   next();
 }, async (req, res) => {
   try {
@@ -267,6 +281,20 @@ router.put("/update/:id", (req, res, next) => {
   console.log("=== MIDDLEWARE POST-MULTER UPDATE ===");
   console.log("Body después de multer:", req.body);
   console.log("Files después de multer:", req.files);
+  
+  if (req.files && req.files.length > 0) {
+    console.log("=== DETALLES DE ARCHIVOS RECIBIDOS ===");
+    req.files.forEach((file, index) => {
+      console.log(`Archivo ${index + 1}:`, {
+        fieldname: file.fieldname,
+        originalname: file.originalname,
+        filename: file.filename,
+        mimetype: file.mimetype,
+        size: file.size
+      });
+    });
+  }
+  
   next();
 }, async (req, res) => {
   try {
