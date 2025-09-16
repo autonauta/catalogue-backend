@@ -147,15 +147,8 @@ router.post("/create", (req, res, next) => {
       });
     }
 
-    // Procesar includes si viene como string
-    let includesArray = [];
-    if (includes) {
-      if (typeof includes === 'string') {
-        includesArray = includes.split(',').map(item => item.trim()).filter(item => item);
-      } else if (Array.isArray(includes)) {
-        includesArray = includes;
-      }
-    }
+    // Mantener includes tal como llega del frontend
+    let includesArray = includes;
 
     // Procesar price si viene como string
     let priceObject = {};

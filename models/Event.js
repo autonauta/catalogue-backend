@@ -79,17 +79,11 @@ const eventSchema = new mongoose.Schema(
       trim: true,
       maxlength: [1000, "La descripción no puede exceder 1000 caracteres"]
     },
-    includes: [{
+    includes: {
       type: String,
       trim: true,
-      maxlength: [200, "Cada elemento incluido no puede exceder 200 caracteres"],
-      validate: {
-        validator: function(value) {
-          return value && value.length > 0;
-        },
-        message: "Los elementos incluidos no pueden estar vacíos"
-      }
-    }],
+      maxlength: [2000, "El campo includes no puede exceder 2000 caracteres"]
+    },
     price: {
       early_bird: { 
         type: Number,
@@ -223,14 +217,9 @@ eventSchema.pre('save', function(next) {
     this.event_end_date = this.event_start_date;
   }
   
-  // Truncar elementos de includes que excedan 200 caracteres
-  if (this.includes && Array.isArray(this.includes)) {
-    this.includes = this.includes.map(item => {
-      if (typeof item === 'string' && item.length > 200) {
-        return item.substring(0, 197) + '...';
-      }
-      return item;
-    }).filter(item => item && item.trim().length > 0);
+  // Truncar includes si excede 2000 caracteres
+  if (this.includes && typeof this.includes === 'string' && this.includes.length > 2000) {
+    this.includes = this.includes.substring(0, 1997) + '...';
   }
   
   next();
@@ -240,14 +229,9 @@ eventSchema.pre('save', function(next) {
 eventSchema.pre(['updateOne', 'findOneAndUpdate'], function(next) {
   const update = this.getUpdate();
   
-  // Truncar elementos de includes que excedan 200 caracteres
-  if (update && update.includes && Array.isArray(update.includes)) {
-    update.includes = update.includes.map(item => {
-      if (typeof item === 'string' && item.length > 200) {
-        return item.substring(0, 197) + '...';
-      }
-      return item;
-    }).filter(item => item && item.trim().length > 0);
+  // Truncar includes si excede 2000 caracteres
+  if (update && update.includes && typeof update.includes === 'string' && update.includes.length > 2000) {
+    update.includes = update.includes.substring(0, 1997) + '...';
   }
   
   next();
