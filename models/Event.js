@@ -109,10 +109,10 @@ const eventSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: ["draft", "published", "cancelled", "completed"],
-        message: "El estado debe ser: draft, published, cancelled o completed"
+        values: ["activo", "cancelado", "pasado"],
+        message: "El estado debe ser: activo, cancelado o pasado"
       },
-      default: "draft"
+      default: "activo"
     },
     max_participants: {
       type: Number,
@@ -157,7 +157,7 @@ eventSchema.virtual('is_full').get(function() {
 
 // Virtual para verificar si el evento está disponible
 eventSchema.virtual('is_available').get(function() {
-  return this.status === 'published' && !this.is_full;
+  return this.status === 'activo' && !this.is_full;
 });
 
 // Método para agregar un participante

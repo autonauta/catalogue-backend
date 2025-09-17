@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
     }
     
     if (available === 'true') {
-      filters.status = 'published';
+      filters.status = 'activo';
       filters.$expr = {
         $lt: ['$current_participants', '$max_participants']
       };
