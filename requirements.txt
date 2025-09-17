@@ -1,0 +1,15 @@
+# Dependencias para el Compresor de Video MP4
+# No se requieren dependencias adicionales - usa solo librerías estándar de Python
+# Requisito: FFmpeg debe estar instalado en el sistema
+
+# Para instalar FFmpeg:
+# Windows: Descargar desde https://ffmpeg.org/download.html
+# Linux: sudo apt install ffmpeg
+# macOS: brew install ffmpeg
+
+# Opcional: Para mejor rendimiento en interfaces gráficas
+# tkinter (incluido con Python)
+# threading (incluido con Python)
+# subprocess (incluido con Python)
+# pathlib (incluido con Python)
+# json (incluido con Python)
