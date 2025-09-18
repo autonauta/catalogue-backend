@@ -1,7 +1,24 @@
 const mongoose = require('mongoose');
+const config = require('config');
 
-// Obtener la conexión de Exodus
-const { exodusConnection } = require('../index');
+// Crear conexión directa a la base de datos de Exodus
+const exodusDB = config.get("ATLASDB2");
+const exodusConnection = mongoose.createConnection(
+  exodusDB,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+
+// Listener para la conexión
+exodusConnection.on('connected', () => {
+  console.log("✅ GalleryImage: Conexión a Exodus establecida");
+});
+
+exodusConnection.on('error', (err) => {
+  console.error("❌ GalleryImage: Error de conexión a Exodus:", err);
+});
 
 const galleryImageSchema = new mongoose.Schema({
   filename: {
