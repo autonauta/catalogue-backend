@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+// Obtener la conexión de Exodus
+const { exodusConnection } = require('../index');
+
 const galleryImageSchema = new mongoose.Schema({
   filename: {
     type: String,
@@ -143,4 +146,4 @@ galleryImageSchema.pre('save', async function(next) {
   next();
 });
 
-module.exports = mongoose.model('GalleryImage', galleryImageSchema);
+module.exports = exodusConnection.model('GalleryImage', galleryImageSchema);

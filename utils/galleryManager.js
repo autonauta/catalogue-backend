@@ -2,7 +2,14 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
-const GalleryImage = require('../models/GalleryImage');
+
+// Importar el modelo de manera segura para evitar importaciones circulares
+let GalleryImage;
+try {
+  GalleryImage = require('../models/GalleryImage');
+} catch (error) {
+  console.error("Error al importar GalleryImage:", error.message);
+}
 
 const execAsync = promisify(exec);
 
@@ -185,6 +192,11 @@ async function processUploadedImage(file, originalSize, eventId) {
       console.warn("⚠️ No se pudo eliminar archivo temporal:", unlinkError.message);
     }
     
+    // Verificar que el modelo esté disponible
+    if (!GalleryImage) {
+      throw new Error("Modelo GalleryImage no disponible");
+    }
+    
     // Crear registro en base de datos
     const galleryImage = new GalleryImage({
       filename: uniqueFilename,
@@ -237,6 +249,10 @@ async function processUploadedImage(file, originalSize, eventId) {
 async function cleanupOldImages() {
   try {
     console.log("🧹 Iniciando limpieza de imágenes antiguas...");
+    
+    if (!GalleryImage) {
+      throw new Error("Modelo GalleryImage no disponible");
+    }
     
     const imagesToDelete = await GalleryImage.cleanupOldImages(GALLERY_CONFIG.MAX_IMAGES);
     
@@ -291,6 +307,10 @@ async function getAllGalleryImages(limit = null, skip = 0, eventId = null) {
   try {
     console.log("📸 Obteniendo imágenes de la galería...");
     
+    if (!GalleryImage) {
+      throw new Error("Modelo GalleryImage no disponible");
+    }
+    
     let query = GalleryImage.find();
     
     // Filtrar por evento si se especifica
@@ -326,6 +346,10 @@ async function getAllGalleryImages(limit = null, skip = 0, eventId = null) {
  */
 async function getGalleryStats() {
   try {
+    if (!GalleryImage) {
+      throw new Error("Modelo GalleryImage no disponible");
+    }
+    
     const totalImages = await GalleryImage.countDocuments();
     const totalSize = await GalleryImage.aggregate([
       { $group: { _id: null, totalSize: { $sum: "$file_size" } } }
@@ -359,6 +383,10 @@ async function getGalleryStats() {
  */
 async function deleteGalleryImage(imageId) {
   try {
+    if (!GalleryImage) {
+      throw new Error("Modelo GalleryImage no disponible");
+    }
+    
     const image = await GalleryImage.findById(imageId);
     if (!image) {
       throw new Error("Imagen no encontrada");
