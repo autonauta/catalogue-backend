@@ -157,7 +157,16 @@ async function processUploadedImage(file, originalSize, eventId) {
   try {
     console.log("🔄 Procesando imagen:", file.originalname);
     
-    // PRIMERO: Verificar duplicados ANTES de procesar
+    // PRIMERO: Verificar que el archivo temporal existe
+    try {
+      await fs.access(file.path);
+      console.log("✅ Archivo temporal existe");
+    } catch (accessError) {
+      console.error("❌ Archivo temporal no encontrado:", file.path);
+      throw new Error("Archivo temporal no encontrado");
+    }
+    
+    // SEGUNDO: Verificar duplicados ANTES de procesar
     console.log("🔍 Verificando duplicados...");
     const existingImage = await GalleryImage.findOne({
       original_filename: file.originalname,
@@ -187,11 +196,11 @@ async function processUploadedImage(file, originalSize, eventId) {
     
     console.log("✅ Imagen no duplicada, procediendo con el procesamiento");
     
-    // SEGUNDO: Crear directorio si no existe
+    // TERCERO: Crear directorio si no existe
     console.log("📁 Preparando directorio de destino...");
     await createGalleryDirectory();
     
-    // TERCERO: Generar nombres de archivo
+    // CUARTO: Generar nombres de archivo
     console.log("📝 Generando nombres de archivo...");
     const originalFilename = file.originalname;
     const uniqueFilename = generateUniqueFilename(originalFilename, 'webp');
@@ -201,7 +210,7 @@ async function processUploadedImage(file, originalSize, eventId) {
     console.log("📁 Archivo temporal:", tempPath);
     console.log("📁 Archivo final:", finalPath);
     
-    // CUARTO: Comprimir a WebP
+    // QUINTO: Comprimir a WebP
     console.log("🔧 Iniciando compresión...");
     await compressImageToWebP(tempPath, finalPath, GALLERY_CONFIG.WEBP_QUALITY);
     

@@ -57,16 +57,7 @@ router.post('/upload', galleryUpload.array('images', 10), async (req, res) => {
         const originalSize = file.size;
         console.log("📏 Tamaño original:", (originalSize / 1024).toFixed(2), "KB");
         
-        // Verificar que el archivo temporal existe
-        try {
-          await require('fs').promises.access(file.path);
-          console.log("✅ Archivo temporal existe");
-        } catch (accessError) {
-          console.error("❌ Archivo temporal no encontrado:", file.path);
-          throw new Error("Archivo temporal no encontrado");
-        }
-        
-        // Procesar imagen (comprimir y guardar)
+        // Procesar imagen (incluye verificación de duplicados)
         console.log("🚀 Iniciando procesamiento de imagen...");
         const result = await processUploadedImage(file, originalSize, event_id);
         
