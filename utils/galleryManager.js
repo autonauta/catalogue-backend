@@ -157,7 +157,8 @@ async function processUploadedImage(file, originalSize, eventId) {
   try {
     console.log("🔄 Procesando imagen:", file.originalname);
     
-    // Verificar si ya existe una imagen con el mismo nombre original en el mismo evento
+    // PRIMERO: Verificar duplicados ANTES de procesar
+    console.log("🔍 Verificando duplicados...");
     const existingImage = await GalleryImage.findOne({
       original_filename: file.originalname,
       event_id: eventId
@@ -168,7 +169,7 @@ async function processUploadedImage(file, originalSize, eventId) {
       console.log("📅 Imagen existente subida el:", existingImage.upload_date);
       console.log("🆔 ID de imagen existente:", existingImage._id);
       
-      // Limpiar archivo temporal
+      // Limpiar archivo temporal inmediatamente
       try {
         await fs.unlink(file.path);
         console.log("🗑️ Archivo temporal eliminado (duplicado)");
@@ -186,10 +187,12 @@ async function processUploadedImage(file, originalSize, eventId) {
     
     console.log("✅ Imagen no duplicada, procediendo con el procesamiento");
     
-    // Crear directorio si no existe
+    // SEGUNDO: Crear directorio si no existe
+    console.log("📁 Preparando directorio de destino...");
     await createGalleryDirectory();
     
-    // Generar nombres de archivo
+    // TERCERO: Generar nombres de archivo
+    console.log("📝 Generando nombres de archivo...");
     const originalFilename = file.originalname;
     const uniqueFilename = generateUniqueFilename(originalFilename, 'webp');
     const tempPath = file.path;
@@ -198,7 +201,8 @@ async function processUploadedImage(file, originalSize, eventId) {
     console.log("📁 Archivo temporal:", tempPath);
     console.log("📁 Archivo final:", finalPath);
     
-    // Comprimir a WebP
+    // CUARTO: Comprimir a WebP
+    console.log("🔧 Iniciando compresión...");
     await compressImageToWebP(tempPath, finalPath, GALLERY_CONFIG.WEBP_QUALITY);
     
     // Obtener información de la imagen comprimida
@@ -236,6 +240,7 @@ async function processUploadedImage(file, originalSize, eventId) {
     
     await galleryImage.save();
     console.log("✅ Imagen guardada en base de datos:", galleryImage._id);
+    console.log("🎉 Procesamiento completado exitosamente");
     
     return {
       success: true,
