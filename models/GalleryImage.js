@@ -99,6 +99,7 @@ galleryImageSchema.index({ order: -1 });
 galleryImageSchema.index({ format: 1 });
 galleryImageSchema.index({ event_id: 1 });
 galleryImageSchema.index({ event_id: 1, upload_date: -1 }); // Índice compuesto para filtros por evento
+galleryImageSchema.index({ event_id: 1, original_filename: 1 }); // Índice compuesto para verificar duplicados
 
 // Virtual para URL completa
 galleryImageSchema.virtual('url').get(function() {

@@ -157,6 +157,35 @@ async function processUploadedImage(file, originalSize, eventId) {
   try {
     console.log("🔄 Procesando imagen:", file.originalname);
     
+    // Verificar si ya existe una imagen con el mismo nombre original en el mismo evento
+    const existingImage = await GalleryImage.findOne({
+      original_filename: file.originalname,
+      event_id: eventId
+    });
+    
+    if (existingImage) {
+      console.log("⚠️ Imagen duplicada encontrada:", file.originalname);
+      console.log("📅 Imagen existente subida el:", existingImage.upload_date);
+      console.log("🆔 ID de imagen existente:", existingImage._id);
+      
+      // Limpiar archivo temporal
+      try {
+        await fs.unlink(file.path);
+        console.log("🗑️ Archivo temporal eliminado (duplicado)");
+      } catch (unlinkError) {
+        console.warn("⚠️ No se pudo eliminar archivo temporal:", unlinkError.message);
+      }
+      
+      return {
+        success: false,
+        duplicate: true,
+        existingImage: existingImage.getImageInfo(),
+        message: `La imagen "${file.originalname}" ya existe en este evento`
+      };
+    }
+    
+    console.log("✅ Imagen no duplicada, procediendo con el procesamiento");
+    
     // Crear directorio si no existe
     await createGalleryDirectory();
     

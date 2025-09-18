@@ -28,7 +28,7 @@ event_id: string (ID del evento, requerido)
 ```json
 {
   "success": true,
-  "message": "Procesadas X imágenes exitosamente",
+  "message": "Procesadas 2 imágenes exitosamente, 1 duplicadas, 0 errores",
   "results": [
     {
       "success": true,
@@ -60,6 +60,17 @@ event_id: string (ID del evento, requerido)
           "height": 1080
         }
       }
+    },
+    {
+      "success": false,
+      "duplicate": true,
+      "filename": "imagen_duplicada.jpg",
+      "existingImage": {
+        "id": "string",
+        "filename": "string",
+        "upload_date": "2024-01-01T00:00:00.000Z"
+      },
+      "message": "La imagen \"imagen_duplicada.jpg\" ya existe en este evento"
     }
   ],
   "errors": [],
@@ -75,7 +86,9 @@ event_id: string (ID del evento, requerido)
   },
   "stats": {
     "totalProcessed": 3,
-    "totalErrors": 0,
+    "successful": 2,
+    "duplicates": 1,
+    "errors": 0,
     "imagesDeleted": 5
   }
 }

@@ -77,10 +77,20 @@ router.post('/upload', galleryUpload.array('images', 10), async (req, res) => {
             compression: result.info
           });
           console.log("✅ Imagen procesada exitosamente");
+        } else if (result.duplicate) {
+          // Manejar duplicados como información, no como error
+          results.push({
+            success: false,
+            duplicate: true,
+            filename: file.originalname,
+            existingImage: result.existingImage,
+            message: result.message
+          });
+          console.log("⚠️ Imagen duplicada:", result.message);
         } else {
           errors.push({
             filename: file.originalname,
-            error: "Error desconocido en el procesamiento"
+            error: result.message || "Error desconocido en el procesamiento"
           });
         }
         
@@ -102,16 +112,23 @@ router.post('/upload', galleryUpload.array('images', 10), async (req, res) => {
       console.error("⚠️ Error durante limpieza:", cleanupError.message);
     }
     
+    // Calcular estadísticas de la respuesta
+    const successfulImages = results.filter(r => r.success).length;
+    const duplicateImages = results.filter(r => r.duplicate).length;
+    const failedImages = errors.length;
+    
     // Respuesta exitosa
     res.json({
       success: true,
-      message: `Procesadas ${results.length} imágenes exitosamente`,
+      message: `Procesadas ${successfulImages} imágenes exitosamente, ${duplicateImages} duplicadas, ${failedImages} errores`,
       results: results,
       errors: errors,
       cleanup: cleanupResult,
       stats: {
         totalProcessed: results.length,
-        totalErrors: errors.length,
+        successful: successfulImages,
+        duplicates: duplicateImages,
+        errors: failedImages,
         imagesDeleted: cleanupResult?.deleted || 0
       }
     });
