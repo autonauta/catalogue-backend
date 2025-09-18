@@ -27,15 +27,41 @@ const GALLERY_CONFIG = {
  */
 async function createGalleryDirectory() {
   try {
+    console.log("🔍 Verificando directorio de galería:", GALLERY_CONFIG.SERVER_PATH);
     await fs.access(GALLERY_CONFIG.SERVER_PATH);
     console.log("✅ Directorio de galería ya existe");
-  } catch (error) {
+    
+    // Verificar permisos de escritura
     try {
-      await fs.mkdir(GALLERY_CONFIG.SERVER_PATH, { recursive: true });
-      await fs.chmod(GALLERY_CONFIG.SERVER_PATH, 0o755);
+      await fs.access(GALLERY_CONFIG.SERVER_PATH, fs.constants.W_OK);
+      console.log("✅ Permisos de escritura OK");
+    } catch (writeError) {
+      console.warn("⚠️ Sin permisos de escritura, intentando cambiar permisos...");
+      try {
+        await fs.chmod(GALLERY_CONFIG.SERVER_PATH, 0o755);
+        console.log("✅ Permisos actualizados");
+      } catch (chmodError) {
+        console.error("❌ No se pudieron cambiar los permisos:", chmodError.message);
+        throw new Error("Sin permisos de escritura en el directorio de galería");
+      }
+    }
+    
+  } catch (error) {
+    console.log("📁 Directorio no existe, creando...");
+    try {
+      // Crear directorio con permisos apropiados
+      await fs.mkdir(GALLERY_CONFIG.SERVER_PATH, { recursive: true, mode: 0o755 });
       console.log("✅ Directorio de galería creado:", GALLERY_CONFIG.SERVER_PATH);
+      
+      // Verificar que se creó correctamente
+      await fs.access(GALLERY_CONFIG.SERVER_PATH);
+      console.log("✅ Directorio verificado");
+      
     } catch (createError) {
       console.error("❌ Error al crear directorio de galería:", createError);
+      console.error("❌ Ruta:", GALLERY_CONFIG.SERVER_PATH);
+      console.error("❌ Error details:", createError.message);
+      console.error("💡 Verifica que el usuario tenga permisos para crear directorios en:", path.dirname(GALLERY_CONFIG.SERVER_PATH));
       throw createError;
     }
   }
@@ -56,8 +82,22 @@ function generateUniqueFilename(originalName, format = 'webp') {
  */
 async function compressImageToWebP(inputPath, outputPath, quality = GALLERY_CONFIG.WEBP_QUALITY) {
   try {
+    console.log("🔧 Iniciando compresión de imagen...");
+    console.log("📁 Archivo de entrada:", inputPath);
+    console.log("📁 Archivo de salida:", outputPath);
+    console.log("⚙️ Calidad:", quality);
+    
+    // Verificar que el archivo de entrada existe
+    try {
+      await fs.access(inputPath);
+      console.log("✅ Archivo de entrada existe");
+    } catch (accessError) {
+      console.error("❌ Archivo de entrada no encontrado:", inputPath);
+      throw new Error(`Archivo de entrada no encontrado: ${inputPath}`);
+    }
+    
     const command = `ffmpeg -i "${inputPath}" -c:v libwebp -quality ${quality} -y "${outputPath}"`;
-    console.log("🔧 Comprimiendo imagen:", command);
+    console.log("🔧 Comando FFmpeg:", command);
     
     const { stdout, stderr } = await execAsync(command);
     
@@ -65,10 +105,21 @@ async function compressImageToWebP(inputPath, outputPath, quality = GALLERY_CONF
       console.warn("⚠️ Advertencias de FFmpeg:", stderr);
     }
     
+    // Verificar que el archivo de salida se creó
+    try {
+      await fs.access(outputPath);
+      console.log("✅ Archivo de salida creado exitosamente");
+    } catch (outputError) {
+      console.error("❌ Archivo de salida no se creó:", outputPath);
+      throw new Error(`Archivo de salida no se creó: ${outputPath}`);
+    }
+    
     console.log("✅ Imagen comprimida exitosamente");
     return true;
   } catch (error) {
     console.error("❌ Error al comprimir imagen:", error);
+    console.error("❌ Input path:", inputPath);
+    console.error("❌ Output path:", outputPath);
     throw new Error(`Error al comprimir imagen: ${error.message}`);
   }
 }

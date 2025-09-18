@@ -10,16 +10,18 @@ const {
   GALLERY_CONFIG 
 } = require('../utils/galleryManager');
 
-// Middleware para manejar errores de Multer
-router.use(handleMulterError);
+// Middleware para manejar errores de Multer se aplicará después de las rutas
 
 // POST /gallery/upload - Subir imágenes a la galería
 router.post('/upload', galleryUpload.array('images', 10), async (req, res) => {
   try {
     console.log("=== SUBIDA DE IMÁGENES A GALERÍA ===");
     console.log("Archivos recibidos:", req.files?.length || 0);
+    console.log("Body recibido:", req.body);
+    console.log("Files recibidos:", req.files);
     
     if (!req.files || req.files.length === 0) {
+      console.log("❌ No se recibieron archivos");
       return res.status(400).json({
         error: true,
         message: "No se recibieron archivos de imagen"
@@ -28,14 +30,17 @@ router.post('/upload', galleryUpload.array('images', 10), async (req, res) => {
     
     // Validar event_id
     const { event_id } = req.body;
+    console.log("📅 Event ID recibido:", event_id);
+    
     if (!event_id) {
+      console.log("❌ Event ID faltante");
       return res.status(400).json({
         error: true,
         message: "El event_id es requerido"
       });
     }
     
-    console.log("📅 Event ID:", event_id);
+    console.log("📅 Event ID válido:", event_id);
     
     const results = [];
     const errors = [];
@@ -44,13 +49,25 @@ router.post('/upload', galleryUpload.array('images', 10), async (req, res) => {
     for (let i = 0; i < req.files.length; i++) {
       const file = req.files[i];
       console.log(`\n🔄 Procesando archivo ${i + 1}/${req.files.length}: ${file.originalname}`);
+      console.log("📁 Archivo temporal:", file.path);
+      console.log("📏 Tamaño del archivo:", file.size, "bytes");
       
       try {
         // Obtener tamaño original
         const originalSize = file.size;
         console.log("📏 Tamaño original:", (originalSize / 1024).toFixed(2), "KB");
         
+        // Verificar que el archivo temporal existe
+        try {
+          await require('fs').promises.access(file.path);
+          console.log("✅ Archivo temporal existe");
+        } catch (accessError) {
+          console.error("❌ Archivo temporal no encontrado:", file.path);
+          throw new Error("Archivo temporal no encontrado");
+        }
+        
         // Procesar imagen (comprimir y guardar)
+        console.log("🚀 Iniciando procesamiento de imagen...");
         const result = await processUploadedImage(file, originalSize, event_id);
         
         if (result.success) {
@@ -275,5 +292,34 @@ router.get('/config', (req, res) => {
     });
   }
 });
+
+// GET /gallery/test - Endpoint de prueba para verificar el sistema
+router.get('/test', async (req, res) => {
+  try {
+    console.log("🧪 Ejecutando prueba del sistema de galería...");
+    
+    const { createGalleryDirectory } = require('../utils/galleryManager');
+    
+    // Probar creación de directorio
+    await createGalleryDirectory();
+    
+    res.json({
+      success: true,
+      message: "Sistema de galería funcionando correctamente",
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error("❌ Error en prueba del sistema:", error);
+    res.status(500).json({
+      error: true,
+      message: "Error en el sistema de galería",
+      details: error.message
+    });
+  }
+});
+
+// Middleware para manejar errores de Multer
+router.use(handleMulterError);
 
 module.exports = router;
