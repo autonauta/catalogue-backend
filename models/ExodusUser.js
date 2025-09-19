@@ -9,6 +9,13 @@ const exodusConnection = mongoose.createConnection(config.get("ATLASDB2"), {
 });
 
 const exodusUserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: [2, "El nombre debe tener al menos 2 caracteres"],
+    maxlength: [50, "El nombre no puede exceder 50 caracteres"]
+  },
   rol: {
     type: String,
     enum: ["admin", "client"],

@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
 
 // POST /exodus/auth/create
 router.post("/create", async (req, res) => {
-  const { email, password, rol } = req.body;
+  const { name, email, password, rol } = req.body;
 
   try {
     // Verificar si el usuario ya existe
@@ -54,13 +54,14 @@ router.post("/create", async (req, res) => {
       });
     }
 
-    const newUser = new ExodusUser({ email, password, rol });
+    const newUser = new ExodusUser({ name, email, password, rol });
     await newUser.save();
 
     res.status(201).send({
       success: true,
       message: "Usuario de Exodus creado correctamente.",
       credentials: {
+        name,
         email,
         password,
         rol,

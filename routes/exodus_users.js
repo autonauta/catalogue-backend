@@ -46,11 +46,11 @@ router.get("/:id", async (req, res) => {
 // PUT /exodus/users/:id - Actualizar un usuario
 router.put("/:id", async (req, res) => {
   try {
-    const { email, rol } = req.body;
+    const { name, email, rol } = req.body;
     
     const user = await ExodusUser.findByIdAndUpdate(
       req.params.id,
-      { email, rol },
+      { name, email, rol },
       { new: true, runValidators: true }
     ).select('-password');
     
