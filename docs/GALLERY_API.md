@@ -9,7 +9,8 @@ Sistema de galería automática con compresión WebP, auto-rotación y límite d
 - **Límite de imágenes**: 1000
 - **Tamaño máximo por archivo**: 10MB
 - **Formatos soportados**: JPEG, PNG, GIF, BMP, WebP
-- **Calidad WebP**: 85%
+- **Calidad WebP**: 60% (ajustable automáticamente hasta 20%)
+- **Tamaño máximo por imagen**: 1MB
 
 ## 🚀 **Rutas Disponibles**
 

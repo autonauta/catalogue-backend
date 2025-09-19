@@ -17,7 +17,9 @@ const GALLERY_CONFIG = {
   // Límite máximo de imágenes
   MAX_IMAGES: 1000,
   // Configuración de compresión WebP
-  WEBP_QUALITY: 85,
+  WEBP_QUALITY: 60, // Reducido de 85 a 60 para mayor compresión
+  // Tamaño máximo objetivo por imagen (1MB)
+  MAX_IMAGE_SIZE: 1024 * 1024, // 1MB en bytes
   // Formatos soportados
   SUPPORTED_FORMATS: ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp'],
   // Tamaño máximo de archivo (10MB)
@@ -80,14 +82,14 @@ function generateUniqueFilename(originalName, format = 'webp') {
 }
 
 /**
- * Comprimir imagen a WebP usando FFmpeg
+ * Comprimir imagen a WebP usando FFmpeg con compresión agresiva
  */
-async function compressImageToWebP(inputPath, outputPath, quality = GALLERY_CONFIG.WEBP_QUALITY) {
+async function compressImageToWebP(inputPath, outputPath, targetSize = GALLERY_CONFIG.MAX_IMAGE_SIZE) {
   try {
-    console.log("🔧 Iniciando compresión de imagen...");
+    console.log("🔧 Iniciando compresión agresiva de imagen...");
     console.log("📁 Archivo de entrada:", inputPath);
     console.log("📁 Archivo de salida:", outputPath);
-    console.log("⚙️ Calidad:", quality);
+    console.log("🎯 Tamaño objetivo:", (targetSize / 1024).toFixed(2), "KB");
     
     // Verificar que el archivo de entrada existe
     try {
@@ -98,26 +100,60 @@ async function compressImageToWebP(inputPath, outputPath, quality = GALLERY_CONF
       throw new Error(`Archivo de entrada no encontrado: ${inputPath}`);
     }
     
-    const command = `ffmpeg -i "${inputPath}" -c:v libwebp -quality ${quality} -y "${outputPath}"`;
-    console.log("🔧 Comando FFmpeg:", command);
+    // Intentar compresión con diferentes niveles de calidad
+    const qualityLevels = [60, 50, 40, 30, 20]; // Niveles de calidad de mayor a menor
+    let bestResult = null;
+    let bestQuality = qualityLevels[0];
     
-    const { stdout, stderr } = await execAsync(command);
-    
-    if (stderr && !stderr.includes('video:')) {
-      console.warn("⚠️ Advertencias de FFmpeg:", stderr);
+    for (const quality of qualityLevels) {
+      console.log(`🔧 Probando compresión con calidad ${quality}...`);
+      
+      const command = `ffmpeg -i "${inputPath}" -c:v libwebp -quality ${quality} -compression_level 6 -y "${outputPath}"`;
+      console.log("🔧 Comando FFmpeg:", command);
+      
+      try {
+        const { stdout, stderr } = await execAsync(command);
+        
+        if (stderr && !stderr.includes('video:')) {
+          console.warn("⚠️ Advertencias de FFmpeg:", stderr);
+        }
+        
+        // Verificar que el archivo se creó
+        await fs.access(outputPath);
+        
+        // Obtener tamaño del archivo comprimido
+        const stats = await fs.stat(outputPath);
+        const compressedSize = stats.size;
+        
+        console.log(`📊 Tamaño comprimido con calidad ${quality}:`, (compressedSize / 1024).toFixed(2), "KB");
+        
+        if (compressedSize <= targetSize) {
+          console.log(`✅ Objetivo alcanzado con calidad ${quality}`);
+          bestResult = { quality, size: compressedSize };
+          break;
+        } else {
+          console.log(`⚠️ Tamaño aún muy grande con calidad ${quality}`);
+          if (!bestResult || compressedSize < bestResult.size) {
+            bestResult = { quality, size: compressedSize };
+            bestQuality = quality;
+          }
+        }
+        
+      } catch (cmdError) {
+        console.warn(`⚠️ Error con calidad ${quality}:`, cmdError.message);
+        continue;
+      }
     }
     
-    // Verificar que el archivo de salida se creó
-    try {
-      await fs.access(outputPath);
-      console.log("✅ Archivo de salida creado exitosamente");
-    } catch (outputError) {
-      console.error("❌ Archivo de salida no se creó:", outputPath);
-      throw new Error(`Archivo de salida no se creó: ${outputPath}`);
+    if (!bestResult) {
+      throw new Error("No se pudo comprimir la imagen con ningún nivel de calidad");
     }
     
-    console.log("✅ Imagen comprimida exitosamente");
-    return true;
+    console.log(`✅ Imagen comprimida exitosamente con calidad ${bestResult.quality}`);
+    console.log(`📊 Tamaño final:`, (bestResult.size / 1024).toFixed(2), "KB");
+    console.log(`📈 Reducción:`, ((await fs.stat(inputPath)).size - bestResult.size) / 1024, "KB");
+    
+    return { quality: bestResult.quality, size: bestResult.size };
   } catch (error) {
     console.error("❌ Error al comprimir imagen:", error);
     console.error("❌ Input path:", inputPath);
@@ -212,7 +248,7 @@ async function processUploadedImage(file, originalSize, eventId) {
     
     // QUINTO: Comprimir a WebP
     console.log("🔧 Iniciando compresión...");
-    await compressImageToWebP(tempPath, finalPath, GALLERY_CONFIG.WEBP_QUALITY);
+    const compressionResult = await compressImageToWebP(tempPath, finalPath, GALLERY_CONFIG.MAX_IMAGE_SIZE);
     
     // Obtener información de la imagen comprimida
     const imageInfo = await getImageInfo(finalPath);
@@ -242,7 +278,7 @@ async function processUploadedImage(file, originalSize, eventId) {
         height: imageInfo.height
       },
       format: 'webp',
-      quality: GALLERY_CONFIG.WEBP_QUALITY,
+      quality: compressionResult.quality, // Usar la calidad real aplicada
       is_compressed: true,
       event_id: eventId
     });
