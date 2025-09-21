@@ -9,8 +9,8 @@ const { exec } = require("child_process");
 const util = require("util");
 const execAsync = util.promisify(exec);
 
-// Middleware de autenticación (asumiendo que tienes uno)
-const auth = require("../middleware/auth");
+// Middleware de autenticación deshabilitado para pruebas
+// const auth = require("../middleware/auth");
 
 // Configuración de multer para subida de archivos
 const storage = multer.diskStorage({
@@ -53,10 +53,10 @@ const ProcessingJob = require("../models/ProcessingJob");
  * @desc Procesar imágenes con IA
  * @access Private
  */
-router.post("/process", auth, upload.array("images", 20), async (req, res) => {
+router.post("/process", upload.array("images", 20), async (req, res) => {
   try {
     const { quality = "high", convertHeic = true } = req.body;
-    const userId = req.user.id; // Asumiendo que tienes req.user del middleware auth
+    const userId = "test-user"; // Usuario temporal para pruebas
     
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -155,7 +155,7 @@ router.post("/process", auth, upload.array("images", 20), async (req, res) => {
  * @desc Descargar resultados procesados
  * @access Private
  */
-router.get("/download/:jobId", auth, async (req, res) => {
+router.get("/download/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
     const zipPath = path.join(__dirname, "../uploads/zips", `${jobId}.zip`);
@@ -168,7 +168,7 @@ router.get("/download/:jobId", auth, async (req, res) => {
     }
 
     // Verificar que el job pertenece al usuario
-    const job = await ProcessingJob.findOne({ jobId, userId: req.user.id });
+    const job = await ProcessingJob.findOne({ jobId, userId: "test-user" });
     if (!job) {
       return res.status(403).json({
         success: false,
@@ -200,12 +200,12 @@ router.get("/download/:jobId", auth, async (req, res) => {
  * @desc Obtener estado del procesamiento
  * @access Private
  */
-router.get("/status/:jobId", auth, async (req, res) => {
+router.get("/status/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
     
     // Obtener estado de la base de datos
-    const job = await ProcessingJob.findOne({ jobId, userId: req.user.id });
+    const job = await ProcessingJob.findOne({ jobId, userId: "test-user" });
     if (!job) {
       return res.status(404).json({
         success: false,
@@ -256,7 +256,7 @@ router.get("/formats", (req, res) => {
  * @desc Validar archivos antes del procesamiento
  * @access Private
  */
-router.post("/validate", auth, upload.array("images", 20), async (req, res) => {
+router.post("/validate", upload.array("images", 20), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -324,13 +324,13 @@ router.post("/validate", auth, upload.array("images", 20), async (req, res) => {
  * @desc Obtener historial de trabajos del usuario
  * @access Private
  */
-router.get("/jobs", auth, async (req, res) => {
+router.get("/jobs", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const skip = (page - 1) * limit;
     
-    const jobs = await ProcessingJob.getUserJobs(req.user.id, parseInt(limit), parseInt(skip));
-    const totalJobs = await ProcessingJob.countDocuments({ userId: req.user.id });
+    const jobs = await ProcessingJob.getUserJobs("test-user", parseInt(limit), parseInt(skip));
+    const totalJobs = await ProcessingJob.countDocuments({ userId: "test-user" });
     
     res.json({
       success: true,
@@ -358,9 +358,9 @@ router.get("/jobs", auth, async (req, res) => {
  * @desc Obtener estadísticas del usuario
  * @access Private
  */
-router.get("/stats", auth, async (req, res) => {
+router.get("/stats", async (req, res) => {
   try {
-    const stats = await ProcessingJob.getUserStats(req.user.id);
+    const stats = await ProcessingJob.getUserStats("test-user");
     
     res.json({
       success: true,
@@ -387,13 +387,13 @@ router.get("/stats", auth, async (req, res) => {
  * @desc Eliminar un trabajo específico
  * @access Private
  */
-router.delete("/jobs/:jobId", auth, async (req, res) => {
+router.delete("/jobs/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
     
     const job = await ProcessingJob.findOneAndDelete({ 
       jobId, 
-      userId: req.user.id 
+      userId: "test-user" 
     });
     
     if (!job) {
