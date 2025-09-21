@@ -42,6 +42,7 @@ const events = require("./routes/events");
 const exodusAuth = require("./routes/exodus_auth");
 const exodusUsers = require("./routes/exodus_users");
 const gallery = require("./routes/gallery");
+const imageProcessing = require("./routes/image_processing");
 
 
 // Middleware base
@@ -80,6 +81,7 @@ app.use("/api/v1/exodus/events", events);
 app.use("/api/v1/exodus/auth", exodusAuth);
 app.use("/api/v1/exodus/users", exodusUsers);
 app.use("/api/v1/exodus/gallery", gallery);
+app.use("/api/v1/image-processing", imageProcessing);
 //
 //Config - connect to multiple databases.
 const catalogueDB = config.get("ATLASDB");
