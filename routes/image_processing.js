@@ -56,7 +56,8 @@ const ProcessingJob = require("../models/ProcessingJob");
 router.post("/process", upload.array("images", 20), async (req, res) => {
   try {
     const { quality = "high", convertHeic = true } = req.body;
-    const userId = "test-user"; // Usuario temporal para pruebas
+    const { ObjectId } = require('mongoose').Types;
+    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
     
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -169,7 +170,7 @@ router.get("/download/:jobId", async (req, res) => {
     }
 
     // Verificar que el job pertenece al usuario
-    const job = await ProcessingJob.findOne({ jobId, userId: "test-user" });
+    const job = await ProcessingJob.findOne({ jobId, userId: userId });
     if (!job) {
       return res.status(403).json({
         success: false,
@@ -206,7 +207,7 @@ router.get("/status/:jobId", async (req, res) => {
     const { jobId } = req.params;
     
     // Obtener estado de la base de datos
-    const job = await ProcessingJob.findOne({ jobId, userId: "test-user" });
+    const job = await ProcessingJob.findOne({ jobId, userId: userId });
     if (!job) {
       return res.status(404).json({
         success: false,
@@ -329,9 +330,11 @@ router.get("/jobs", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const skip = (page - 1) * limit;
+    const { ObjectId } = require('mongoose').Types;
+    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
     
-    const jobs = await ProcessingJob.getUserJobs("test-user", parseInt(limit), parseInt(skip));
-    const totalJobs = await ProcessingJob.countDocuments({ userId: "test-user" });
+    const jobs = await ProcessingJob.getUserJobs(userId, parseInt(limit), parseInt(skip));
+    const totalJobs = await ProcessingJob.countDocuments({ userId: userId });
     
     res.json({
       success: true,
@@ -361,7 +364,9 @@ router.get("/jobs", async (req, res) => {
  */
 router.get("/stats", async (req, res) => {
   try {
-    const stats = await ProcessingJob.getUserStats("test-user");
+    const { ObjectId } = require('mongoose').Types;
+    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
+    const stats = await ProcessingJob.getUserStats(userId);
     
     res.json({
       success: true,
@@ -391,10 +396,12 @@ router.get("/stats", async (req, res) => {
 router.delete("/jobs/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
+    const { ObjectId } = require('mongoose').Types;
+    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
     
     const job = await ProcessingJob.findOneAndDelete({ 
       jobId, 
-      userId: "test-user" 
+      userId: userId 
     });
     
     if (!job) {
