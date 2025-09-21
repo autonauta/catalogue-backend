@@ -48,6 +48,9 @@ const upload = multer({
 // Modelos
 const ProcessingJob = require("../models/ProcessingJob");
 
+// Para pruebas: usar un userId fijo
+const TEST_USER_ID = "507f1f77bcf86cd799439011"; // ObjectId fijo para pruebas
+
 /**
  * @route POST /api/v1/image-processing/process
  * @desc Procesar imágenes con IA
@@ -56,8 +59,7 @@ const ProcessingJob = require("../models/ProcessingJob");
 router.post("/process", upload.array("images", 20), async (req, res) => {
   try {
     const { quality = "high", convertHeic = true } = req.body;
-    const { ObjectId } = require('mongoose').Types;
-    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
+    const userId = TEST_USER_ID; // Usar userId fijo para pruebas
     
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -160,8 +162,7 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
 router.get("/download/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
-    const { ObjectId } = require('mongoose').Types;
-    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
+    const userId = TEST_USER_ID; // Usar userId fijo para pruebas
     const zipPath = path.join(__dirname, "../uploads/zips", `${jobId}.zip`);
     
     if (!fs.existsSync(zipPath)) {
@@ -207,8 +208,7 @@ router.get("/download/:jobId", async (req, res) => {
 router.get("/status/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
-    const { ObjectId } = require('mongoose').Types;
-    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
+    const userId = TEST_USER_ID; // Usar userId fijo para pruebas
     
     // Obtener estado de la base de datos
     const job = await ProcessingJob.findOne({ jobId, userId: userId });
@@ -334,8 +334,7 @@ router.get("/jobs", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const skip = (page - 1) * limit;
-    const { ObjectId } = require('mongoose').Types;
-    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
+    const userId = TEST_USER_ID; // Usar userId fijo para pruebas
     
     const jobs = await ProcessingJob.getUserJobs(userId, parseInt(limit), parseInt(skip));
     const totalJobs = await ProcessingJob.countDocuments({ userId: userId });
@@ -368,8 +367,7 @@ router.get("/jobs", async (req, res) => {
  */
 router.get("/stats", async (req, res) => {
   try {
-    const { ObjectId } = require('mongoose').Types;
-    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
+    const userId = TEST_USER_ID; // Usar userId fijo para pruebas
     const stats = await ProcessingJob.getUserStats(userId);
     
     res.json({
@@ -400,8 +398,7 @@ router.get("/stats", async (req, res) => {
 router.delete("/jobs/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
-    const { ObjectId } = require('mongoose').Types;
-    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
+    const userId = TEST_USER_ID; // Usar userId fijo para pruebas
     
     const job = await ProcessingJob.findOneAndDelete({ 
       jobId, 
