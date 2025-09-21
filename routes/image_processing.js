@@ -160,6 +160,8 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
 router.get("/download/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
+    const { ObjectId } = require('mongoose').Types;
+    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
     const zipPath = path.join(__dirname, "../uploads/zips", `${jobId}.zip`);
     
     if (!fs.existsSync(zipPath)) {
@@ -205,6 +207,8 @@ router.get("/download/:jobId", async (req, res) => {
 router.get("/status/:jobId", async (req, res) => {
   try {
     const { jobId } = req.params;
+    const { ObjectId } = require('mongoose').Types;
+    const userId = new ObjectId(); // Generar ObjectId válido para pruebas
     
     // Obtener estado de la base de datos
     const job = await ProcessingJob.findOne({ jobId, userId: userId });
