@@ -49,6 +49,9 @@ const imageProcessing = require("./routes/image_processing");
 app.use(cors({ exposedHeaders: ["X-Total-Count"] }));
 app.use(morgan("tiny"));
 
+// Archivos estáticos servidos por Apache
+// app.use(express.static('public'));
+
 // Body parsing - excluir rutas de eventos para permitir multipart/form-data
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/v1/exodus/events/create')) {

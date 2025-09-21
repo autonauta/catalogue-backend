@@ -84,7 +84,7 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
 
     // Ejecutar procesamiento con Python
     const pythonScript = path.join(__dirname, "../processing_service.py");
-    const command = `python "${pythonScript}" "${tempDir}" "${outputDir}" "${quality}" "${convertHeic}"`;
+    const command = `./venv/bin/python "${pythonScript}" "${tempDir}" "${outputDir}" "${quality}" "${convertHeic}"`;
 
     console.log(`Iniciando procesamiento para job ${jobId}...`);
     
