@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const { exec } = require("child_process");
 const util = require("util");
 const execAsync = util.promisify(exec);
-const { Server } = require("socket.io");
+// Socket.IO se obtiene de la instancia de la app
 
 // Middleware de autenticación deshabilitado para pruebas
 // const auth = require("../middleware/auth");
@@ -163,6 +163,8 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
       pythonScript,
       '--quality', quality,
       ...(convertHeic === 'true' ? ['--convert-heic'] : []),
+      '--corrections', JSON.stringify(selectedCorrections),
+      '--analysis', JSON.stringify(selectedAnalysis),
       tempDir,
       outputDir
     ], {
