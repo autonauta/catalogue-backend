@@ -170,7 +170,7 @@ class ImageProcessor:
             
             # Reducción de ruido
             if 'noiseReduction' in corrections:
-                processed_img = self.noise_reduction(processed_img, quality)
+                processed_img = self.noise_reduction(processed_img)
                 logger.info("Reducción de ruido aplicada")
             
             # Color grading
