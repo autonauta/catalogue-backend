@@ -160,12 +160,12 @@ class ImageProcessor:
             
             # Corrección de exposición
             if 'exposureCorrection' in corrections:
-                processed_img = self.exposure_correction(processed_img)
+                processed_img = self.adaptive_clahe(processed_img)
                 logger.info("Corrección de exposición aplicada")
             
             # Mejora de contraste
             if 'contrastEnhancement' in corrections:
-                processed_img = self.contrast_enhancement(processed_img, quality)
+                processed_img = self.adaptive_clahe(processed_img)
                 logger.info("Mejora de contraste aplicada")
             
             # Reducción de ruido
