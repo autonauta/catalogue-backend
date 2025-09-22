@@ -137,7 +137,8 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
         totalFiles: req.files.length,
         currentFile: i + 1,
         fileName: file.originalname,
-        fileSize: file.size
+        fileSize: file.size,
+        fileIndex: i
       });
     }
 
