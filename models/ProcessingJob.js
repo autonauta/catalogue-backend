@@ -30,8 +30,8 @@ const processingJobSchema = new mongoose.Schema({
   },
   quality: {
     type: String,
-    enum: ["high", "medium", "fast"],
-    default: "high"
+    enum: ["professional", "standard", "fast"],
+    default: "standard"
   },
   convertHeic: {
     type: Boolean,
