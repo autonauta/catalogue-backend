@@ -82,6 +82,9 @@ app.use("/api/v1/training", training);
 app.use("/api/v1/upload", upload);
 app.use("/api/v1/exodus/events", events);
 app.use("/api/v1/exodus/auth", exodusAuth);
+// Pasar instancia de Socket.IO a la app
+app.set('io', io);
+
 app.use("/api/v1/exodus/users", exodusUsers);
 app.use("/api/v1/exodus/gallery", gallery);
 app.use("/api/v1/image-processing", imageProcessing);
