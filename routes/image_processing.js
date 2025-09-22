@@ -131,14 +131,15 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
       fs.renameSync(file.path, newPath);
       inputPaths.push(newPath);
       
-      // Emitir progreso de subida
-      emitProgress(io, jobId, 'upload', {
+      // Emitir progreso de subida individual
+      emitProgress(io, jobId, 'file-progress', {
         message: `Subiendo archivo ${i + 1} de ${req.files.length}`,
         totalFiles: req.files.length,
         currentFile: i + 1,
         fileName: file.originalname,
         fileSize: file.size,
-        fileIndex: i
+        fileIndex: i,
+        progress: Math.round(((i + 1) / req.files.length) * 100)
       });
     }
 
@@ -189,7 +190,8 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
           progress: progress,
           totalFiles: req.files.length,
           currentFile: currentFileIndex,
-          fileName: output.match(/Imagen procesada exitosamente: (.+)/)?.[1] || `Imagen ${currentFileIndex}`
+          fileName: output.match(/Imagen procesada exitosamente: (.+)/)?.[1] || `Imagen ${currentFileIndex}`,
+          fileIndex: currentFileIndex - 1 // Índice basado en 0
         });
       }
     });
