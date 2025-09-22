@@ -16,16 +16,36 @@ def main():
     
     # Configurar argumentos de línea de comandos
     parser = argparse.ArgumentParser(description='Procesar imágenes desde la API')
-    parser.add_argument('--quality', choices=['high', 'medium', 'fast'], default='high',
-                       help='Calidad del procesamiento')
+    parser.add_argument('--quality', choices=['professional', 'standard', 'fast'], default='standard',
+                       help='Nivel de procesamiento')
     parser.add_argument('--convert-heic', action='store_true',
                        help='Convertir archivos HEIC a JPG')
+    parser.add_argument('--corrections', type=str, default='[]',
+                       help='Lista de correcciones a aplicar (JSON)')
+    parser.add_argument('--analysis', type=str, default='[]',
+                       help='Lista de análisis a realizar (JSON)')
     parser.add_argument('input_dir', help='Directorio de entrada')
     parser.add_argument('output_dir', help='Directorio de salida')
     
     args = parser.parse_args()
     
     try:
+        # Parsear configuración profesional
+        try:
+            corrections = json.loads(args.corrections)
+            analysis = json.loads(args.analysis)
+        except json.JSONDecodeError as e:
+            print(json.dumps({
+                "success": False,
+                "error": f"Error parseando configuración: {str(e)}"
+            }))
+            sys.exit(1)
+        
+        print(f"INFO: Configuración profesional:")
+        print(f"INFO:   - Calidad: {args.quality}")
+        print(f"INFO:   - Correcciones: {corrections}")
+        print(f"INFO:   - Análisis: {analysis}")
+        
         # Verificar que el directorio de entrada existe
         if not os.path.exists(args.input_dir):
             print(json.dumps({
@@ -56,12 +76,14 @@ def main():
         # Crear servicio de procesamiento
         service = ProcessingService()
         
-        # Procesar imágenes
-        result = service.process_images(
+        # Procesar imágenes con configuración profesional
+        result = service.process_images_professional(
             input_paths=input_files,
             output_dir=args.output_dir,
             quality=args.quality,
-            convert_heic=args.convert_heic
+            convert_heic=args.convert_heic,
+            corrections=corrections,
+            analysis=analysis
         )
         
         # Imprimir resultado en formato JSON

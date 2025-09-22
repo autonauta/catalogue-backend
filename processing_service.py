@@ -247,6 +247,162 @@ class ProcessingService:
         return validation
 
 # Funciones de conveniencia
+    def process_images_professional(self, input_paths: List[str], output_dir: str, 
+                                  quality: str = 'standard', convert_heic: bool = True,
+                                  corrections: List[str] = None, analysis: List[str] = None) -> Dict:
+        """
+        Procesar múltiples imágenes con configuración profesional
+        
+        Args:
+            input_paths: Lista de rutas de archivos de entrada
+            output_dir: Directorio de salida
+            quality: Nivel de procesamiento ('professional', 'standard', 'fast')
+            convert_heic: Si convertir archivos HEIC a JPG
+            corrections: Lista de correcciones a aplicar
+            analysis: Lista de análisis a realizar
+            
+        Returns:
+            Diccionario con estadísticas del procesamiento
+        """
+        if corrections is None:
+            corrections = ['whiteBalance', 'exposureCorrection', 'contrastEnhancement', 'noiseReduction']
+        if analysis is None:
+            analysis = ['histogramAnalysis', 'exposureAnalysis', 'colorAnalysis']
+            
+        logger.info(f"Iniciando procesamiento profesional con {len(input_paths)} archivos")
+        logger.info(f"Configuración: calidad={quality}, correcciones={corrections}, análisis={analysis}")
+        
+        start_time = datetime.now()
+        processed_count = 0
+        failed_count = 0
+        total_size = 0
+        
+        # Crear directorio de salida si no existe
+        os.makedirs(output_dir, exist_ok=True)
+        
+        for input_path in input_paths:
+            try:
+                logger.info(f"Procesando: {os.path.basename(input_path)}")
+                
+                # Análisis pre-processing
+                analysis_results = self._perform_analysis(input_path, analysis)
+                logger.info(f"Análisis completado: {analysis_results}")
+                
+                # Procesar imagen con correcciones específicas
+                output_path = self._process_single_image_professional(
+                    input_path, output_dir, quality, convert_heic, corrections
+                )
+                
+                if output_path:
+                    processed_count += 1
+                    total_size += os.path.getsize(output_path)
+                    logger.info(f"Imagen procesada exitosamente: {os.path.basename(output_path)}")
+                else:
+                    failed_count += 1
+                    logger.error(f"Error procesando: {os.path.basename(input_path)}")
+                    
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"Error procesando {os.path.basename(input_path)}: {str(e)}")
+        
+        end_time = datetime.now()
+        processing_time = (end_time - start_time).total_seconds()
+        
+        result = {
+            'processed_successfully': processed_count,
+            'failed_count': failed_count,
+            'total_files': len(input_paths),
+            'processing_time_seconds': round(processing_time, 2),
+            'total_size_bytes': total_size,
+            'quality': quality,
+            'corrections_applied': corrections,
+            'analysis_performed': analysis
+        }
+        
+        logger.info(f"Procesamiento completado: {processed_count}/{len(input_paths)} exitosos en {processing_time:.2f}s")
+        return result
+
+    def _perform_analysis(self, image_path: str, analysis_types: List[str]) -> Dict:
+        """Realizar análisis pre-processing de la imagen"""
+        results = {}
+        
+        try:
+            import cv2
+            import numpy as np
+            
+            # Cargar imagen
+            image = cv2.imread(image_path)
+            if image is None:
+                return results
+            
+            # Análisis de histograma
+            if 'histogramAnalysis' in analysis_types:
+                hist = cv2.calcHist([image], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
+                results['histogram'] = {
+                    'channels': len(hist),
+                    'total_pixels': np.sum(hist)
+                }
+            
+            # Análisis de exposición
+            if 'exposureAnalysis' in analysis_types:
+                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                mean_brightness = np.mean(gray)
+                results['exposure'] = {
+                    'mean_brightness': round(mean_brightness, 2),
+                    'overexposed': mean_brightness > 200,
+                    'underexposed': mean_brightness < 50
+                }
+            
+            # Análisis de color
+            if 'colorAnalysis' in analysis_types:
+                mean_color = np.mean(image, axis=(0, 1))
+                results['color'] = {
+                    'mean_bgr': [round(c, 2) for c in mean_color],
+                    'color_temperature': 'warm' if mean_color[2] > mean_color[0] else 'cool'
+                }
+            
+            # Análisis de ruido
+            if 'noiseAnalysis' in analysis_types:
+                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                noise_level = np.std(gray)
+                results['noise'] = {
+                    'level': round(noise_level, 2),
+                    'high_noise': noise_level > 30
+                }
+                
+        except Exception as e:
+            logger.error(f"Error en análisis: {str(e)}")
+        
+        return results
+
+    def _process_single_image_professional(self, input_path: str, output_dir: str, 
+                                         quality: str, convert_heic: bool, 
+                                         corrections: List[str]) -> Optional[str]:
+        """Procesar una sola imagen con configuración profesional"""
+        try:
+            # Convertir HEIC si es necesario
+            if convert_heic and input_path.lower().endswith(('.heic', '.heif')):
+                input_path = self.heic_converter.convert_heic_to_jpg(input_path)
+            
+            # Procesar con correcciones específicas
+            output_path = os.path.join(output_dir, os.path.basename(input_path))
+            
+            # Aplicar correcciones según la configuración
+            processed_image = self.image_processor.professional_edit(
+                input_path, quality, corrections
+            )
+            
+            if processed_image is not None:
+                # Guardar imagen procesada
+                import cv2
+                cv2.imwrite(output_path, processed_image)
+                return output_path
+            
+        except Exception as e:
+            logger.error(f"Error procesando imagen {input_path}: {str(e)}")
+        
+        return None
+
 def process_images(input_paths: List[str], output_dir: str, quality: str = 'high') -> Dict:
     """Función de conveniencia para procesar imágenes"""
     service = ProcessingService()

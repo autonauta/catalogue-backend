@@ -71,9 +71,34 @@ function emitProgress(io, jobId, type, data) {
  */
 router.post("/process", upload.array("images", 20), async (req, res) => {
   try {
-    const { quality = "high", convertHeic = true } = req.body;
+    const { 
+      quality = "standard", 
+      convertHeic = true,
+      corrections = "[]",
+      analysis = "[]"
+    } = req.body;
     const userId = TEST_USER_ID; // Usar userId fijo para pruebas
     const io = req.app.get('io'); // Obtener instancia de Socket.IO
+    
+    // Parsear configuración profesional
+    let selectedCorrections = [];
+    let selectedAnalysis = [];
+    
+    try {
+      selectedCorrections = JSON.parse(corrections);
+      selectedAnalysis = JSON.parse(analysis);
+    } catch (error) {
+      console.error('Error parseando configuración:', error);
+      // Usar valores por defecto
+      selectedCorrections = ['whiteBalance', 'exposureCorrection', 'contrastEnhancement', 'noiseReduction'];
+      selectedAnalysis = ['histogramAnalysis', 'exposureAnalysis', 'colorAnalysis'];
+    }
+    
+    console.log('Configuración profesional:', {
+      quality,
+      corrections: selectedCorrections,
+      analysis: selectedAnalysis
+    });
     
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -119,7 +144,9 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
     // Ejecutar procesamiento con Python
     const pythonScript = path.join(__dirname, "../process_images_api.py");
     const convertHeicFlag = convertHeic === 'true' ? '--convert-heic' : '';
-    const command = `./venv/bin/python "${pythonScript}" --quality "${quality}" ${convertHeicFlag} "${tempDir}" "${outputDir}"`;
+    const correctionsFlag = `--corrections "${JSON.stringify(selectedCorrections)}"`;
+    const analysisFlag = `--analysis "${JSON.stringify(selectedAnalysis)}"`;
+    const command = `./venv/bin/python "${pythonScript}" --quality "${quality}" ${convertHeicFlag} ${correctionsFlag} ${analysisFlag} "${tempDir}" "${outputDir}"`;
 
     console.log(`Iniciando procesamiento para job ${jobId}...`);
     

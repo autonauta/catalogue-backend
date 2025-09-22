@@ -125,50 +125,128 @@ class ImageProcessor:
         else:  # Imagen limpia
             return img
     
-    def professional_edit(self, img: np.ndarray, quality: str = 'high') -> np.ndarray:
+    def professional_edit(self, image_path: str, quality: str = 'standard', 
+                         corrections: List[str] = None) -> Optional[np.ndarray]:
         """
-        Procesamiento profesional completo de la imagen
+        Edición profesional de imagen con correcciones específicas
         
         Args:
-            img: Imagen de entrada (BGR)
-            quality: 'high', 'medium', 'fast'
-        
+            image_path: Ruta de la imagen
+            quality: Nivel de procesamiento ('professional', 'standard', 'fast')
+            corrections: Lista de correcciones a aplicar
+            
         Returns:
-            Imagen procesada
+            Imagen procesada o None si hay error
         """
+        if corrections is None:
+            corrections = ['whiteBalance', 'exposureCorrection', 'contrastEnhancement', 'noiseReduction']
+        
         try:
-            # 1. Reducción de ruido (solo en calidad alta)
-            if quality == 'high':
-                img = self.noise_reduction(img)
+            # Cargar imagen
+            img = cv2.imread(image_path)
+            if img is None:
+                logger.error(f"No se pudo cargar la imagen: {image_path}")
+                return None
             
-            # 2. Balance de blancos avanzado
-            img_balanced = self.advanced_white_balance(img)
+            logger.info(f"Aplicando correcciones: {corrections}")
             
-            # 3. CLAHE adaptativo
-            img_clahe = self.adaptive_clahe(img_balanced)
+            # Aplicar correcciones según la configuración
+            processed_img = img.copy()
             
-            # 4. Tone mapping local
-            img_tm = exposure.rescale_intensity(
-                img_clahe, 
-                in_range='image', 
-                out_range=(0, 255)
-            ).astype(np.uint8)
+            # Corrección de balance de blancos
+            if 'whiteBalance' in corrections:
+                processed_img = self.white_patch_balance(processed_img)
+                logger.info("White balance aplicado")
             
-            # 5. Saturación adaptativa
-            img_final = self.adaptive_saturation(img_tm)
+            # Corrección de exposición
+            if 'exposureCorrection' in corrections:
+                processed_img = self.exposure_correction(processed_img)
+                logger.info("Corrección de exposición aplicada")
             
-            # 6. Ajuste final de contraste (solo en calidad alta)
-            if quality == 'high':
-                lab = cv2.cvtColor(img_final, cv2.COLOR_BGR2LAB)
-                l, a, b = cv2.split(lab)
-                l = cv2.createCLAHE(clipLimit=1.1, tileGridSize=(8,8)).apply(l)
-                img_final = cv2.cvtColor(cv2.merge((l, a, b)), cv2.COLOR_LAB2BGR)
+            # Mejora de contraste
+            if 'contrastEnhancement' in corrections:
+                processed_img = self.contrast_enhancement(processed_img, quality)
+                logger.info("Mejora de contraste aplicada")
             
-            return img_final
+            # Reducción de ruido
+            if 'noiseReduction' in corrections:
+                processed_img = self.noise_reduction(processed_img, quality)
+                logger.info("Reducción de ruido aplicada")
+            
+            # Color grading
+            if 'colorGrading' in corrections:
+                processed_img = self.color_grading(processed_img)
+                logger.info("Color grading aplicado")
+            
+            # Control de saturación
+            if 'saturationControl' in corrections:
+                processed_img = self.saturation_control(processed_img)
+                logger.info("Control de saturación aplicado")
+            
+            # Tone mapping
+            if 'toneMapping' in corrections:
+                processed_img = self.tone_mapping(processed_img)
+                logger.info("Tone mapping aplicado")
+            
+            # Enfoque
+            if 'sharpening' in corrections:
+                processed_img = self.smart_sharpening(processed_img, quality)
+                logger.info("Enfoque aplicado")
+            
+            # Mejora de detalles
+            if 'detailEnhancement' in corrections:
+                processed_img = self.detail_enhancement(processed_img)
+                logger.info("Mejora de detalles aplicada")
+            
+            return processed_img
             
         except Exception as e:
-            logger.error(f"Error procesando imagen: {e}")
-            return img
+            logger.error(f"Error en edición profesional: {str(e)}")
+            return None
+
+    def color_grading(self, img: np.ndarray) -> np.ndarray:
+        """Gradación profesional de colores"""
+        # Ajuste de curvas de color
+        img_float = img.astype(np.float32) / 255.0
+        
+        # Curva S para mejorar contraste
+        img_float = np.power(img_float, 0.8)
+        
+        # Ajuste de saturación
+        hsv = cv2.cvtColor(img_float, cv2.COLOR_BGR2HSV)
+        hsv[:, :, 1] = np.clip(hsv[:, :, 1] * 1.1, 0, 1)
+        img_float = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+        
+        return np.clip(img_float * 255, 0, 255).astype(np.uint8)
+
+    def saturation_control(self, img: np.ndarray) -> np.ndarray:
+        """Control preciso de saturación"""
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV).astype(np.float32)
+        hsv[:, :, 1] = np.clip(hsv[:, :, 1] * 1.05, 0, 255)
+        return cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2BGR)
+
+    def tone_mapping(self, img: np.ndarray) -> np.ndarray:
+        """Mapeo de tonos HDR"""
+        # Simular mapeo de tonos HDR
+        img_float = img.astype(np.float32) / 255.0
+        img_float = np.power(img_float, 0.7)
+        return np.clip(img_float * 255, 0, 255).astype(np.uint8)
+
+    def smart_sharpening(self, img: np.ndarray, quality: str = 'standard') -> np.ndarray:
+        """Enfoque selectivo inteligente"""
+        if quality == 'professional':
+            kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+        elif quality == 'standard':
+            kernel = np.array([[0,-1,0], [-1,5,-1], [0,-1,0]])
+        else:  # fast
+            kernel = np.array([[0,-1,0], [-1,3,-1], [0,-1,0]])
+        
+        return cv2.filter2D(img, -1, kernel)
+
+    def detail_enhancement(self, img: np.ndarray) -> np.ndarray:
+        """Mejora de detalles finos"""
+        # Usar filtro bilateral para preservar bordes
+        return cv2.bilateralFilter(img, 9, 75, 75)
     
     def process_image_file(self, input_path: str, output_path: str, quality: str = 'high') -> bool:
         """
