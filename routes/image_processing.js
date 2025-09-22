@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const { exec } = require("child_process");
 const util = require("util");
 const execAsync = util.promisify(exec);
+const { Server } = require("socket.io");
 
 // Middleware de autenticación deshabilitado para pruebas
 // const auth = require("../middleware/auth");
@@ -51,6 +52,18 @@ const ProcessingJob = require("../models/ProcessingJob");
 // Para pruebas: usar un userId fijo
 const TEST_USER_ID = "507f1f77bcf86cd799439011"; // ObjectId fijo para pruebas
 
+// Función para emitir progreso via Socket.IO
+function emitProgress(io, jobId, type, data) {
+  if (io) {
+    io.emit('processing-progress', {
+      jobId,
+      type, // 'upload', 'processing', 'file-progress', 'completed'
+      data,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
 /**
  * @route POST /api/v1/image-processing/process
  * @desc Procesar imágenes con IA
@@ -60,6 +73,7 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
   try {
     const { quality = "high", convertHeic = true } = req.body;
     const userId = TEST_USER_ID; // Usar userId fijo para pruebas
+    const io = req.app.get('io'); // Obtener instancia de Socket.IO
     
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -73,16 +87,33 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
     const tempDir = path.join(__dirname, "../uploads/temp", jobId);
     const outputDir = path.join(__dirname, "../uploads/processed", jobId);
     
+    // Emitir inicio de procesamiento
+    emitProgress(io, jobId, 'upload', {
+      message: 'Iniciando subida de archivos...',
+      totalFiles: req.files.length,
+      currentFile: 0
+    });
+    
     // Crear directorios
     fs.mkdirSync(tempDir, { recursive: true });
     fs.mkdirSync(outputDir, { recursive: true });
 
-    // Mover archivos a directorio temporal
+    // Mover archivos a directorio temporal con progreso
     const inputPaths = [];
-    for (let file of req.files) {
+    for (let i = 0; i < req.files.length; i++) {
+      const file = req.files[i];
       const newPath = path.join(tempDir, file.originalname);
       fs.renameSync(file.path, newPath);
       inputPaths.push(newPath);
+      
+      // Emitir progreso de subida
+      emitProgress(io, jobId, 'upload', {
+        message: `Subiendo archivo ${i + 1} de ${req.files.length}`,
+        totalFiles: req.files.length,
+        currentFile: i + 1,
+        fileName: file.originalname,
+        fileSize: file.size
+      });
     }
 
     // Ejecutar procesamiento con Python
@@ -92,11 +123,61 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
 
     console.log(`Iniciando procesamiento para job ${jobId}...`);
     
-    const { stdout, stderr } = await execAsync(command);
+    // Emitir inicio de procesamiento
+    emitProgress(io, jobId, 'processing', {
+      message: 'Iniciando procesamiento con IA...',
+      progress: 0,
+      totalFiles: req.files.length,
+      currentFile: 0
+    });
     
-    if (stderr) {
-      console.error("Error en procesamiento:", stderr);
-    }
+    // Ejecutar procesamiento con progreso en tiempo real
+    const pythonProcess = spawn('./venv/bin/python', [
+      pythonScript,
+      '--quality', quality,
+      ...(convertHeic === 'true' ? ['--convert-heic'] : []),
+      tempDir,
+      outputDir
+    ], {
+      cwd: path.join(__dirname, '..')
+    });
+
+    let processingOutput = '';
+    let currentFileIndex = 0;
+
+    pythonProcess.stdout.on('data', (data) => {
+      const output = data.toString();
+      processingOutput += output;
+      
+      // Buscar patrones de progreso en la salida de Python
+      if (output.includes('Imagen procesada exitosamente:')) {
+        currentFileIndex++;
+        const progress = Math.round((currentFileIndex / req.files.length) * 100);
+        
+        emitProgress(io, jobId, 'file-progress', {
+          message: `Procesando imagen ${currentFileIndex} de ${req.files.length}`,
+          progress: progress,
+          totalFiles: req.files.length,
+          currentFile: currentFileIndex,
+          fileName: output.match(/Imagen procesada exitosamente: (.+)/)?.[1] || `Imagen ${currentFileIndex}`
+        });
+      }
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      console.error("Error en procesamiento:", data.toString());
+    });
+
+    // Esperar a que termine el proceso
+    await new Promise((resolve, reject) => {
+      pythonProcess.on('close', (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`Proceso terminó con código ${code}`));
+        }
+      });
+    });
 
     // Leer resultados
     const resultFile = path.join(outputDir, "processing_result.json");
@@ -105,6 +186,14 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
     if (fs.existsSync(resultFile)) {
       processingStats = JSON.parse(fs.readFileSync(resultFile, "utf8"));
     }
+
+    // Emitir progreso de creación de ZIP
+    emitProgress(io, jobId, 'processing', {
+      message: 'Creando archivo ZIP...',
+      progress: 95,
+      totalFiles: req.files.length,
+      currentFile: req.files.length
+    });
 
     // Crear ZIP con resultados
     const zipPath = path.join(__dirname, "../uploads/zips", `${jobId}.zip`);
@@ -135,6 +224,16 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
       fileSize: req.files.reduce((total, file) => total + file.size, 0)
     });
     await job.save();
+
+    // Emitir finalización
+    emitProgress(io, jobId, 'completed', {
+      message: 'Procesamiento completado exitosamente',
+      progress: 100,
+      totalFiles: req.files.length,
+      processedFiles: processingStats.processed_successfully || 0,
+      processingTime: processingStats.processing_time_seconds || 0,
+      downloadUrl: `/api/v1/image-processing/download/${jobId}`
+    });
 
     res.json({
       success: true,
