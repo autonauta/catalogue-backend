@@ -194,8 +194,14 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
       const output = data.toString();
       processingOutput += output;
       
+      console.log('🐍 Salida de Python:', output);
+      
       // Buscar patrones de progreso en la salida de Python
+      console.log('🔍 Buscando patrón en:', output);
+      console.log('🔍 ¿Contiene "Imagen procesada exitosamente:"?', output.includes('Imagen procesada exitosamente:'));
+      
       if (output.includes('Imagen procesada exitosamente:')) {
+        console.log('✅ Patrón detectado! Enviando progreso...');
         currentFileIndex++;
         const progress = Math.round((currentFileIndex / req.files.length) * 100);
         
@@ -210,6 +216,8 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
         
         console.log(`📤 Enviando progreso de procesamiento para archivo ${currentFileIndex - 1}:`, processingProgressData);
         emitProgress(io, jobId, 'file-progress', processingProgressData);
+      } else {
+        console.log('❌ Patrón no detectado en esta salida');
       }
     });
 
