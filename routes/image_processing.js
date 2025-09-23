@@ -55,12 +55,23 @@ const TEST_USER_ID = "507f1f77bcf86cd799439011"; // ObjectId fijo para pruebas
 // Función para emitir progreso via Socket.IO
 function emitProgress(io, jobId, type, data) {
   if (io) {
-    io.emit('processing-progress', {
+    const eventData = {
       jobId,
       type, // 'upload', 'processing', 'file-progress', 'completed'
       data,
       timestamp: new Date().toISOString()
+    };
+    
+    console.log(`📡 Emitiendo evento Socket.IO:`, {
+      type: eventData.type,
+      jobId: eventData.jobId,
+      fileIndex: data.fileIndex,
+      progress: data.progress
     });
+    
+    io.emit('processing-progress', eventData);
+  } else {
+    console.error('❌ Socket.IO no disponible para emitir evento');
   }
 }
 
@@ -132,7 +143,7 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
       inputPaths.push(newPath);
       
       // Emitir progreso de subida individual
-      emitProgress(io, jobId, 'file-progress', {
+      const uploadProgressData = {
         message: `Subiendo archivo ${i + 1} de ${req.files.length}`,
         totalFiles: req.files.length,
         currentFile: i + 1,
@@ -140,7 +151,10 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
         fileSize: file.size,
         fileIndex: i,
         progress: Math.round(((i + 1) / req.files.length) * 100)
-      });
+      };
+      
+      console.log(`📤 Enviando progreso de subida para archivo ${i}:`, uploadProgressData);
+      emitProgress(io, jobId, 'file-progress', uploadProgressData);
     }
 
     // Ejecutar procesamiento con Python
@@ -185,14 +199,17 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
         currentFileIndex++;
         const progress = Math.round((currentFileIndex / req.files.length) * 100);
         
-        emitProgress(io, jobId, 'file-progress', {
+        const processingProgressData = {
           message: `Procesando imagen ${currentFileIndex} de ${req.files.length}`,
           progress: progress,
           totalFiles: req.files.length,
           currentFile: currentFileIndex,
           fileName: output.match(/Imagen procesada exitosamente: (.+)/)?.[1] || `Imagen ${currentFileIndex}`,
           fileIndex: currentFileIndex - 1 // Índice basado en 0
-        });
+        };
+        
+        console.log(`📤 Enviando progreso de procesamiento para archivo ${currentFileIndex - 1}:`, processingProgressData);
+        emitProgress(io, jobId, 'file-progress', processingProgressData);
       }
     });
 
