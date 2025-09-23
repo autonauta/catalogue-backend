@@ -222,7 +222,32 @@ router.post("/process", upload.array("images", 20), async (req, res) => {
     });
 
     pythonProcess.stderr.on('data', (data) => {
-      console.error("Error en procesamiento:", data.toString());
+      const output = data.toString();
+      console.log('🐍 Salida de Python (stderr):', output);
+      
+      // Buscar patrones de progreso en stderr también
+      console.log('🔍 Buscando patrón en stderr:', output);
+      console.log('🔍 ¿Contiene "Imagen procesada exitosamente:"?', output.includes('Imagen procesada exitosamente:'));
+      
+      if (output.includes('Imagen procesada exitosamente:')) {
+        console.log('✅ Patrón detectado en stderr! Enviando progreso...');
+        currentFileIndex++;
+        const progress = Math.round((currentFileIndex / req.files.length) * 100);
+        
+        const processingProgressData = {
+          message: `Procesando imagen ${currentFileIndex} de ${req.files.length}`,
+          progress: progress,
+          totalFiles: req.files.length,
+          currentFile: currentFileIndex,
+          fileName: output.match(/Imagen procesada exitosamente: (.+)/)?.[1] || `Imagen ${currentFileIndex}`,
+          fileIndex: currentFileIndex - 1 // Índice basado en 0
+        };
+        
+        console.log(`📤 Enviando progreso de procesamiento para archivo ${currentFileIndex - 1}:`, processingProgressData);
+        emitProgress(io, jobId, 'file-progress', processingProgressData);
+      } else {
+        console.log('❌ Patrón no detectado en stderr');
+      }
     });
 
     // Esperar a que termine el proceso
