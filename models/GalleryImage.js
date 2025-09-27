@@ -21,6 +21,7 @@ exodusConnection.on('error', (err) => {
 });
 
 const galleryImageSchema = new mongoose.Schema({
+  // Información de la imagen original
   filename: {
     type: String,
     required: [true, "El nombre del archivo es requerido"],
@@ -30,6 +31,28 @@ const galleryImageSchema = new mongoose.Schema({
     type: String,
     required: [true, "La ruta del archivo es requerida"],
     trim: true
+  },
+  // Versiones de la imagen
+  versions: {
+    thumbnail: {
+      filename: String,
+      path: String,
+      size: Number,
+      dimensions: {
+        width: Number,
+        height: Number
+      }
+    },
+    original_compressed: {
+      filename: String,
+      path: String,
+      size: Number,
+      dimensions: {
+        width: Number,
+        height: Number
+      },
+      quality: Number
+    }
   },
   original_filename: {
     type: String,
@@ -130,7 +153,8 @@ galleryImageSchema.methods.getImageInfo = function() {
     quality: this.quality,
     is_compressed: this.is_compressed,
     order: this.order,
-    event_id: this.event_id
+    event_id: this.event_id,
+    versions: this.versions
   };
 };
 

@@ -82,6 +82,112 @@ function generateUniqueFilename(originalName, format = 'webp') {
 }
 
 /**
+ * Generar thumbnail pequeño (200x200) con compresión máxima
+ */
+async function generateThumbnail(inputPath, outputPath) {
+  try {
+    console.log("🖼️ Generando thumbnail...");
+    console.log("📁 Archivo de entrada:", inputPath);
+    console.log("📁 Archivo de salida:", outputPath);
+    
+    // Verificar que el archivo de entrada existe
+    try {
+      await fs.access(inputPath);
+      console.log("✅ Archivo de entrada existe");
+    } catch (accessError) {
+      console.error("❌ Archivo de entrada no encontrado:", inputPath);
+      throw new Error(`Archivo de entrada no encontrado: ${inputPath}`);
+    }
+    
+    // Generar thumbnail de 200x200 con compresión máxima
+    const command = `ffmpeg -i "${inputPath}" -vf "scale=200:200:force_original_aspect_ratio=decrease,pad=200:200:(ow-iw)/2:(oh-ih)/2:color=white" -c:v libwebp -quality 30 -compression_level 6 -y "${outputPath}"`;
+    console.log("🔧 Comando FFmpeg para thumbnail:", command);
+    
+    const { stdout, stderr } = await execAsync(command);
+    
+    if (stderr && !stderr.includes('video:')) {
+      console.warn("⚠️ Advertencias de FFmpeg:", stderr);
+    }
+    
+    // Verificar que el archivo se creó
+    await fs.access(outputPath);
+    
+    // Obtener información del thumbnail
+    const thumbnailInfo = await getImageInfo(outputPath);
+    
+    console.log("✅ Thumbnail generado exitosamente");
+    console.log(`📊 Tamaño thumbnail:`, (thumbnailInfo.size / 1024).toFixed(2), "KB");
+    console.log(`📐 Dimensiones: ${thumbnailInfo.width}x${thumbnailInfo.height}`);
+    
+    return {
+      size: thumbnailInfo.size,
+      dimensions: {
+        width: thumbnailInfo.width,
+        height: thumbnailInfo.height
+      }
+    };
+    
+  } catch (error) {
+    console.error("❌ Error al generar thumbnail:", error);
+    throw new Error(`Error al generar thumbnail: ${error.message}`);
+  }
+}
+
+/**
+ * Generar imagen comprimida de alta calidad manteniendo dimensiones originales
+ */
+async function generateHighQualityCompressed(inputPath, outputPath, originalDimensions) {
+  try {
+    console.log("🎨 Generando imagen de alta calidad...");
+    console.log("📁 Archivo de entrada:", inputPath);
+    console.log("📁 Archivo de salida:", outputPath);
+    console.log("📐 Dimensiones originales:", originalDimensions);
+    
+    // Verificar que el archivo de entrada existe
+    try {
+      await fs.access(inputPath);
+      console.log("✅ Archivo de entrada existe");
+    } catch (accessError) {
+      console.error("❌ Archivo de entrada no encontrado:", inputPath);
+      throw new Error(`Archivo de entrada no encontrado: ${inputPath}`);
+    }
+    
+    // Generar imagen de alta calidad manteniendo dimensiones originales
+    const command = `ffmpeg -i "${inputPath}" -c:v libwebp -quality 85 -compression_level 4 -y "${outputPath}"`;
+    console.log("🔧 Comando FFmpeg para alta calidad:", command);
+    
+    const { stdout, stderr } = await execAsync(command);
+    
+    if (stderr && !stderr.includes('video:')) {
+      console.warn("⚠️ Advertencias de FFmpeg:", stderr);
+    }
+    
+    // Verificar que el archivo se creó
+    await fs.access(outputPath);
+    
+    // Obtener información de la imagen comprimida
+    const compressedInfo = await getImageInfo(outputPath);
+    
+    console.log("✅ Imagen de alta calidad generada exitosamente");
+    console.log(`📊 Tamaño:`, (compressedInfo.size / 1024).toFixed(2), "KB");
+    console.log(`📐 Dimensiones: ${compressedInfo.width}x${compressedInfo.height}`);
+    
+    return {
+      size: compressedInfo.size,
+      dimensions: {
+        width: compressedInfo.width,
+        height: compressedInfo.height
+      },
+      quality: 85
+    };
+    
+  } catch (error) {
+    console.error("❌ Error al generar imagen de alta calidad:", error);
+    throw new Error(`Error al generar imagen de alta calidad: ${error.message}`);
+  }
+}
+
+/**
  * Comprimir imagen a WebP usando FFmpeg con compresión agresiva
  */
 async function compressImageToWebP(inputPath, outputPath, targetSize = GALLERY_CONFIG.MAX_IMAGE_SIZE) {
@@ -236,26 +342,41 @@ async function processUploadedImage(file, originalSize, eventId) {
     console.log("📁 Preparando directorio de destino...");
     await createGalleryDirectory();
     
-    // CUARTO: Generar nombres de archivo
+    // CUARTO: Generar nombres de archivo para las versiones
     console.log("📝 Generando nombres de archivo...");
     const originalFilename = file.originalname;
-    const uniqueFilename = generateUniqueFilename(originalFilename, 'webp');
+    const baseFilename = generateUniqueFilename(originalFilename, 'webp').replace('.webp', '');
     const tempPath = file.path;
-    const finalPath = path.join(GALLERY_CONFIG.SERVER_PATH, uniqueFilename);
+    
+    // Nombres para las versiones (solo thumbnail y original comprimida)
+    const thumbnailFilename = `${baseFilename}_thumb.webp`;
+    const originalCompressedFilename = `${baseFilename}_orig.webp`;
+    
+    // Rutas completas
+    const thumbnailPath = path.join(GALLERY_CONFIG.SERVER_PATH, thumbnailFilename);
+    const originalCompressedPath = path.join(GALLERY_CONFIG.SERVER_PATH, originalCompressedFilename);
     
     console.log("📁 Archivo temporal:", tempPath);
-    console.log("📁 Archivo final:", finalPath);
+    console.log("📁 Thumbnail:", thumbnailPath);
+    console.log("📁 Original comprimida:", originalCompressedPath);
     
-    // QUINTO: Comprimir a WebP
-    console.log("🔧 Iniciando compresión...");
-    const compressionResult = await compressImageToWebP(tempPath, finalPath, GALLERY_CONFIG.MAX_IMAGE_SIZE);
+    // QUINTO: Obtener información de la imagen original
+    console.log("📊 Obteniendo información de imagen original...");
+    const originalImageInfo = await getImageInfo(tempPath);
+    console.log("📐 Dimensiones originales:", originalImageInfo);
     
-    // Obtener información de la imagen comprimida
-    const imageInfo = await getImageInfo(finalPath);
+    // SEXTO: Generar las dos versiones en paralelo
+    console.log("🚀 Generando versiones...");
+    const [thumbnailResult, originalCompressedResult] = await Promise.all([
+      generateThumbnail(tempPath, thumbnailPath),
+      generateHighQualityCompressed(tempPath, originalCompressedPath, originalImageInfo)
+    ]);
     
-    // Calcular ratio de compresión
+    console.log("✅ Versiones generadas exitosamente");
+    
+    // Calcular ratio de compresión (usando la versión original comprimida como referencia)
     const compressionRatio = originalSize > 0 ? 
-      ((originalSize - imageInfo.size) / originalSize) * 100 : 0;
+      ((originalSize - originalCompressedResult.size) / originalSize) * 100 : 0;
     
     // Limpiar archivo temporal
     try {
@@ -267,18 +388,30 @@ async function processUploadedImage(file, originalSize, eventId) {
     
     // Crear registro en base de datos
     const galleryImage = new GalleryImage({
-      filename: uniqueFilename,
-      path: path.join(GALLERY_CONFIG.FRONTEND_PATH, uniqueFilename),
+      filename: originalCompressedFilename, // Usar la versión original comprimida como principal
+      path: path.join(GALLERY_CONFIG.FRONTEND_PATH, originalCompressedFilename),
+      versions: {
+        thumbnail: {
+          filename: thumbnailFilename,
+          path: path.join(GALLERY_CONFIG.FRONTEND_PATH, thumbnailFilename),
+          size: thumbnailResult.size,
+          dimensions: thumbnailResult.dimensions
+        },
+        original_compressed: {
+          filename: originalCompressedFilename,
+          path: path.join(GALLERY_CONFIG.FRONTEND_PATH, originalCompressedFilename),
+          size: originalCompressedResult.size,
+          dimensions: originalCompressedResult.dimensions,
+          quality: originalCompressedResult.quality
+        }
+      },
       original_filename: originalFilename,
-      file_size: imageInfo.size,
+      file_size: originalCompressedResult.size, // Tamaño de la versión original comprimida
       original_size: originalSize,
       compression_ratio: compressionRatio,
-      dimensions: {
-        width: imageInfo.width,
-        height: imageInfo.height
-      },
+      dimensions: originalCompressedResult.dimensions,
       format: 'webp',
-      quality: compressionResult.quality, // Usar la calidad real aplicada
+      quality: originalCompressedResult.quality,
       is_compressed: true,
       event_id: eventId
     });
@@ -292,9 +425,14 @@ async function processUploadedImage(file, originalSize, eventId) {
       image: galleryImage,
       info: {
         originalSize: originalSize,
-        compressedSize: imageInfo.size,
+        thumbnailSize: thumbnailResult.size,
+        originalCompressedSize: originalCompressedResult.size,
         compressionRatio: compressionRatio,
-        dimensions: imageInfo
+        dimensions: {
+          original: originalImageInfo,
+          thumbnail: thumbnailResult.dimensions,
+          originalCompressed: originalCompressedResult.dimensions
+        }
       }
     };
     
@@ -332,10 +470,33 @@ async function cleanupOldImages() {
     
     for (const image of imagesToDelete) {
       try {
-        // Eliminar archivo físico
-        const filePath = path.join(GALLERY_CONFIG.SERVER_PATH, image.filename);
-        await fs.unlink(filePath);
-        console.log("🗑️ Archivo eliminado:", image.filename);
+        // Eliminar todos los archivos físicos (todas las versiones)
+        const filesToDelete = [];
+        
+        // Archivo principal
+        if (image.filename) {
+          filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.filename));
+        }
+        
+        // Archivos de versiones
+        if (image.versions) {
+          if (image.versions.thumbnail && image.versions.thumbnail.filename) {
+            filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.versions.thumbnail.filename));
+          }
+          if (image.versions.original_compressed && image.versions.original_compressed.filename) {
+            filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.versions.original_compressed.filename));
+          }
+        }
+        
+        // Eliminar cada archivo
+        for (const filePath of filesToDelete) {
+          try {
+            await fs.unlink(filePath);
+            console.log("🗑️ Archivo eliminado:", path.basename(filePath));
+          } catch (unlinkError) {
+            console.warn("⚠️ No se pudo eliminar archivo:", path.basename(filePath), unlinkError.message);
+          }
+        }
         
         // Eliminar registro de base de datos
         await GalleryImage.findByIdAndDelete(image._id);
@@ -344,7 +505,8 @@ async function cleanupOldImages() {
         deletedFiles.push({
           id: image._id,
           filename: image.filename,
-          path: image.path
+          path: image.path,
+          filesDeleted: filesToDelete.length
         });
         
       } catch (deleteError) {
@@ -445,18 +607,47 @@ async function deleteGalleryImage(imageId) {
       throw new Error("Imagen no encontrada");
     }
     
-    // Eliminar archivo físico
-    const filePath = path.join(GALLERY_CONFIG.SERVER_PATH, image.filename);
-    await fs.unlink(filePath);
+    // Eliminar todos los archivos físicos (todas las versiones)
+    const filesToDelete = [];
+    
+    // Archivo principal
+    if (image.filename) {
+      filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.filename));
+    }
+    
+    // Archivos de versiones
+    if (image.versions) {
+      if (image.versions.thumbnail && image.versions.thumbnail.filename) {
+        filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.versions.thumbnail.filename));
+      }
+      if (image.versions.original_compressed && image.versions.original_compressed.filename) {
+        filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.versions.original_compressed.filename));
+      }
+    }
+    
+    // Eliminar cada archivo
+    const deletedFiles = [];
+    for (const filePath of filesToDelete) {
+      try {
+        await fs.unlink(filePath);
+        deletedFiles.push(path.basename(filePath));
+        console.log("🗑️ Archivo eliminado:", path.basename(filePath));
+      } catch (unlinkError) {
+        console.warn("⚠️ No se pudo eliminar archivo:", path.basename(filePath), unlinkError.message);
+      }
+    }
     
     // Eliminar registro de base de datos
     await GalleryImage.findByIdAndDelete(imageId);
     
     console.log("✅ Imagen eliminada:", image.filename);
+    console.log(`🗑️ Archivos eliminados: ${deletedFiles.length}/${filesToDelete.length}`);
     
     return {
       success: true,
-      deletedImage: image.getImageInfo()
+      deletedImage: image.getImageInfo(),
+      deletedFiles: deletedFiles,
+      totalFiles: filesToDelete.length
     };
     
   } catch (error) {
@@ -475,5 +666,7 @@ module.exports = {
   deleteGalleryImage,
   generateUniqueFilename,
   compressImageToWebP,
+  generateThumbnail,
+  generateHighQualityCompressed,
   getImageInfo
 };

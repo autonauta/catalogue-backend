@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const fs = require('fs').promises;
 const { galleryUpload, handleMulterError } = require('../middleware/galleryUpload');
 const { 
   processUploadedImage, 
@@ -9,6 +11,7 @@ const {
   deleteGalleryImage,
   GALLERY_CONFIG 
 } = require('../utils/galleryManager');
+const GalleryImage = require('../models/GalleryImage');
 
 // Middleware para manejar errores de Multer se aplicará después de las rutas
 
@@ -269,6 +272,100 @@ router.delete('/images/:id', async (req, res) => {
     res.status(500).json({
       error: true,
       message: "Error interno del servidor al eliminar imagen",
+      details: error.message
+    });
+  }
+});
+
+// GET /gallery/image/:id/:version - Obtener imagen específica en diferentes versiones
+router.get('/image/:id/:version?', async (req, res) => {
+  try {
+    const { id, version = 'original' } = req.params;
+    console.log("🖼️ Obteniendo imagen:", id, "versión:", version);
+    
+    if (!id) {
+      return res.status(400).json({
+        error: true,
+        message: "ID de imagen requerido"
+      });
+    }
+    
+    // Buscar la imagen en la base de datos
+    const image = await GalleryImage.findById(id);
+    if (!image) {
+      return res.status(404).json({
+        error: true,
+        message: "Imagen no encontrada"
+      });
+    }
+    
+    // Determinar qué versión servir
+    let targetVersion = null;
+    let filePath = null;
+    
+    switch (version) {
+      case 'thumbnail':
+        if (image.versions.thumbnail) {
+          targetVersion = image.versions.thumbnail;
+          filePath = path.join(GALLERY_CONFIG.SERVER_PATH, targetVersion.filename);
+        }
+        break;
+      case 'original':
+        if (image.versions.original_compressed) {
+          targetVersion = image.versions.original_compressed;
+          filePath = path.join(GALLERY_CONFIG.SERVER_PATH, targetVersion.filename);
+        }
+        break;
+      default:
+        return res.status(400).json({
+          error: true,
+          message: "Versión no válida. Use: thumbnail u original"
+        });
+    }
+    
+    if (!targetVersion || !filePath) {
+      return res.status(404).json({
+        error: true,
+        message: `Versión ${version} no encontrada para esta imagen`
+      });
+    }
+    
+    // Verificar que el archivo existe
+    try {
+      await fs.access(filePath);
+    } catch (accessError) {
+      console.error("❌ Archivo no encontrado:", filePath);
+      return res.status(404).json({
+        error: true,
+        message: "Archivo de imagen no encontrado en el servidor"
+      });
+    }
+    
+    // Configurar headers para la respuesta
+    res.setHeader('Content-Type', 'image/webp');
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache por 1 año
+    res.setHeader('Content-Length', targetVersion.size);
+    
+    // Enviar el archivo
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error("❌ Error al enviar archivo:", err);
+        if (!res.headersSent) {
+          res.status(500).json({
+            error: true,
+            message: "Error al servir el archivo de imagen"
+          });
+        }
+      } else {
+        console.log("✅ Imagen servida exitosamente:", targetVersion.filename);
+      }
+    });
+    
+  } catch (error) {
+    console.error("❌ Error al obtener imagen:", error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor al obtener imagen",
       details: error.message
     });
   }
