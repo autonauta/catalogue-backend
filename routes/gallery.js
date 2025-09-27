@@ -9,6 +9,7 @@ const {
   getAllGalleryImages, 
   getGalleryStats, 
   deleteGalleryImage,
+  deleteAllGalleryImages,
   GALLERY_CONFIG 
 } = require('../utils/galleryManager');
 const GalleryImage = require('../models/GalleryImage');
@@ -231,6 +232,31 @@ router.delete('/cleanup', async (req, res) => {
     res.status(500).json({
       error: true,
       message: "Error interno del servidor durante la limpieza",
+      details: error.message
+    });
+  }
+});
+
+// DELETE /gallery/all - Eliminar TODAS las imágenes de la galería
+router.delete('/all', async (req, res) => {
+  try {
+    console.log("🗑️ Eliminando TODAS las imágenes de la galería...");
+    
+    const result = await deleteAllGalleryImages();
+    
+    console.log("✅ Eliminación masiva completada:", result);
+    
+    res.json({
+      success: true,
+      message: result.message,
+      result: result
+    });
+    
+  } catch (error) {
+    console.error("❌ Error al eliminar todas las imágenes:", error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor al eliminar todas las imágenes",
       details: error.message
     });
   }

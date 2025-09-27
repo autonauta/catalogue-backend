@@ -99,8 +99,8 @@ async function generateThumbnail(inputPath, outputPath) {
       throw new Error(`Archivo de entrada no encontrado: ${inputPath}`);
     }
     
-    // Generar thumbnail de 200x200 con compresión máxima
-    const command = `ffmpeg -i "${inputPath}" -vf "scale=200:200:force_original_aspect_ratio=decrease,pad=200:200:(ow-iw)/2:(oh-ih)/2:color=white" -c:v libwebp -quality 30 -compression_level 6 -y "${outputPath}"`;
+    // Generar thumbnail manteniendo proporción original (máximo 200px en el lado más largo)
+    const command = `ffmpeg -i "${inputPath}" -vf "scale=200:200:force_original_aspect_ratio=decrease" -c:v libwebp -quality 30 -compression_level 6 -y "${outputPath}"`;
     console.log("🔧 Comando FFmpeg para thumbnail:", command);
     
     const { stdout, stderr } = await execAsync(command);
@@ -598,6 +598,100 @@ async function getGalleryStats() {
 }
 
 /**
+ * Eliminar todas las imágenes de la galería
+ */
+async function deleteAllGalleryImages() {
+  try {
+    console.log("🗑️ Eliminando todas las imágenes de la galería...");
+    
+    // Obtener todas las imágenes
+    const allImages = await GalleryImage.find({});
+    
+    if (allImages.length === 0) {
+      console.log("✅ No hay imágenes para eliminar");
+      return {
+        success: true,
+        deleted: 0,
+        files: [],
+        message: "No había imágenes en la galería"
+      };
+    }
+    
+    console.log(`🗑️ Eliminando ${allImages.length} imágenes...`);
+    
+    const deletedFiles = [];
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (const image of allImages) {
+      try {
+        // Eliminar todos los archivos físicos (todas las versiones)
+        const filesToDelete = [];
+        
+        // Archivo principal
+        if (image.filename) {
+          filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.filename));
+        }
+        
+        // Archivos de versiones
+        if (image.versions) {
+          if (image.versions.thumbnail && image.versions.thumbnail.filename) {
+            filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.versions.thumbnail.filename));
+          }
+          if (image.versions.original_compressed && image.versions.original_compressed.filename) {
+            filesToDelete.push(path.join(GALLERY_CONFIG.SERVER_PATH, image.versions.original_compressed.filename));
+          }
+        }
+        
+        // Eliminar cada archivo
+        const imageDeletedFiles = [];
+        for (const filePath of filesToDelete) {
+          try {
+            await fs.unlink(filePath);
+            imageDeletedFiles.push(path.basename(filePath));
+            console.log("🗑️ Archivo eliminado:", path.basename(filePath));
+          } catch (unlinkError) {
+            console.warn("⚠️ No se pudo eliminar archivo:", path.basename(filePath), unlinkError.message);
+          }
+        }
+        
+        // Eliminar registro de base de datos
+        await GalleryImage.findByIdAndDelete(image._id);
+        console.log("🗑️ Registro eliminado:", image._id);
+        
+        deletedFiles.push({
+          id: image._id,
+          filename: image.filename,
+          path: image.path,
+          filesDeleted: imageDeletedFiles,
+          totalFiles: filesToDelete.length
+        });
+        
+        successCount++;
+        
+      } catch (deleteError) {
+        console.error("❌ Error al eliminar imagen:", image.filename, deleteError.message);
+        errorCount++;
+      }
+    }
+    
+    console.log(`✅ Eliminación completada: ${successCount} imágenes eliminadas exitosamente, ${errorCount} errores`);
+    
+    return {
+      success: true,
+      deleted: successCount,
+      errors: errorCount,
+      files: deletedFiles,
+      message: `Eliminadas ${successCount} imágenes exitosamente, ${errorCount} errores`
+    };
+    
+  } catch (error) {
+    console.error("❌ Error al eliminar todas las imágenes:", error);
+    throw error;
+  }
+}
+
+/**
  * Eliminar imagen específica
  */
 async function deleteGalleryImage(imageId) {
@@ -664,6 +758,7 @@ module.exports = {
   getAllGalleryImages,
   getGalleryStats,
   deleteGalleryImage,
+  deleteAllGalleryImages,
   generateUniqueFilename,
   compressImageToWebP,
   generateThumbnail,
