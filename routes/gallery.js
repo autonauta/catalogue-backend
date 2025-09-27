@@ -17,7 +17,7 @@ const GalleryImage = require('../models/GalleryImage');
 // Middleware para manejar errores de Multer se aplicará después de las rutas
 
 // POST /gallery/upload - Subir imágenes a la galería
-router.post('/upload', galleryUpload.array('images', 10), async (req, res) => {
+router.post('/upload', galleryUpload.array('images', 30), async (req, res) => {
   try {
     console.log("=== SUBIDA DE IMÁGENES A GALERÍA ===");
     console.log("Archivos recibidos:", req.files?.length || 0);

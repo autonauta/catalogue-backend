@@ -43,7 +43,7 @@ const galleryUpload = multer({
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB máximo
-    files: 10 // Máximo 10 archivos por request
+    files: 30 // Máximo 30 archivos por request
   },
   fileFilter: fileFilter
 });
@@ -60,7 +60,7 @@ const handleMulterError = (error, req, res, next) => {
     if (error.code === 'LIMIT_FILE_COUNT') {
       return res.status(400).json({
         error: true,
-        message: 'Demasiados archivos. Máximo 10 imágenes por request.'
+        message: 'Demasiados archivos. Máximo 30 imágenes por request.'
       });
     }
     if (error.code === 'LIMIT_UNEXPECTED_FILE') {
