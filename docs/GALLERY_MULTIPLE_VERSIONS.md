@@ -11,9 +11,9 @@ El sistema de galería ahora genera automáticamente **2 versiones** de cada ima
 
 ### 1. Thumbnail (`_thumb.webp`)
 - **Dimensiones**: Máximo 200px en el lado más largo, manteniendo proporción original
-- **Calidad**: 30% (compresión máxima)
+- **Calidad**: 60% (compresión moderada)
 - **Uso**: Vistas previas, listados de galería, carga rápida
-- **Tamaño típico**: 5-15 KB
+- **Tamaño típico**: 10-25 KB
 
 ### 2. Original Comprimida (`_orig.webp`)
 - **Dimensiones**: Mismas que la imagen original

@@ -100,7 +100,7 @@ async function generateThumbnail(inputPath, outputPath) {
     }
     
     // Generar thumbnail manteniendo proporción original (máximo 200px en el lado más largo)
-    const command = `ffmpeg -i "${inputPath}" -vf "scale=200:200:force_original_aspect_ratio=decrease" -c:v libwebp -quality 30 -compression_level 6 -y "${outputPath}"`;
+    const command = `ffmpeg -i "${inputPath}" -vf "scale=200:200:force_original_aspect_ratio=decrease" -c:v libwebp -quality 60 -compression_level 4 -y "${outputPath}"`;
     console.log("🔧 Comando FFmpeg para thumbnail:", command);
     
     const { stdout, stderr } = await execAsync(command);
