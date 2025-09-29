@@ -4,16 +4,16 @@
 
 El sistema de galería ahora genera automáticamente **2 versiones** de cada imagen subida para optimizar el rendimiento y la experiencia del usuario:
 
-1. **Thumbnail** (máximo 200px) - Para vistas previas y listados
+1. **Thumbnail** (máximo 400px) - Para vistas previas y listados
 2. **Original Comprimida** - Alta calidad manteniendo dimensiones originales
 
 ## Versiones Generadas
 
 ### 1. Thumbnail (`_thumb.webp`)
-- **Dimensiones**: Máximo 200px en el lado más largo, manteniendo proporción original
+- **Dimensiones**: Máximo 400px en el lado más largo, manteniendo proporción original
 - **Calidad**: 60% (compresión moderada)
 - **Uso**: Vistas previas, listados de galería, carga rápida
-- **Tamaño típico**: 10-25 KB
+- **Tamaño típico**: 20-50 KB
 
 ### 2. Original Comprimida (`_orig.webp`)
 - **Dimensiones**: Mismas que la imagen original
@@ -137,7 +137,7 @@ Cada imagen subida genera 2 archivos:
 
 ```
 /var/www/exodustribe.com/public_html/files/galery/
-├── 1699123456789_abc123_thumb.webp    # Thumbnail (máximo 200px)
+├── 1699123456789_abc123_thumb.webp    # Thumbnail (máximo 400px)
 └── 1699123456789_abc123_orig.webp     # Original comprimida
 ```
 

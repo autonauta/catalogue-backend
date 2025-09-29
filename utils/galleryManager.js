@@ -99,8 +99,8 @@ async function generateThumbnail(inputPath, outputPath) {
       throw new Error(`Archivo de entrada no encontrado: ${inputPath}`);
     }
     
-    // Generar thumbnail manteniendo proporción original (máximo 200px en el lado más largo)
-    const command = `ffmpeg -i "${inputPath}" -vf "scale=200:200:force_original_aspect_ratio=decrease" -c:v libwebp -quality 60 -compression_level 4 -y "${outputPath}"`;
+    // Generar thumbnail manteniendo proporción original (máximo 400px en el lado más largo)
+    const command = `ffmpeg -i "${inputPath}" -vf "scale=400:400:force_original_aspect_ratio=decrease" -c:v libwebp -quality 60 -compression_level 4 -y "${outputPath}"`;
     console.log("🔧 Comando FFmpeg para thumbnail:", command);
     
     const { stdout, stderr } = await execAsync(command);
